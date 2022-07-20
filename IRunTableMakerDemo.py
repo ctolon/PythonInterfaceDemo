@@ -358,7 +358,6 @@ def get_key(json_dict_new):
         if '.' in extrargs.outputjson:
             print("Wrong formatted input for JSON output!!! Script will Stopped.")
             return
-        print(extrargs.outputjson)
         temp = extrargs.outputjson
         temp = temp+'.json'
         my_json = temp
@@ -368,11 +367,7 @@ def get_key(json_dict_new):
         print("Logical json input error. Report it!!!")
         
         
-    
-    
-get_key(json_dict_new)  
-
-print(extrargs.outputjson)     
+get_key(json_dict_new)       
        
 configured_commands = vars(extrargs) # for get extrargs
 # Listing Added Commands
