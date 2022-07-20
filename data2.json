@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "Files/AO2D_Run3sim_nonpromptJpsi_muon.root"
+        "aod-file": "AO2Ds_nightlies/AO2D_nightlies3010_DQ.root "
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
@@ -68,7 +68,7 @@
         "ccdb-url": "http://alice-ccdb.cern.ch",
         "ccdbPath": "Analysis/PID/TOF",
         "ccdb-timestamp": "-1",
-        "pid-el": "-1",
+        "pid-el": "1",
         "pid-mu": "-1",
         "pid-pi": "-1",
         "pid-ka": "-1",
@@ -79,7 +79,7 @@
         "pid-al": "-1"
     },
     "event-selection-task": {
-        "syst": "pp",
+        "syst": "PbPb",
         "muonSelection": "0",
         "isMC": "true"
     },
@@ -124,7 +124,7 @@
         "cfgIsRun2": "false",
         "processFullWithCent": "false",
         "processFullWithCentWithV0Bits": "false",
-        "processFull": "false",
+        "processFull": "true",
         "processFullWithV0Bits": "false",
         "processFullWithEventFilter": "false",
         "processFullWithEventFilterWithV0Bits": "false",

@@ -6,6 +6,8 @@ import logging
 from ast import parse
 import os
 import argparse
+import argcomplete  
+from argcomplete.completers import ChoicesCompleter
 
 # DEMO Python Interface for runTableMaker.py
 
@@ -46,6 +48,7 @@ parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="s
 parser.add_argument('--cfgMinTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database,nargs='*', type=str)
+#parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database,nargs='*', type=str)
 
 # table-maker process
 parser.add_argument('--processFull', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
