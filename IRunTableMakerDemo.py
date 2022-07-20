@@ -34,6 +34,7 @@ for key, value in json_cut_database.items():
 # MCSignal Database
 for key, value in json_mcsignal_database.items():
     mcsignal_database.append(value)
+    
 
 
 
@@ -42,6 +43,9 @@ parser = argparse.ArgumentParser(description='Arguments to pass')
 
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+
+#json output
+parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # table-maker cfg
 parser.add_argument('--cfgEventCuts', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
@@ -157,6 +161,7 @@ json_dict_new = json_dict
 
 
 def get_key(json_dict_new):
+    my_json = 'ConfiguredTableMakerData.json'
     json_dict = json.load(open('dataMC.json'))
     #json_dict = json.load(open('data.json'))
     json_dict_new = json_dict
@@ -169,7 +174,7 @@ def get_key(json_dict_new):
             for value, value2 in value.items():
                 #print(value)
                 #aod
-                if value =='aod' and extrargs.aod:
+                if value =='aod-file' and extrargs.aod:
                    json_dict[key][value] = extrargs.aod                
                 # tablemaker cfg
                 if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
@@ -339,15 +344,37 @@ def get_key(json_dict_new):
                 if value == 'pid-al' and extrargs.pid_al:
                     json_dict[key][value] = extrargs.pid_al
                 
-            
-    dosya = open('ConfiguredTableMakerData.json','w')
-    dosya.write(json.dumps(json_dict, indent= 2))
+    if(extrargs.outputjson == None):
+        #print("1")          
+        config_output_json = open(my_json,'w')
+        config_output_json.write(json.dumps(json_dict, indent= 2))
+        print("Forget to Give output JSON name. Default Config")
+    elif(extrargs.outputjson[-5:] == ".json"):
+        #print("2")
+        my_json = extrargs.outputjson
+        config_output_json = open(my_json,'w')
+        config_output_json.write(json.dumps(json_dict, indent= 2))
+    elif(extrargs.outputjson[-5:] != ".json"):
+        if '.' in extrargs.outputjson:
+            print("Wrong formatted input for JSON output!!! Script will Stopped.")
+            return
+        print(extrargs.outputjson)
+        temp = extrargs.outputjson
+        temp = temp+'.json'
+        my_json = temp
+        config_output_json = open(my_json,'w')
+        config_output_json.write(json.dumps(json_dict, indent= 2))
+    else:
+        print("Logical json input error. Report it!!!")
+        
+        
     
-get_key(json_dict_new)         
+    
+get_key(json_dict_new)  
+
+print(extrargs.outputjson)     
+       
 configured_commands = vars(extrargs) # for get extrargs
-
-#TODO: Fix The Style
-
 # Listing Added Commands
 print("Args provided configurations List")
 print("========================================")
