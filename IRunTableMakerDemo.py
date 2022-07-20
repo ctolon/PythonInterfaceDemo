@@ -1,33 +1,36 @@
-#MÜKEMMEL INTERFACE PROJEM
-
 import json
 import sys
 import logging
 from ast import parse
 import os
 import argparse
-import argcomplete  
-from argcomplete.completers import ChoicesCompleter
+#import argcomplete  
+#from argcomplete.completers import ChoicesCompleter
 
 # DEMO Python Interface for runTableMaker.py
 
+# Function to convert 
+def listToString(s):
+   
+    # initialize an empty string
+    str1 =","
+   
+    # return string 
+    return (str1.join(s))
+
 json_cut_database = json.load(open('AnalysisCutDatabase.json'))
 json_mcsignal_database = json.load(open('MCSignalDatabase.json'))
-i=0
 cut_database = []
 mcsignal_database =[]
 
 # Cut Database
 for key, value in json_cut_database.items():
     cut_database.append(value)
-#print(cut_database)
-#print(type(cut_database))
 
 # MCSignal Database
 for key, value in json_mcsignal_database.items():
     mcsignal_database.append(value)
-#print(mcsignal_database)
-#print(type(mcsignal_database))
+
 
 
 
@@ -48,7 +51,6 @@ parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="s
 parser.add_argument('--cfgMinTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database,nargs='*', type=str)
-#parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database,nargs='*', type=str)
 
 # table-maker process
 parser.add_argument('--processFull', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
@@ -335,9 +337,15 @@ def get_key(json_dict_new):
                 
             
     dosya = open('ConfiguredTableMakerData.json','w')
-    dosya.write(json.dumps(json_dict))
+    dosya.write(json.dumps(json_dict, indent= 2))
                    
-get_key(json_dict_new)
-#print(extrargs.pid_el)
-print(extrargs.tof_expreso)
-#print(getattr(extrargs, 'pid-el'))
+configured_commands = vars(extrargs) # for get extrargs
+
+# Listing Added Commands
+print("Args provided configurations List")
+print("========================================")
+for key,value in configured_commands.items():
+    if(value != None):
+        print("--"+key,":",listToString(value))
+
+
