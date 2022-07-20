@@ -11,12 +11,16 @@ import argparse
 
 # Function to convert 
 def listToString(s):
+    if len(s) > 1:
+        # initialize an empty string
+        str1 =" "
    
-    # initialize an empty string
-    str1 =","
-   
-    # return string 
-    return (str1.join(s))
+        # return string 
+        return (str1.join(s))
+    else:
+        str1 = " "
+        
+        return (str1.join(s))
 
 json_cut_database = json.load(open('AnalysisCutDatabase.json'))
 json_mcsignal_database = json.load(open('MCSignalDatabase.json'))
@@ -338,14 +342,17 @@ def get_key(json_dict_new):
             
     dosya = open('ConfiguredTableMakerData.json','w')
     dosya.write(json.dumps(json_dict, indent= 2))
-                   
+    
+get_key(json_dict_new)         
 configured_commands = vars(extrargs) # for get extrargs
+
+#TODO: Fix The Style
 
 # Listing Added Commands
 print("Args provided configurations List")
 print("========================================")
 for key,value in configured_commands.items():
     if(value != None):
-        print("--"+key,":",listToString(value))
+        print("--"+key,":", value)
 
 
