@@ -1,3 +1,16 @@
+#############################################################################
+##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
+## This program is free software: you can redistribute it and/or modify it ##
+##  under the terms of the GNU General Public License as published by the  ##
+## Free Software Foundation, either version 3 of the License, or (at your  ##
+## option) any later version. This program is distributed in the hope that ##
+##  it will be useful, but WITHOUT ANY WARRANTY; without even the implied  ##
+##     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    ##
+##           See the GNU General Public License for more details.          ##
+##    You should have received a copy of the GNU General Public License    ##
+##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
+#############################################################################
+
 import json
 import sys
 import logging
@@ -22,8 +35,8 @@ def listToString(s):
         
         return (str1.join(s))
 
-json_cut_database = json.load(open('AnalysisCutDatabase.json'))
-json_mcsignal_database = json.load(open('MCSignalDatabase.json'))
+json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
+json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
 cut_database = []
 mcsignal_database =[]
 
@@ -155,14 +168,14 @@ parser.add_argument('--pid-al', help="pid selection input 1 or -1", action="stor
 extrargs = parser.parse_args()
 
 #Open JSON File
-json_dict = json.load(open('dataMC.json'))
+json_dict = json.load(open('Configs/configTableMakerMCRun3.json'))
 
 json_dict_new = json_dict
 
 
 def get_key(json_dict_new):
     my_json = 'ConfiguredTableMakerData.json'
-    json_dict = json.load(open('dataMC.json'))
+    json_dict = json.load(open('Configs/configTableMakerMCRun3.json'))
     #json_dict = json.load(open('data.json'))
     json_dict_new = json_dict
     for key, value in json_dict_new.items():
@@ -173,7 +186,7 @@ def get_key(json_dict_new):
             #print(value, type(value))
             for value, value2 in value.items():
                 #print(value)
-                #aod
+                # aod
                 if value =='aod-file' and extrargs.aod:
                    json_dict[key][value] = extrargs.aod                
                 # tablemaker cfg

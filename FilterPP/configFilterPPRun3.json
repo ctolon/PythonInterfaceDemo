@@ -7,11 +7,35 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "\/home\/iarsene\/data\/2021\/AO2Ds_nightlies\/AO2D_nightlies3010_DQ.root"
+        "aod-file": "AO2D_filterppTest.root"
     },
-    "internal-dpl-aod-spawner": "",
-    "internal-dpl-aod-index-builder": "",
-    "mc-converter": "",
+    "d-q-event-selection-task": {
+        "cfgEventCuts": "eventStandardNoINT7",
+        "cfgWithQA": "false",
+        "processEventSelection": "true",
+        "processDummy": "false"
+    },
+    "d-q-barrel-track-selection": {
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,jpsiO2MCdebugCuts",
+        "cfgWithQA": "false",
+        "processSelection": "true",
+        "processDummy": "false"
+    },
+    "d-q-muons-selection": {
+        "cfgMuonsCuts": "muonHighPt",
+        "cfgWithQA": "false",
+        "processSelection": "true",
+        "processDummy": "false"
+    },
+    "d-q-filter-p-p-task": {
+        "cfgBarrelSels": "jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts2::2,jpsiO2MCdebugCuts3::1,jpsiO2MCdebugCuts3::2,jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts::2",
+        "cfgMuonSels": "muonHighPt::1",
+        "cfgWithQA": "false",
+        "processFilterPP": "true",
+        "processDummy": "false"
+    },
+    "internal-dpl-aod-global-analysis-file-sink": "",
+    "internal-dpl-aod-writer": "",
     "timestamp-task": {
         "verbose": "false",
         "rct-path": "RCT\/RunInformation\/",
@@ -19,7 +43,6 @@
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "isRun2MC": "false"
     },
-    "track-propagation": "",
     "tof-pid-full": {
         "param-file": "",
         "param-sigma": "TOFReso",
@@ -59,6 +82,10 @@
         "processRun2": "false",
         "processRun3": "true"
     },
+    "multiplicity-table": {
+        "processRun2": "false",
+        "processRun3": "true"
+    },
     "tof-signal": "",
     "track-extension": {
         "processRun2": "false",
@@ -70,21 +97,21 @@
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
         "ccdb-timestamp": "-1",
-        "pid-el": "1",
-        "pid-mu": "1",
-        "pid-pi": "1",
-        "pid-ka": "1",
-        "pid-pr": "1",
+        "pid-el": "-1",
+        "pid-mu": "-1",
+        "pid-pi": "-1",
+        "pid-ka": "-1",
+        "pid-pr": "-1",
         "pid-de": "-1",
         "pid-tr": "-1",
         "pid-he": "-1",
         "pid-al": "-1"
     },
     "event-selection-task": {
-        "syst": "PbPb",
+        "syst": "pp",
         "muonSelection": "0",
         "customDeltaBC": "300",
-        "isMC": "true",
+        "isMC": "false",
         "processRun2": "false",
         "processRun3": "true"
     },
@@ -93,32 +120,5 @@
     },
     "track-selection": {
         "isRun3": "true"
-    },
-    "table-maker-m-c": {
-        "cfgEventCuts": "eventStandardNoINT7",
-        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
-        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
-        "cfgBarrelLowPt": "0.5",
-        "cfgMuonLowPt": "0.5",
-        "cfgMinTpcSignal": "30",
-        "cfgMaxTpcSignal": "300",
-        "cfgMCsignals": "electronPrimary,eFromJpsi,muFromJpsi,eFromLMeeLF,LMeeLF,Jpsi",
-        "cfgIsRun2": "false",
-        "cfgNoQA": "false",
-        "cfgDetailedQA": "false",
-        "processFull": "false",
-        "processFullWithCov": "false",
-        "processBarrelOnly": "false",
-        "processBarrelOnlyWithCent": "false",
-        "processBarrelOnlyWithCov": "false",
-        "processMuonOnlyWithCov": "false",
-        "processMuonOnlyWithCent": "false",
-        "processOnlyBCs": "true"
-    },
-    "multiplicity-table": {
-        "processRun2": "false",
-        "processRun3": "true"
-    },
-    "internal-dpl-aod-global-analysis-file-sink": "",
-    "internal-dpl-aod-writer": ""
+    }
 }
