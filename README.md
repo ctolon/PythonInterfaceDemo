@@ -143,7 +143,7 @@ Param | Opt | Task | Desc | Automate | nargs | Default | Only
 `--aod` | No Restrications | `internal-dpl-aod-reader` | |
 `--outputjson` | No Restrications | Special Option | |
 `--onlySelect` | true false | Special Option | |
-`--process` | `Full` `FullTiny` `FullWithCov` `FullWithCent` `BarrelOnlyWithV0Bits` `BarrelOnlyEventFilter` `BarrelOnlyWithCent` `BarrelOnlyWithCov` `BarrelOnly` `MuonOnlyWithCent` `MuonOnlyWithCov` `MuonOnly` `MuonOnlyWithFilter` `OnlyBCs` | `table-maker` | |
+`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | |
 `--run` | `2` `3` | Special Option | |
 `--isMC` | `true` `false` | `event-selection-task` | |
 `--` | No Restrications | `internal-dpl-aod-reader` | |
