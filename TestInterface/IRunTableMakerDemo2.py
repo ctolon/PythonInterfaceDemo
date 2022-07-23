@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
 ## This program is free software: you can redistribute it and/or modify it ##
@@ -17,12 +19,13 @@ import logging
 from ast import parse
 import os
 import argparse
-#import argcomplete  
-#from argcomplete.completers import ChoicesCompleter
+import argcomplete  
+from argcomplete.completers import ChoicesCompleter
 
 # DEMO Python Interface for runTableMaker.py
 
-# Function to convert 
+# List to String --> Function to convert 
+
 def listToString(s):
     if len(s) > 1:
         # initialize an empty string
@@ -35,11 +38,25 @@ def listToString(s):
         
         return (str1.join(s))
 
+# defination for binary check TODO: Need to be integrated
+def binary_selector(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
+        return "true"
+        #return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
+        return "false"
+        #return False
+    else:
+        raise argparse.ArgumentTypeError('Misstyped value!')
+
 json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
 json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
 cut_database = []
 mcsignal_database =[]
 
+# control list for type control
 clist=[]
 
 # Cut Database
@@ -49,6 +66,10 @@ for key, value in json_cut_database.items():
 # MCSignal Database
 for key, value in json_mcsignal_database.items():
     mcsignal_database.append(value)
+    
+###################################
+# Interface Predefined Selections #
+###################################
     
 # process options in table maker
 tablemaker_all_process = ["Full","FullTiny","FullWithCov","FullWithCent",
@@ -111,7 +132,9 @@ process_dummies =["filter","event","muons","barrel"]
 track_prop = ["Standart","Covariance"]
     
 
-
+########################
+# Interface Parameters #
+########################
 
 
 parser = argparse.ArgumentParser(description='Arguments to pass')
@@ -123,7 +146,7 @@ parser.add_argument('--aod', help="Add your AOD File with path", action="store",
 parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # only select
-parser.add_argument('--onlySelect', help="Activate only selected JSON configs", action="store",choices=["true","false"],default="false", type=str)
+parser.add_argument('--onlySelect', help="Activate only selected JSON configs", action="store",choices=["true","false"], default="false", type=str.lower)
 
 # table-maker cfg
 parser.add_argument('--cfgEventCuts', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
@@ -133,7 +156,7 @@ parser.add_argument('--cfgBarrelLowPt', help="Input type number", action="store"
 parser.add_argument('--cfgMuonLowPt', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgNoQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str)
 parser.add_argument('--cfgDetailedQA', help="QA Detail Selection true or false", action="store", choices=["true","false"], type=str)
-#parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str)
+#parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 parser.add_argument('--cfgMinTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database, nargs='*', type=str)
@@ -143,7 +166,8 @@ parser.add_argument('--process', help="Process Selection options true or false (
 
 # Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
 parser.add_argument('--run', help="Run Selection", action="store", choices=['2','3'], type=str, required=True)
-#parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+#parser.add_argument('--processRun2', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
+#parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # event-selection-task
 parser.add_argument('--syst', help="Collision System Selection Input pp or PbPb", action="store", choices=['pp','PbPb'], type=str)
@@ -164,14 +188,14 @@ parser.add_argument('--isProcessEvTime', help="Process Selection options true or
 parser.add_argument('--tof-expreso', help="Tof expreso Input Type Number", action="store", type=str)
 
 # need refactoring part
-#parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
-#parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel
+#parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection no need automatic with process tablemaker
+#parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel no need automatic with process tablemaker
 # TODO: Bunu nasıl entegre edicem?
 parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #event selection, barel track task, filter task
 
 #d-q-event-selection-task
 parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
-#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need
+#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need TODO entegrasyonu yapılmamış olabilir
 
 # d-q-filter-p-p-task
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with commas", action="store", choices=cut_database, nargs='*', type=str) # run3
@@ -208,11 +232,12 @@ parser.add_argument('--maxchi2tpc', help="Input Type Number", action="store", ty
 parser.add_argument('--pid', help="pid selection input", action="store", choices=pid_options, nargs='*', type=str)
 
 
+argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
-#####################
-# PREFIX ADDING PART#
-#####################
+######################
+# PREFIX ADDING PART #
+###################### 
 
 # add prefix for extrargs.process for TableMaker and Filter PP
 if extrargs.process != None:
@@ -269,6 +294,7 @@ def get_key(json_dict_new):
                         bcs_search = [s for s in extrargs.process if "Bcs" in s]    
                                           
                         # Automatic Activate and Disable regarding to process func. in tablemaker
+                        # todo: dq-barrel ve muon taskı içeride var mı kontrol için if statement yaz
                         if len(full_search) > 0 and extrargs.isMC == False:
                             if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None and json_dict["d-q-muons-selection"]["processSelection"] != None:
                                 json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "true"
@@ -291,6 +317,7 @@ def get_key(json_dict_new):
                         #print("Key :",key,"Value:",value,"Value 2 :",value2)
                         
                 # Filter PP Task TODO Entegre et
+                # TODO: Bu catların listToStringini fixle
                 if value =='cfgPairCuts' and extrargs.cfgPairCuts:
                     extrargs.cfgPairCuts = ",".join(extrargs.cfgPairCuts)
                     json_dict[key][value] = extrargs.cfgPairCuts
@@ -303,22 +330,41 @@ def get_key(json_dict_new):
                     json_dict[key]["processFilterPP"] = False
                 elif value =='processFilterPPTiny' and extrargs.isFilterPPTiny == False:
                     json_dict[key][value] = False
-                    json_dict[key]["processFilterPP"] = True
-
-                    
+                    json_dict[key]["processFilterPP"] = True         
                         
-                # Run Selection  TODO : Otomasyonlarını yap      
-                """
+                # Run 2/3 and MC/DATA Selection  Automations      
+                
                 if extrargs.run == "2":
-                    #automated things
-                    print("")
+                    if value == 'cfgIsRun2':
+                        json_dict[key][value] = "true"
+                    if value == 'isRun3':
+                        json_dict[key][value] = "false"
+                    if value == 'processRun3':
+                        json_dict[key][value] = "false"
                 if extrargs.run == "3":
-                    return
+                    if value == 'cfgIsrun2':
+                        json_dict[key][value] = "false"
+                    if value == 'isRun3':
+                        json_dict[key][value] = "true"
+                    if value == 'processRun3':
+                        json_dict[key][value] = "true"
+                
+                if extrargs.run == '2' and extrargs.run == 'MC':
+                    if value == 'isRun2MC':
+                        json_dict[key][value] = "true"
+                if extrargs.run != '2' and extrargs.run != 'MC':
+                    if value == 'isRun2MC':
+                        json_dict[key][value] = "false"
+                        
+                        
                 if extrargs.run == "MC":
-                    return
+                    if value == 'isMC':
+                        json_dict[key][value] = "true"
                 if extrargs.run == "Data":
-                    return
-                """
+                    if value == 'isMC':
+                        json_dict[key][value] = "false"
+                
+                
                     
                 # Pid Selections
                 if  (value in pid_options_pre) and extrargs.pid:
