@@ -136,6 +136,62 @@ bash.
 
 # Instructions
 
+TODO: Add Details
+
+Param | Opt | Task | Desc | Automate | nargs | Default | Only
+--- | --- | --- | --- | --- | --- | --- | --- |
+`--aod` | No Restrications | `internal-dpl-aod-reader` | |
+`--outputjson` | No Restrications | Special Option | |
+`--onlySelect` | true false | Special Option | |
+`--process` | `Full` `FullTiny` `FullWithCov` `FullWithCent` `BarrelOnlyWithV0Bits` `BarrelOnlyEventFilter` `BarrelOnlyWithCent` `BarrelOnlyWithCov` `BarrelOnly` `MuonOnlyWithCent` `MuonOnlyWithCov` `MuonOnly` `MuonOnlyWithFilter` `OnlyBCs` | `table-maker` | |
+`--run` | `2` `3` | Special Option | |
+`--isMC` | `true` `false` | `event-selection-task` | |
+`--` | No Restrications | `internal-dpl-aod-reader` | |
+`--syst` | `pp` `PbPb` | `event-selection-task` | |
+`--muonSelection` | `0` `1` | `event-selection-task` | |
+`--CustomDeltaBC` | No Restrications | `event-selection-task` | |
+`--processStandart` | `true` `false` | `track-propagation` | |
+`--processCovariance` | `true` `false` | `track-propagation` | |
+`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | |
+`--tof-expreso` | No Restrications | `tof-pid-beta` | |
+`--processDummy` | Not Integrated Yet! | `internal-dpl-aod-reader` | |
+`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | |
+`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
+`--cfgWithQA` | `true` `false` | `internal-dpl-aod-reader` | |
+`--d_bz` | No Restrications | `v0-selector` | |
+`--v0cospa` | No Restrications | `v0-selector` | |
+`--dcav0dau` | No Restrications | `v0-selector` | |
+`--v0Rmin` | No Restrications | `v0-selector` | |
+`--v0Rmax` | No Restrications | `v0-selector` | |
+`--dcamin` | No Restrications | `v0-selector` | |
+`--dcamax` | No Restrications | `v0-selector` | |
+`--mincrossedrows` | No Restrications | `v0-selector` | |
+`--maxchi2tpc` | No Restrications | `v0-selector` | |
+`--pid'` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | |
+`--isFilterPPTiny` | `true` `false` | `d-q-filter-p-p-task` | |
+`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `internal-dpl-aod-reader` | |
+`--cfgBarrelSels` | No Restrications | `internal-dpl-aod-reader` | |
+`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `internal-dpl-aod-reader` | |
+`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | |
+`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | |
+`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | |
+`--cfgBarrelLowPt` | No Restrications | `table-maker` | |
+`--cfgMuonLowPt` | No Restrications | `table-maker` | |
+`--cfgNoQA` | `true` `false` | `table-maker` | |
+`--cfgDetailedQA` | `true` `false` | `table-maker` | |
+`--cfgMinTpcSignal` | No Restrications | `table-maker` | |
+`--cfgMaxTpcSignal` | No Restrications | `table-maker` | |
+`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | |
+
+
+
+
+
+Main File | Data Model | Description
+--- | --- | ---
+[`readerConfiguration_reducedEvent.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerDataRun2.json) | DQ Skimmed Data Model | for data
+[`readerConfiguration_reducedEventMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerDataRun3.json) | DQ Skimmed Data Model | for MC
+
 TO BE ADDED
 
 # Available configs in Interface
