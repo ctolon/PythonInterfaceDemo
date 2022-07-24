@@ -97,7 +97,7 @@ tablemaker_bcs_pre = ["processOnlyBCs"]
 run_options = ["2","3"]
 
 #mc or data
-mc_data = ["MC","Data"]
+#mc_data = ["MC","Data"]
 
 #isrun2mc, mc ve is run3 processe göre belirlenecek.
 
@@ -122,11 +122,8 @@ tpo = ["EvTime","NoEvTime"]
 filter_PP_process = ["FilterPP","FilterPPTiny"]
 
 
-# dq Task Selection Options for event selection
-event_selection = ["true","false"]
-
 # dummy selection
-process_dummies =["filter","event","muons","barrel"]
+process_dummies =["filter","event","barrel"]
 
 #track prop select.
 track_prop = ["Standart","Covariance"]
@@ -187,15 +184,17 @@ parser.add_argument('--isProcessEvTime', help="Process Selection options true or
 #tof-pid-beta
 parser.add_argument('--tof-expreso', help="Tof expreso Input Type Number", action="store", type=str)
 
-# need refactoring part
 #parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection no need automatic with process tablemaker
 #parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel no need automatic with process tablemaker
-# TODO: Bunu nasıl entegre edicem?
-parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #event selection, barel track task, filter task
 
-#d-q-event-selection-task
+# dummies
+parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=process_dummies, nargs='*', type=str) #event selection, barel track task, filter task
+
+# d-q-track barrel-task
+
 parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
-#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need TODO entegrasyonu yapılmamış olabilir
+# d-q event selection task
+parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #check for no need automation TODO entegrasyonu yapılmamış olabilir
 
 # d-q-filter-p-p-task
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with commas", action="store", choices=cut_database, nargs='*', type=str) # run3
@@ -273,7 +272,7 @@ def get_key(json_dict_new):
         #print("value List = ", value)
         #print(type(value))
         if type(value) == type(json_dict):
-            print(value, type(value))
+            #print(value, type(value))
             for value, value2 in value.items():
                 #print(value)
                 
@@ -291,20 +290,22 @@ def get_key(json_dict_new):
                         full_search = [s for s in extrargs.process if "Full" in s]
                         barrel_search = [s for s in extrargs.process if "Barrel" in s]
                         muon_search = [s for s in extrargs.process if "Muon" in s]
-                        bcs_search = [s for s in extrargs.process if "Bcs" in s]    
+                        bcs_search = [s for s in extrargs.process if "Bcs" in s]   
+                        
+                        
                                           
                         # Automatic Activate and Disable regarding to process func. in tablemaker
                         # todo: dq-barrel ve muon taskı içeride var mı kontrol için if statement yaz
-                        if len(full_search) > 0 and extrargs.isMC == False:
+                        if len(full_search) > 0 and extrargs.isMC == "false":
                             if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None and json_dict["d-q-muons-selection"]["processSelection"] != None:
                                 json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                                 json_dict["d-q-muons-selection"]["processSelection"] = "true"
-                        if len(barrel_search) > 0 and len(muon_search) < 0 and len(full_search) <0 and extrargs.isMC == False:
+                        if len(barrel_search) > 0 and len(muon_search) == 0 and len(full_search) == 0 and extrargs.isMC == "false":
                             if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None:
                                 json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             if json_dict["d-q-muons-selection"]["processSelection"] != None:
                                 json_dict["d-q-muons-selection"]["processSelection"] = "false"     
-                        if len(muon_search) > 0 and len(barrel_search) < 0 and len(full_search) <0 and extrargs.isMC == False:
+                        if len(muon_search) > 0 and len(barrel_search) == 0 and len(full_search) == 0 and extrargs.isMC == "false":
                             if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None:
                                 json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             if json_dict["d-q-muons-selection"]["processSelection"] != None:
@@ -319,7 +320,9 @@ def get_key(json_dict_new):
                 # Filter PP Task TODO Entegre et
                 # TODO: Bu catların listToStringini fixle
                 if value =='cfgPairCuts' and extrargs.cfgPairCuts:
-                    extrargs.cfgPairCuts = ",".join(extrargs.cfgPairCuts)
+                    if type(extrargs.cfgPairCuts) == type(clist):
+                        extrargs.cfgPairCuts = listToString(extrargs.cfgPairCuts) 
+                    #extrargs.cfgPairCuts = ",".join(extrargs.cfgPairCuts)
                     json_dict[key][value] = extrargs.cfgPairCuts
                 if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
                     json_dict[key][value] = extrargs.cfgBarrelSels
@@ -335,19 +338,23 @@ def get_key(json_dict_new):
                 # Run 2/3 and MC/DATA Selection  Automations      
                 
                 if extrargs.run == "2":
-                    if value == 'cfgIsRun2':
-                        json_dict[key][value] = "true"
+                    #if value == 'cfgIsRun2':
+                        #json_dict[key][value] = "true"
                     if value == 'isRun3':
                         json_dict[key][value] = "false"
                     if value == 'processRun3':
                         json_dict[key][value] = "false"
+                    if value == 'processRun2':
+                        json_dict[key][value] = "true"
                 if extrargs.run == "3":
-                    if value == 'cfgIsrun2':
-                        json_dict[key][value] = "false"
+                    #if value == 'cfgIsRun2':
+                        #json_dict[key][value] = "false"
                     if value == 'isRun3':
                         json_dict[key][value] = "true"
                     if value == 'processRun3':
                         json_dict[key][value] = "true"
+                    if value == 'processRun2':
+                        json_dict[key][value] = "false"
                 
                 if extrargs.run == '2' and extrargs.run == 'MC':
                     if value == 'isRun2MC':
@@ -357,11 +364,10 @@ def get_key(json_dict_new):
                         json_dict[key][value] = "false"
                         
                         
-                if extrargs.run == "MC":
-                    if value == 'isMC':
+                if value == "isMC" and extrargs.isMC:
+                    if extrargs.isMC == "true":
                         json_dict[key][value] = "true"
-                if extrargs.run == "Data":
-                    if value == 'isMC':
+                    if extrargs.isMC == "false":
                         json_dict[key][value] = "false"
                 
                 
@@ -414,7 +420,7 @@ def get_key(json_dict_new):
                         extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
                     json_dict[key][value] = extrargs.cfgBarrelTrackCuts
                 if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                    if type(extrargs.cfgBarrelTrackCuts) == type(clist):
+                    if type(extrargs.cfgMuonCuts) == type(clist):
                         extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)                
                     json_dict[key][value] = extrargs.cfgMuonCuts
                 if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
@@ -425,7 +431,7 @@ def get_key(json_dict_new):
                    json_dict[key][value] = extrargs.cfgNoQA
                 if value == 'cfgDetailedQA' and extrargs.cfgDetailedQA:
                     json_dict[key][value] = extrargs.cfgDetailedQA
-                if value == 'cfgIsRun2' and extrargs.run == "3":
+                if value == 'cfgIsRun2' and extrargs.run == "2":
                     json_dict[key][value] = "true"
                 if value =='cfgMinTpcSignal' and extrargs.cfgMinTpcSignal:
                    json_dict[key][value] = extrargs.cfgMinTpcSignal
@@ -434,7 +440,7 @@ def get_key(json_dict_new):
                 if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
                     if type(extrargs.cfgMCsignals) == type(clist):
                         extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)                     
-                    extrargs.cfgMCsignals = ",".join(extrargs.cfgMCsignals)
+                    #extrargs.cfgMCsignals = ",".join(extrargs.cfgMCsignals)
                     json_dict[key][value] = extrargs.cfgMCsignals
 
                 # event-selection
@@ -444,6 +450,9 @@ def get_key(json_dict_new):
                    json_dict[key][value] = extrargs.muonSelection
                 if value == 'customDeltaBC' and extrargs.customDeltaBC:
                     json_dict[key][value] = extrargs.customDeltaBC
+                # TODO: this for only run3 also need automate
+                if value == 'processEventSelection' and extrargs.processEventSelection:
+                    json_dict[key][value] = extrargs.processEventSelection
                     
                 # tof-pid-beta
                 if value == 'tof-expreso' and extrargs.tof_expreso:
@@ -469,6 +478,15 @@ def get_key(json_dict_new):
                 if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == True:
                     json_dict[key][value] = extrargs.isBarrelSelectionTiny
                     json_dict[key]["processSelection"] = False
+                    
+                # dummy selection
+                if value == 'processDummy' and extrargs.processDummy:
+                    if extrargs.processDummy == "event":
+                        json_dict['d-q-event-selection-task']['processDummy'] = True
+                    if extrargs.processDummy == "filter":
+                        json_dict['d-q-filter-p-p-task']['processDummy'] = True
+                    if extrargs.processDummy == "barrel":
+                        json_dict['d-q-barrel-track-selection-task']['processDummy'] = True
                 
                         
     if(extrargs.outputjson == None):
