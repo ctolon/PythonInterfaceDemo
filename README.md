@@ -80,8 +80,8 @@ xxxDemo.py python scripts only overrides JSON level 2 values. They are creating 
 [`IRunTableReaderDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IRunTableReaderDemo.py).
 * Test Script for Interfaced IRunDQEfficiency.py  
 [`IRunDQEfficiencyDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IRunDQEfficiencyDemo.py).
-* test script for Interfaced IRunFilterPP.py
-[`IRunFilterPPDemo.h`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IFilterPPDemo.py).
+* Test script for Interfaced IRunFilterPP.py
+[`IRunFilterPPDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IFilterPPDemo.py).
 * Config and database files are also added in this folder.
 
 ## Repository Organization and Development Strategy
@@ -136,6 +136,28 @@ bash.
 
 # Instructions
 
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+
+
+
+Examples(in AllWorkFlows):
+- Run TableMaker on Data run3 With Minimum Commands
+  ```ruby
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3
+  ```
+- Run TableMaker on MC run3 with Minimum Commands
+  ```ruby
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3
+  ```
+
+In case of multiple configs example
+  ```ruby
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod aodff --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly BarrelOnlyWithV0Bits --run 3 --processEventSelection false --syst PbPb --muonSelection 1 --processStandard false --isProcessEvTime false --processDummy barrel --isBarrelSelectionTiny false --cfgWithQA false --pid el mu --cfgPairCuts jpsiPIDnsigma electronPID2  --cfgEventCuts jpsiPIDnsigma --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts jpsiPIDnsigma --cfgNoQA false --cfgDetailedQA true --cfgMCsignals alicePrimary eeFromCC
+  ```
+
 
 
 TODO: Add Details
@@ -150,7 +172,11 @@ Arg | Opt | Task | nargs |
 `--onlySelect` | `true` `false`  | Special Option | 1 |
 `--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
 `--run` | `2` `3` | Special Option | 1 |
-`--isMC` | `true` `false` | `event-selection-task` | 1 |
+`-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
+`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
 `--processEventSelection` | `true` `false`| `d-q-event-selection-task` | |
 `--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
 `--muonSelection` | `0` `1` | `event-selection-task` | 1 |
@@ -159,7 +185,7 @@ Arg | Opt | Task | nargs |
 `--processCovariance` | `true` `false` | `track-propagation` | 1 |
 `--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br>  | * |
+`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
 `--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
 `--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
 `--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
