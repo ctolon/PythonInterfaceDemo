@@ -155,7 +155,7 @@ Examples(in AllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod aodff --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly BarrelOnlyWithV0Bits --run 3 --processEventSelection false --syst PbPb --muonSelection 1 --processStandard false --isProcessEvTime false --processDummy barrel --isBarrelSelectionTiny false --cfgWithQA false --pid el mu --cfgPairCuts jpsiPIDnsigma electronPID2  --cfgEventCuts jpsiPIDnsigma --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts jpsiPIDnsigma --cfgNoQA false --cfgDetailedQA true --cfgMCsignals alicePrimary eeFromCC
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod aodff --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly BarrelOnlyWithV0Bits --run 3 --syst PbPb --muonSelection 1 --processStandard false --isProcessEvTime false --processDummy barrel --isBarrelSelectionTiny false --cfgWithQA false --pid el mu --cfgPairCuts jpsiPIDnsigma electronPID2  --cfgEventCuts jpsiPIDnsigma --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts jpsiPIDnsigma --cfgNoQA false --cfgDetailedQA true --cfgMCsignals alicePrimary eeFromCC
   ```
 
 
@@ -177,7 +177,6 @@ Arg | Opt | Task | nargs |
 `--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
 `--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
 `--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--processEventSelection` | `true` `false`| `d-q-event-selection-task` | |
 `--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
 `--muonSelection` | `0` `1` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
