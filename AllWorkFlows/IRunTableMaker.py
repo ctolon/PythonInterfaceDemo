@@ -217,7 +217,7 @@ parser.add_argument('--processDummy', help="Process Selection options true or fa
 
 parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
 # d-q event selection task
-parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #check for no need automation TODO entegrasyonu yapılmamış olabilir
+#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # d-q-filter-p-p-task
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with commas", action="store", choices=analysisCutDatabase, nargs='*', type=str) # run3
@@ -447,27 +447,34 @@ for key, value in config.items():
                     full_search = [s for s in extrargs.process if "Full" in s]
                     barrel_search = [s for s in extrargs.process if "Barrel" in s]
                     muon_search = [s for s in extrargs.process if "Muon" in s]
-                    bcs_search = [s for s in extrargs.process if "Bcs" in s]   
+                    bcs_search = [s for s in extrargs.process if "BCs" in s]   
+                    
                     
                     
                                         
                     # Automatic Activate and Disable regarding to process func. in tablemaker
                     # todo: dq-barrel ve muon taskı içeride var mı kontrol için if statement yaz
                     if len(full_search) > 0 and extrargs.runData:
-                        if config["d-q-barrel-track-selection-task"]["processSelection"] != None and config["d-q-muons-selection"]["processSelection"] != None:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-muons-selection"]["processSelection"] = "true"
-                    if len(barrel_search) > 0 and len(muon_search) == 0 and len(full_search) == 0 and extrargs.runData:
-                        if config["d-q-barrel-track-selection-task"]["processSelection"] != None:
+                            config["d-q-event-selection-task"]["processEventSelection"] = "true"
+                                   
+                    if len(barrel_search) > 0 and extrargs.runData:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
-                        if config["d-q-muons-selection"]["processSelection"] != None:
-                            config["d-q-muons-selection"]["processSelection"] = "false"     
-                    if len(muon_search) > 0 and len(barrel_search) == 0 and len(full_search) == 0 and extrargs.runData:
-                        if config["d-q-barrel-track-selection-task"]["processSelection"] != None:
+                    if len(barrel_search) == 0 and extrargs.runData:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                        if config["d-q-muons-selection"]["processSelection"] != None:
+                            
+                    if len(muon_search) > 0 and extrargs.runData:
                             config["d-q-muons-selection"]["processSelection"] = "true"
-                                                    
+                    if len(muon_search) == 0 and extrargs.runData:
+                            config["d-q-muons-selection"]["processSelection"] = "false"
+                            
+                    if len(bcs_search) > 0 and extrargs.runData:
+                            config["d-q-event-selection-task"]["processEventSelection"] = "true"
+                    if len(bcs_search) == 0 and extrargs.runData:
+                            config["d-q-event-selection-task"]["processEventSelection"] = "false"
+
+                                                                                
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
                     config[key][value] = value2
@@ -627,7 +634,7 @@ for key, value in config.items():
                 config[key]["processSelection"] = False
                 
             # dummy selection
-            if value == 'processDummy' and extrargs.processDummy:
+            if value == 'processDummy' and extrargs.processDummy and extrargs.runData:
                 if extrargs.processDummy == "event":
                     config['d-q-event-selection-task']['processDummy'] = True
                 if extrargs.processDummy == "filter":
