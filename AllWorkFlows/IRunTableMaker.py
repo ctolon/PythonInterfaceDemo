@@ -604,9 +604,6 @@ for key, value in config.items():
                 config[key][value] = extrargs.muonSelection
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-            # TODO: this for only run3 also need automate
-            if value == 'processEventSelection' and extrargs.processEventSelection:
-                config[key][value] = extrargs.processEventSelection
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
