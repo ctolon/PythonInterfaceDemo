@@ -613,12 +613,12 @@ for key, value in config.items():
                 config[key][value] = extrargs.tof_expreso
                 
             # tof-pid-full, tof-pid for run3
-            if value == 'processEvTime' and extrargs.isProcessEvTime == True:
-                config[key][value] = True
-                config[key]["processNoEvTime"] = False
-            elif value == 'processEvTime' and extrargs.isProcessEvTime == False:
-                config[key][value] = False
-                config[key]["processNoEvTime"] = True
+            if value == 'processEvTime' and extrargs.isProcessEvTime == "true":
+                config[key][value] = "true"
+                config[key]["processNoEvTime"] = "false"
+            elif value == 'processEvTime' and extrargs.isProcessEvTime == "false":
+                config[key][value] = "false"
+                config[key]["processNoEvTime"] = "true"
                     
             # all d-q tasks and selections TODO Eğer TableMakerdakiyle aynı şeyi isterlerse refactor
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
@@ -629,18 +629,18 @@ for key, value in config.items():
             if value == 'processCovariance' and extrargs.processCovariance:
                 config[key][value] = extrargs.processCovariance
             # dq-barrel-track-selection-task
-            if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == True:
+            if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == "true":
                 config[key][value] = extrargs.isBarrelSelectionTiny
-                config[key]["processSelection"] = False
+                config[key]["processSelection"] = "false"
                 
             # dummy selection
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData:
                 if extrargs.processDummy == "event":
-                    config['d-q-event-selection-task']['processDummy'] = True
+                    config['d-q-event-selection-task']['processDummy'] = "true"
                 if extrargs.processDummy == "filter":
-                    config['d-q-filter-p-p-task']['processDummy'] = True
+                    config['d-q-filter-p-p-task']['processDummy'] = "true"
                 if extrargs.processDummy == "barrel":
-                    config['d-q-barrel-track-selection-task']['processDummy'] = True
+                    config['d-q-barrel-track-selection-task']['processDummy'] = "true"
 
 ###
 
