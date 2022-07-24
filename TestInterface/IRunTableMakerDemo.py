@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
 ## This program is free software: you can redistribute it and/or modify it ##
@@ -22,11 +24,12 @@ import argparse
 
 # DEMO Python Interface for runTableMaker.py
 
-# Function to convert 
+# List to String --> Function to convert 
+
 def listToString(s):
     if len(s) > 1:
         # initialize an empty string
-        str1 =" "
+        str1 =","
    
         # return string 
         return (str1.join(s))
@@ -35,10 +38,26 @@ def listToString(s):
         
         return (str1.join(s))
 
+# defination for binary check TODO: Need to be integrated
+def binary_selector(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
+        return "true"
+        #return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
+        return "false"
+        #return False
+    else:
+        raise argparse.ArgumentTypeError('Misstyped value!')
+
 json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
 json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
 cut_database = []
 mcsignal_database =[]
+
+# control list for type control
+clist=[]
 
 # Cut Database
 for key, value in json_cut_database.items():
@@ -48,8 +67,71 @@ for key, value in json_cut_database.items():
 for key, value in json_mcsignal_database.items():
     mcsignal_database.append(value)
     
+###################################
+# Interface Predefined Selections #
+###################################
+    
+# process options in table maker
+tablemaker_all_process = ["Full","FullTiny","FullWithCov","FullWithCent",
+        "BarrelOnlyWithV0Bits","BarrelOnlyEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly",
+        "MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter",
+        "OnlyBCs"]
+tablemaker_full = ["Full","FullTiny","FullWithCov","FullWithCent"]
+tablemaker_barrel = ["BarrelOnlyWithV0Bits","BarrelOnlyEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly"]
+tablemaker_muon = ["MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter"]
+tablemaker_bcs = ["OnlyBCs"]
+
+# with full name
+tablemaker_all_process_pre = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
+        "processBarrelOnlyWithV0Bits","processBarrelOnlyEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
+        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
+        "processOnlyBCs"]
+tablemaker_full_pre = ["processFull","processFullTiny","processFullWithCov","processFullWithCent"]
+tablemaker_barrel_pre = ["processBarrelOnlyWithV0Bits","processBarrelOnlyEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly"]
+tablemaker_muon_pre = ["processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter"]
+tablemaker_bcs_pre = ["processOnlyBCs"]
 
 
+
+#process run options
+run_options = ["2","3"]
+
+#mc or data
+#mc_data = ["MC","Data"]
+
+#isrun2mc, mc ve is run3 processe göre belirlenecek.
+
+#centrality table options
+centrality_table_options = ["V0M", "Run2SPDtks","Run2SPDcls","Run2CL0","Run2CL1"]
+
+#with full name
+
+centrality_table_options_pre = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+
+
+#pid options
+pid_options = ["el","mu","pi","ka","pr","de","tr","he","al"]
+
+pid_options_pre = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+
+#tof pid and pid-full process opts
+tpo = ["EvTime","NoEvTime"]
+
+#filter pp options
+# = ["BarrelSels","MuonSels"]
+filter_PP_process = ["FilterPP","FilterPPTiny"]
+
+
+# dummy selection
+process_dummies =["filter","event","barrel"]
+
+#track prop select.
+track_prop = ["Standart","Covariance"]
+    
+
+########################
+# Interface Parameters #
+########################
 
 
 parser = argparse.ArgumentParser(description='Arguments to pass')
@@ -57,8 +139,11 @@ parser = argparse.ArgumentParser(description='Arguments to pass')
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
-#json output
+# json output
 parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
+
+# only select
+parser.add_argument('--onlySelect', help="Activate only selected JSON configs", action="store",choices=["true","false"], default="false", type=str.lower)
 
 # table-maker cfg
 parser.add_argument('--cfgEventCuts', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
@@ -68,75 +153,65 @@ parser.add_argument('--cfgBarrelLowPt', help="Input type number", action="store"
 parser.add_argument('--cfgMuonLowPt', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgNoQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str)
 parser.add_argument('--cfgDetailedQA', help="QA Detail Selection true or false", action="store", choices=["true","false"], type=str)
-parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str)
+#parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 parser.add_argument('--cfgMinTpcSignal', help="Input type number", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Input type number", action="store", type=str)
-parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database,nargs='*', type=str)
+parser.add_argument('--cfgMCsignals', help="Configure MCSignals with commas", action="store",choices=mcsignal_database, nargs='*', type=str)
 
 # table-maker process
-parser.add_argument('--processFull', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processFullTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processFullWithCov', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processFullWithCent', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelOnlyWithV0Bits', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelOnlyEventFilter', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelOnlyWithCent', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelOnlyWithCov', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelOnly', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processMuonOnlyWithCent', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processMuonOnlyWithCov', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processMuonOnly', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processMuonOnlyWithFilter', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processOnlyBCs', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+parser.add_argument('--process', help="Process Selection options true or false (string)", action="store", choices=tablemaker_all_process, nargs='*', type=str)
 
-# event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
-parser.add_argument('--processRun2', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
+parser.add_argument('--run', help="Run Selection", action="store", choices=['2','3'], type=str, required=True)
+#parser.add_argument('--processRun2', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
+#parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # event-selection-task
 parser.add_argument('--syst', help="Collision System Selection Input pp or PbPb", action="store", choices=['pp','PbPb'], type=str)
 parser.add_argument('--muonSelection', help="Muon Selection Input Type Number", action="store", type=str)
 parser.add_argument('--customDeltaBC', help="CustomDeltaBC Input Type Number", action="store", type=str)
-parser.add_argument('--isMC', help="Is it Monte Carlo options true or false", action="store", choices=["true","false"], type=str)
+parser.add_argument('--isMC', help="Is it Monte Carlo options true or false", action="store", choices=["true","false"],default="false", type=str, required=True)
 
 # track-propagation
 parser.add_argument('--processStandard', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
 parser.add_argument('--processCovariance', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
 
-# tof-pid-full, tof-pid for run3
-parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# tof-pid-full, tof-pid for run3 ???
+parser.add_argument('--isProcessEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+#parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need
+#parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)#no need
 
 #tof-pid-beta
 parser.add_argument('--tof-expreso', help="Tof expreso Input Type Number", action="store", type=str)
 
-# need refactoring part
-parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
-parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel
-parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #event selection, barel track task, filter task
+#parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection no need automatic with process tablemaker
+#parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel no need automatic with process tablemaker
 
-#d-q-event-selection-task
-parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
+# dummies
+parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=process_dummies, nargs='*', type=str) #event selection, barel track task, filter task
+
+# d-q-track barrel-task
+
+parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection
+# d-q event selection task
+parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #check for no need automation TODO entegrasyonu yapılmamış olabilir
 
 # d-q-filter-p-p-task
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with commas", action="store", choices=cut_database, nargs='*', type=str) # run3
 parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection example jpsiO2MCdebugCuts2::1 ", action="store", type=str) # run2 
 parser.add_argument('--cfgMuonSels', help="Configure Muon Selection example muonHighPt::1", action="store", type=str) # run 2
-parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3
-parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3
+parser.add_argument('--isFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+#parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
+#parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 
 # centrality-table
-parser.add_argument('--estV0M', help="Input 1 or -1", action="store", choices=["-1","1"], type=str)
-parser.add_argument('--estRun2SPDtks', help="Input 1 or -1", action="store", choices=["-1","1"], type=str)
-parser.add_argument('--estRun2SPDcls', help="Input 1 or -1", action="store", choices=["-1","1"], type=str)
-parser.add_argument('--estRun2CL0', help="Input 1 or -1", action="store", choices=["-1","1"], type=str)
-parser.add_argument('--estRun2CL1', help="Input 1 or -1", action="store", choices=["-1","1"], type=str)
+parser.add_argument('--est', help="Configure to centrality Table", action="store", choices=centrality_table_options,nargs="*", type=str)
 
 # timestamp-task
-parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
+#parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
 
 # track-selection
-parser.add_argument('--isRun3', help="Add track propagation to the innermost layer (TPC or ITS)", action="store", choices=['true','false'], type=str)
+#parser.add_argument('--isRun3', help="Add track propagation to the innermost layer (TPC or ITS)", action="store", choices=['true','false'], type=str)
 
 #all d-q tasks and selections
 parser.add_argument('--cfgWithQA', help="Selection Configure QA options true or false", action="store", choices=['true','false'], type=str)
@@ -153,29 +228,43 @@ parser.add_argument('--mincrossedrows', help="Input Type Number", action="store"
 parser.add_argument('--maxchi2tpc', help="Input Type Number", action="store", type=str)
 
 # pid
-parser.add_argument('--pid-el', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-mu', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-pi', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-ka', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-pr', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-de', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-tr', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-he', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
-parser.add_argument('--pid-al', help="pid selection input 1 or -1", action="store", choices=["1","-1"], type=str)
+parser.add_argument('--pid', help="pid selection input", action="store", choices=pid_options, nargs='*', type=str)
 
 
-
+#argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
+######################
+# PREFIX ADDING PART #
+###################### 
+
+# add prefix for extrargs.process for TableMaker and Filter PP
+if extrargs.process != None:
+    prefix_process = "process"
+    extrargs.process = [prefix_process + sub for sub in extrargs.process]
+
+# add prefix for extrargs.pid for pid selection
+if extrargs.pid != None:
+    prefix_pid = "pid-"
+    extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
+    
+# add prefix for extrargs.est for centrality table
+if extrargs.est != None:
+    prefix_est = "est"
+    extrargs.est = [prefix_est + sub for sub in extrargs.est]
+    
+
+
+
 #Open JSON File
-json_dict = json.load(open('Configs/configTableMakerMCRun3.json'))
+json_dict = json.load(open('Configs/configTableMakerDataRun3.json'))
 
 json_dict_new = json_dict
 
 
 def get_key(json_dict_new):
     my_json = 'ConfiguredTableMakerData.json'
-    json_dict = json.load(open('Configs/configTableMakerMCRun3.json'))
+    json_dict = json.load(open('Configs/configTableMakerDataRun3.json'))
     #json_dict = json.load(open('data.json'))
     json_dict_new = json_dict
     for key, value in json_dict_new.items():
@@ -186,138 +275,112 @@ def get_key(json_dict_new):
             #print(value, type(value))
             for value, value2 in value.items():
                 #print(value)
+                
                 # aod
                 if value =='aod-file' and extrargs.aod:
-                   json_dict[key][value] = extrargs.aod                
-                # tablemaker cfg
-                if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
-                    extrargs.cfgEventCuts = ",".join(extrargs.cfgEventCuts)
-                    json_dict[key][value] = extrargs.cfgEventCuts
-                if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
-                    extrargs.cfgBarrelTrackCuts = ",".join(extrargs.cfgBarrelTrackCuts)
-                    json_dict[key][value] = extrargs.cfgBarrelTrackCuts
-                if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                   extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
-                   json_dict[key][value] = extrargs.cfgMuonCuts
-                if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
-                    json_dict[key][value] = extrargs.cfgBarrelLowPt
-                if value == 'cfgMuonLowPt' and extrargs.cfgMuonLowPt:
-                    json_dict[key][value] = extrargs.cfgMuonLowPt
-                if value =='cfgNoQA' and extrargs.cfgNoQA:
-                   json_dict[key][value] = extrargs.cfgNoQA
-                if value == 'cfgDetailedQA' and extrargs.cfgDetailedQA:
-                    json_dict[key][value] = extrargs.cfgDetailedQA
-                if value == 'cfgIsRun2' and extrargs.cfgIsRun2:
-                    json_dict[key][value] = extrargs.cfgIsRun2
-                if value =='cfgMinTpcSignal' and extrargs.cfgMinTpcSignal:
-                   json_dict[key][value] = extrargs.cfgMinTpcSignal
-                if value == 'cfgMaxTpcSignal' and extrargs.cfgMaxTpcSignal:
-                    json_dict[key][value] = extrargs.cfgMaxTpcSignal
-                if value == 'cfgMCsignals' and extrargs.cfgMCsignals:                   
-                    extrargs.cfgMCsignals = ",".join(extrargs.cfgMCsignals)
-                    json_dict[key][value] = extrargs.cfgMCsignals
-                # process
-                if value =='processFull' and extrargs.processFull:
-                   json_dict[key][value] = extrargs.processFull
-                if value == 'processFullTiny' and extrargs.processFullTiny:
-                    json_dict[key][value] = extrargs.processFullTiny
-                if value == 'processFullWithCov' and extrargs.processFullWithCov:
-                    json_dict[key][value] = extrargs.processFullWithCov
-                if value =='processFullWithCent' and extrargs.processFullWithCent:
-                   json_dict[key][value] = extrargs.processFullWithCent
-                if value == 'processBarrelOnlyWithV0Bits' and extrargs.processBarrelOnlyWithV0Bits:
-                    json_dict[key][value] = extrargs.processBarrelOnlyWithV0Bits
-                if value == 'processBarrelOnlyEventFilter' and extrargs.processBarrelOnlyEventFilter:
-                    json_dict[key][value] = extrargs.processBarrelOnlyEventFilter
-                if value =='processBarrelOnlyWithCent' and extrargs.processBarrelOnlyWithCent:
-                   json_dict[key][value] = extrargs.processBarrelOnlyWithCent
-                if value == 'processBarrelOnlyWithCov' and extrargs.processBarrelOnlyWithCov:
-                    json_dict[key][value] = extrargs.processBarrelOnlyWithCov
-                if value == 'processBarrelOnly' and extrargs.processBarrelOnly:
-                    json_dict[key][value] = extrargs.processBarrelOnly
-                if value =='processMuonOnlyWithCent' and extrargs.processMuonOnlyWithCent:
-                   json_dict[key][value] = extrargs.processMuonOnlyWithCent
-                if value == 'processMuonOnlyWithCov' and extrargs.processMuonOnlyWithCov:
-                    json_dict[key][value] = extrargs.processMuonOnlyWithCov
-                if value == 'processMuonOnly' and extrargs.processMuonOnly:
-                    json_dict[key][value] = extrargs.processMuonOnly
-                if value =='processMuonOnlyWithFilter' and extrargs.processMuonOnlyWithFilter:
-                   json_dict[key][value] = extrargs.processMuonOnlyWithFilter
-                if value == 'processOnlyBCs' and extrargs.processOnlyBCs:
-                    json_dict[key][value] = extrargs.processOnlyBCs
-                # event-selection-task ,bc-selection-task, multiplicity-table, track-extension
-                if value =='processRun2' and extrargs.processRun2:
-                   json_dict[key][value] = extrargs.processRun2
-                if value == 'processRun3' and extrargs.processRun3:
-                    json_dict[key][value] = extrargs.processRun3
-                # event-selection-task
-                if value == 'syst' and extrargs.syst:
-                    json_dict[key][value] = extrargs.syst
-                if value =='muonSelection' and extrargs.muonSelection:
-                   json_dict[key][value] = extrargs.muonSelection
-                if value == 'customDeltaBC' and extrargs.customDeltaBC:
-                    json_dict[key][value] = extrargs.customDeltaBC
-                if value == 'isMC' and extrargs.isMC:
-                    json_dict[key][value] = extrargs.isMC
-                # track-propagation
-                if value =='processStandard' and extrargs.processStandard:
-                   json_dict[key][value] = extrargs.processStandard
-                if value == 'processCovariance' and extrargs.processCovariance:
-                    json_dict[key][value] = extrargs.processCovariance
-                # tof-pid-full, tof-pid for run3
-                if value == 'processEvTime' and extrargs.processEvTime:
-                    json_dict[key][value] = extrargs.processEvTime
-                if value =='processNoEvTime' and extrargs.processNoEvTime:
-                   json_dict[key][value] = extrargs.processNoEvTime
-                # tof-pid-beta
-                if value == 'tof-expreso' and extrargs.tof_expreso:
-                    json_dict[key][value] = extrargs.tof_expreso
-                # need refactoring part
-                if value == 'processSelection' and extrargs.processSelection:
-                    json_dict[key][value] = extrargs.processSelection
-                if value =='processSelectionTiny' and extrargs.processSelectionTiny:
-                   json_dict[key][value] = extrargs.processSelectionTiny
-                if value == 'processDummy' and extrargs.processDummy:
-                    json_dict[key][value] = extrargs.processDummy
-                # d-q-event-selection-task
-                if value == 'processEventSelection' and extrargs.processEventSelection:
-                    json_dict[key][value] = extrargs.processEventSelection
-                #d-q-filter-p-p-task
+                   json_dict[key][value] = extrargs.aod
+                   
+                # Process Table Maker
+                if (value in tablemaker_all_process_pre) and extrargs.process:
+                    if value in extrargs.process:
+                        value2 = "true"
+                        json_dict[key][value] = value2
+                        
+                        # check extraargs is contain Full Barrel Muon or Bcs
+                        full_search = [s for s in extrargs.process if "Full" in s]
+                        barrel_search = [s for s in extrargs.process if "Barrel" in s]
+                        muon_search = [s for s in extrargs.process if "Muon" in s]
+                        bcs_search = [s for s in extrargs.process if "Bcs" in s]   
+                        
+                        
+                                          
+                        # Automatic Activate and Disable regarding to process func. in tablemaker
+                        # todo: dq-barrel ve muon taskı içeride var mı kontrol için if statement yaz
+                        if len(full_search) > 0 and extrargs.isMC == "false":
+                            if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None and json_dict["d-q-muons-selection"]["processSelection"] != None:
+                                json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "true"
+                                json_dict["d-q-muons-selection"]["processSelection"] = "true"
+                        if len(barrel_search) > 0 and len(muon_search) == 0 and len(full_search) == 0 and extrargs.isMC == "false":
+                            if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None:
+                                json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "true"
+                            if json_dict["d-q-muons-selection"]["processSelection"] != None:
+                                json_dict["d-q-muons-selection"]["processSelection"] = "false"     
+                        if len(muon_search) > 0 and len(barrel_search) == 0 and len(full_search) == 0 and extrargs.isMC == "false":
+                            if json_dict["d-q-barrel-track-selection-task"]["processSelection"] != None:
+                                json_dict["d-q-barrel-track-selection-task"]["processSelection"] = "false"
+                            if json_dict["d-q-muons-selection"]["processSelection"] != None:
+                                json_dict["d-q-muons-selection"]["processSelection"] = "true"
+                                                        
+                    elif extrargs.onlySelect == "true":
+                        value2 = "false"
+                        json_dict[key][value] = value2
+                        #print(value)
+                        #print("Key :",key,"Value:",value,"Value 2 :",value2)
+                        
+                # Filter PP Task TODO Entegre et
+                # TODO: Bu catların listToStringini fixle
                 if value =='cfgPairCuts' and extrargs.cfgPairCuts:
-                    extrargs.cfgPairCuts = ",".join(extrargs.cfgPairCuts)
+                    if type(extrargs.cfgPairCuts) == type(clist):
+                        extrargs.cfgPairCuts = listToString(extrargs.cfgPairCuts) 
+                    #extrargs.cfgPairCuts = ",".join(extrargs.cfgPairCuts)
                     json_dict[key][value] = extrargs.cfgPairCuts
                 if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
                     json_dict[key][value] = extrargs.cfgBarrelSels
                 if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                     json_dict[key][value] = extrargs.cfgMuonSels
-                if value =='processFilterPP' and extrargs.processFilterPP:
-                   json_dict[key][value] = extrargs.processFilterPP
-                if value == 'processFilterPPTiny' and extrargs.processFilterPPTiny:
-                    json_dict[key][value] = extrargs.processFilterPPTiny
-                # centrality-table
-                if value =='estV0M' and extrargs.estV0M:
-                   json_dict[key][value] = extrargs.estV0M
-                if value == 'estRun2SPDtks' and extrargs.estRun2SPDtks:
-                    json_dict[key][value] = extrargs.estRun2SPDtks
-                if value == 'estRun2SPDcls' and extrargs.estRun2SPDcls:
-                    json_dict[key][value] = extrargs.estRun2SPDcls
-                if value =='estRun2CL0' and extrargs.estRun2CL0:
-                   json_dict[key][value] = extrargs.estRun2CL0
-                if value == 'estRun2CL1' and extrargs.estRun2CL1:
-                    json_dict[key][value] = extrargs.estRun2CL1
-                # timestamp-task
-                if value =='isRun2MC' and extrargs.isRun2MC:
-                   json_dict[key][value] = extrargs.isRun2MC
-                # track-selection
-                if value == 'isRun3' and extrargs.isRun3:
-                    json_dict[key][value] = extrargs.isRun3
-                # all d-q tasks and selections
-                if value == 'cfgWithQA' and extrargs.cfgWithQA:
-                    json_dict[key][value] = extrargs.cfgWithQA
-                if value =='estRun2CL0' and extrargs.estRun2CL0:
-                   json_dict[key][value] = extrargs.estRun2CL0
-                if value == 'estRun2CL1' and extrargs.estRun2CL1:
-                    json_dict[key][value] = extrargs.estRun2CL1
+                if value =='processFilterPPTiny' and extrargs.isFilterPPTiny == True:
+                    json_dict[key][value] = True
+                    json_dict[key]["processFilterPP"] = False
+                elif value =='processFilterPPTiny' and extrargs.isFilterPPTiny == False:
+                    json_dict[key][value] = False
+                    json_dict[key]["processFilterPP"] = True         
+                        
+                # Run 2/3 and MC/DATA Selection  Automations      
+                
+                if extrargs.run == "2":
+                    #if value == 'cfgIsRun2':
+                        #json_dict[key][value] = "true"
+                    if value == 'isRun3':
+                        json_dict[key][value] = "false"
+                    if value == 'processRun3':
+                        json_dict[key][value] = "false"
+                    if value == 'processRun2':
+                        json_dict[key][value] = "true"
+                if extrargs.run == "3":
+                    #if value == 'cfgIsRun2':
+                        #json_dict[key][value] = "false"
+                    if value == 'isRun3':
+                        json_dict[key][value] = "true"
+                    if value == 'processRun3':
+                        json_dict[key][value] = "true"
+                    if value == 'processRun2':
+                        json_dict[key][value] = "false"
+                
+                if extrargs.run == '2' and extrargs.run == 'MC':
+                    if value == 'isRun2MC':
+                        json_dict[key][value] = "true"
+                if extrargs.run != '2' and extrargs.run != 'MC':
+                    if value == 'isRun2MC':
+                        json_dict[key][value] = "false"
+                        
+                        
+                if value == "isMC" and extrargs.isMC:
+                    if extrargs.isMC == "true":
+                        json_dict[key][value] = "true"
+                    if extrargs.isMC == "false":
+                        json_dict[key][value] = "false"
+                
+                
+                    
+                # Pid Selections
+                if  (value in pid_options_pre) and extrargs.pid:
+                    if value in extrargs.pid:
+                        value2 = "1"
+                        json_dict[key][value] = value2
+                    elif extrargs.onlySelect == "true":
+                        value2 = "-1"
+                        json_dict[key][value] = value2
+                        
                 # v0-selector
                 if value =='d_bz' and extrargs.d_bz:
                    json_dict[key][value] = extrargs.d_bz
@@ -337,26 +400,95 @@ def get_key(json_dict_new):
                    json_dict[key][value] = extrargs.mincrossedrows
                 if value == 'maxchi2tpc' and extrargs.maxchi2tpc:
                     json_dict[key][value] = extrargs.maxchi2tpc
-                # pid
-                if value == 'pid-el' and extrargs.pid_el:
-                    json_dict[key][value] = extrargs.pid_el
-                if value == 'pid-mu' and extrargs.pid_mu:
-                    json_dict[key][value] = extrargs.pid_mu
-                if value == 'pid-pi' and extrargs.pid_pi:
-                    json_dict[key][value] = extrargs.pid_pi
-                if value == 'pid-ka' and extrargs.pid_ka:
-                    json_dict[key][value] = extrargs.pid_ka
-                if value == 'pid-pr' and extrargs.pid_pr:
-                    json_dict[key][value] = extrargs.pid_pr
-                if value == 'pid-de' and extrargs.pid_de:
-                    json_dict[key][value] = extrargs.pid_de
-                if value == 'pid-tr' and extrargs.pid_tr:
-                    json_dict[key][value] = extrargs.pid_tr
-                if value == 'pid-he' and extrargs.pid_he:
-                    json_dict[key][value] = extrargs.pid_he
-                if value == 'pid-al' and extrargs.pid_al:
-                    json_dict[key][value] = extrargs.pid_al
+                    
+                # centrality table
+                if (value in centrality_table_options_pre) and extrargs.est:
+                    if value in extrargs.est:
+                        value2 = "1"
+                        json_dict[key][value] = value2
+                    elif extrargs.onlySelect == "true":
+                        value2 = "-1"
+                        json_dict[key][value] = value2
+                        
+                # cfg in TableMaker
+                if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
+                    if type(extrargs.cfgEventCuts) == type(clist):
+                        extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
+                    json_dict[key][value] = extrargs.cfgEventCuts
+                if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
+                    if type(extrargs.cfgBarrelTrackCuts) == type(clist):
+                        extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
+                    json_dict[key][value] = extrargs.cfgBarrelTrackCuts
+                if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
+                    if type(extrargs.cfgMuonCuts) == type(clist):
+                        extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)                
+                    json_dict[key][value] = extrargs.cfgMuonCuts
+                if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
+                    json_dict[key][value] = extrargs.cfgBarrelLowPt
+                if value == 'cfgMuonLowPt' and extrargs.cfgMuonLowPt:
+                    json_dict[key][value] = extrargs.cfgMuonLowPt
+                if value =='cfgNoQA' and extrargs.cfgNoQA:
+                   json_dict[key][value] = extrargs.cfgNoQA
+                if value == 'cfgDetailedQA' and extrargs.cfgDetailedQA:
+                    json_dict[key][value] = extrargs.cfgDetailedQA
+                if value == 'cfgIsRun2' and extrargs.run == "2":
+                    json_dict[key][value] = "true"
+                if value =='cfgMinTpcSignal' and extrargs.cfgMinTpcSignal:
+                   json_dict[key][value] = extrargs.cfgMinTpcSignal
+                if value == 'cfgMaxTpcSignal' and extrargs.cfgMaxTpcSignal:
+                    json_dict[key][value] = extrargs.cfgMaxTpcSignal
+                if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
+                    if type(extrargs.cfgMCsignals) == type(clist):
+                        extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)                     
+                    #extrargs.cfgMCsignals = ",".join(extrargs.cfgMCsignals)
+                    json_dict[key][value] = extrargs.cfgMCsignals
+
+                # event-selection
+                if value == 'syst' and extrargs.syst:
+                    json_dict[key][value] = extrargs.syst
+                if value =='muonSelection' and extrargs.muonSelection:
+                   json_dict[key][value] = extrargs.muonSelection
+                if value == 'customDeltaBC' and extrargs.customDeltaBC:
+                    json_dict[key][value] = extrargs.customDeltaBC
+                # TODO: this for only run3 also need automate
+                if value == 'processEventSelection' and extrargs.processEventSelection:
+                    json_dict[key][value] = extrargs.processEventSelection
+                    
+                # tof-pid-beta
+                if value == 'tof-expreso' and extrargs.tof_expreso:
+                    json_dict[key][value] = extrargs.tof_expreso
+                    
+                # tof-pid-full, tof-pid for run3
+                if value == 'processEvTime' and extrargs.isProcessEvTime == True:
+                    json_dict[key][value] = True
+                    json_dict[key]["processNoEvTime"] = False
+                elif value == 'processEvTime' and extrargs.isProcessEvTime == False:
+                    json_dict[key][value] = False
+                    json_dict[key]["processNoEvTime"] = True
+                     
+                # all d-q tasks and selections TODO Eğer TableMakerdakiyle aynı şeyi isterlerse refactor
+                if value == 'cfgWithQA' and extrargs.cfgWithQA:
+                    json_dict[key][value] = extrargs.cfgWithQA                  
+                # track-propagation
+                if value =='processStandard' and extrargs.processStandard:
+                   json_dict[key][value] = extrargs.processStandard
+                if value == 'processCovariance' and extrargs.processCovariance:
+                    json_dict[key][value] = extrargs.processCovariance
+                # dq-barrel-track-selection-task
+                if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == True:
+                    json_dict[key][value] = extrargs.isBarrelSelectionTiny
+                    json_dict[key]["processSelection"] = False
+                    
+                # dummy selection
+                if value == 'processDummy' and extrargs.processDummy:
+                    if extrargs.processDummy == "event":
+                        json_dict['d-q-event-selection-task']['processDummy'] = True
+                    if extrargs.processDummy == "filter":
+                        json_dict['d-q-filter-p-p-task']['processDummy'] = True
+                    if extrargs.processDummy == "barrel":
+                        json_dict['d-q-barrel-track-selection-task']['processDummy'] = True
                 
+                        
     if(extrargs.outputjson == None):
         #print("1")          
         config_output_json = open(my_json,'w')
@@ -379,15 +511,17 @@ def get_key(json_dict_new):
     else:
         print("Logical json input error. Report it!!!")
         
-        
-get_key(json_dict_new)       
-       
+                          
+get_key(json_dict)
+
 configured_commands = vars(extrargs) # for get extrargs
 # Listing Added Commands
 print("Args provided configurations List")
 print("========================================")
 for key,value in configured_commands.items():
     if(value != None):
+        if type(value) == type(clist):
+            listToString(value)
         print("--"+key,":", value)
 
 
