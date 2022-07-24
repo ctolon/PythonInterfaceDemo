@@ -461,17 +461,17 @@ for key, value in config.items():
                                    
                     if len(barrel_search) > 0 and extrargs.runData:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
-                    if len(barrel_search) == 0 and extrargs.runData:
+                    if len(barrel_search) == 0 and len(full_search) == 0 and extrargs.runData:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             
                     if len(muon_search) > 0 and extrargs.runData:
                             config["d-q-muons-selection"]["processSelection"] = "true"
-                    if len(muon_search) == 0 and extrargs.runData:
+                    if len(muon_search) == 0 and len(full_search) == 0 and extrargs.runData:
                             config["d-q-muons-selection"]["processSelection"] = "false"
                             
                     if len(bcs_search) > 0 and extrargs.runData:
                             config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                    if len(bcs_search) == 0 and extrargs.runData:
+                    if len(bcs_search) == 0 and len(full_search) == 0 and extrargs.runData:
                             config["d-q-event-selection-task"]["processEventSelection"] = "false"
 
                                                                                 
