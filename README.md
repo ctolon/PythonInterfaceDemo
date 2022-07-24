@@ -198,7 +198,7 @@ Arg | Opt | Task | nargs |
 `--mincrossedrows` | all | `v0-selector` | 1 |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
 `--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
-`--isFilterPPTiny` | `true` `false` | `d-q-filter-p-p-task` | 1 |
+`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
 `--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
 `--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
