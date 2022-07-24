@@ -223,7 +223,7 @@ parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options t
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with commas", action="store", choices=analysisCutDatabase, nargs='*', type=str) # run3
 parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection example jpsiO2MCdebugCuts2::1 ", action="store", type=str) # run2 
 parser.add_argument('--cfgMuonSels', help="Configure Muon Selection example muonHighPt::1", action="store", type=str) # run 2
-parser.add_argument('--isFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+parser.add_argument('--FilterPP', help="Process Selection options true or false (string)", action="store", choices=['full','tiny','false'], type=str)
 #parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 
@@ -487,12 +487,15 @@ for key, value in config.items():
                 config[key][value] = extrargs.cfgBarrelSels
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                 config[key][value] = extrargs.cfgMuonSels
-            if value =='processFilterPPTiny' and extrargs.isFilterPPTiny == True:
-                config[key][value] = True
-                config[key]["processFilterPP"] = False
-            elif value =='processFilterPPTiny' and extrargs.isFilterPPTiny == False:
-                config[key][value] = False
-                config[key]["processFilterPP"] = True         
+            if value =='processFilterPP' and extrargs.FilterPP == 'full':
+                config[key][value] = "true"
+                config[key]["processFilterPPTiny"] = "false"
+            if value =='processFilterPPTiny' and extrargs.FilterPP == 'tiny':
+                config[key][value] = "true"
+                config[key]["processFilterPP"] = "false"    
+            if (value =='processFilterPPTiny' or value == 'processFilterPP') and extrargs.FilterPP == 'false':
+                config[key]["processFilterPPTiny"] = "false"
+                config[key]["processFilterPP"] = "false"       
                     
             # Run 2/3 and MC/DATA Selection  Automations      
             
