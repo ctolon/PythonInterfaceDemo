@@ -172,7 +172,7 @@ TODO: Add Details
 
 # Available configs in Interface
 
-* For `IRunTableMaker.py`
+* For `IRunTableMaker.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -222,106 +222,56 @@ Arg | Opt | Task | nargs |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
 
-* Details For `IRunTableMaker.py` (TODO Refactor)
+* Details parameters for `IRunTableMaker.py`
 
-Arg | Automate | Desc | Only | Type | default
+Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- | --- |
-`--aod` | no | Add your aod file with path  | 1 | str | - |
-`--outputjson` | no |  | 1 | str | `tempConfig.json` |
-`--onlySelect` | Main parameter for automate  | Special Option | 1 | str.lower | `false` |
-`--process` | d-q tasks activate/disable | `table-maker` | * | str |
-`--run` | `2` `3` | no| 1 |
-`-runData` | | `event-selection-task`</br> Special Option | 0 |
-`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
-`--muonSelection` | `0` `1` | `event-selection-task` | 1 |
-`--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--processStandart` | `true` `false` | `track-propagation` | 1 |
-`--processCovariance` | `true` `false` | `track-propagation` | 1 |
-`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
-`--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
-`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
-`--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
-`--d_bz` | all | `v0-selector` | 1 |
-`--v0cospa` | all | `v0-selector` | 1 |
-`--dcav0dau` | all | `v0-selector` | 1 |
-`--v0Rmin` | all | `v0-selector` | 1 |
-`--v0Rmax` | all | `v0-selector` | 1 |
-`--dcamin` | all | `v0-selector` | 1 |
-`--dcamax` | all | `v0-selector` |  1|
-`--mincrossedrows` | all | `v0-selector` | 1 |
-`--maxchi2tpc` | all | `v0-selector` | 1 |
-`--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
-`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
-`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
-`--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgBarrelLowPt` | all | `table-maker` | 1 |
-`--cfgMuonLowPt` | all | `table-maker` | 1 |
-`--cfgNoQA` | `true` `false` | `table-maker` | 1 |
-`--cfgDetailedQA` | `true` `false` | `table-maker` | 1 |
-`--cfgMinTpcSignal` | all | `table-maker` | 1 |
-`--cfgMaxTpcSignal` | all | `table-maker` | 1 |
-`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
+`--aod` | String | Add your aod file with path  |  | str |
+`--outputjson` | String | Configure option for output JSON file | `tempConfig.json` | str |
+`--onlySelect` | Boolean | Keep options for only selection in process, pid and centrality table (true is highly recomended)| `true` | str.lower |
+`--process` | String | process selection for skimmed data model in tablemaker |  | str |
+`--run` | Integer | Data run option for ALICE 2/3 |  | str
+`-runData` | no Param |  Data Selection instead of MC |   | str
+`-runMC` |  No Param | MC Selection instead of data |  | -
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
+`--syst` | String | Collision system selection |  | str
+`--muonSelection` | Integer | Muon Selection |  | str
+`--CustomDeltaBC` | all | Delta BC param for `event-selection-task` |  | str
+`--processStandart` | Boolean | Process standart activate/disable for `track-propagation` |  | str.lower
+`--processCovariance` | Boolean | Process Covariance activate/disable for `track-propagation` |  | str.lower
+`--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
+`--tof-expreso` | Float | an TOF Paramater |  | str
+`--processDummy` | String | Dummy selector for task of -> `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  |  | str.lower
+`--isBarrelSelectionTiny` | Boolean | Barrel Tiny Selector for `d-q-barrel-track-selection-task` |  | str.lower
+`--est` | String | `centrality-table` Parameters | | str
+`--cfgWithQA` | Boolean | QA Activate/Disable for `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> |  | str.lower
+`--d_bz` | Float | V0 related param  |  | str
+`--v0cospa` | Float | V0 related param  |  | str
+`--dcav0dau` | Float | V0 related param  |  | str
+`--v0Rmin` | Float | V0 related param  |  | str
+`--v0Rmax` | Float | V0 related param  |  | str
+`--dcamin` | Float | V0 related param  |  | str
+`--dcamax` | Float | V0 related param  |  | str
+`--mincrossedrows` | Float | V0 related param  |  | str
+`--maxchi2tpc` | Float | V0 related param  |  | str
+`--pid` | String | PID Selections for TPC and TOF |  | str.lower
+`--FilterPP` | String | Filter PP task activated/disabled selection |  | str.lower
+`--cfgPairCuts` | String | Pair Cut Selection |  | str
+`--cfgBarrelSels` | String | `d-q-filter-p-p-task` |  | str
+`--cfgMuonSels` | String | `d-q-filter-p-p-task` |  | str
+`--cfgEventCuts` | String | Specify a predefined event selection from CutsLibrary.h |  | str
+`--cfgBarrelTrackCuts` | String | Specify a predefined barrel track selection from CutsLibrary.h |  | str
+`--cfgMuonCuts` | String | Specify a predefined muon selection from CutsLibrary.h  |  | str
+`--cfgBarrelLowPt` | Float | Specify the lowest pt cut for electrons; used in a Partition expression to improve CPU efficiency (GeV) |  | str
+`--cfgMuonLowPt` | Float | Specify the lowest pt cut for muons; used in a Partition expression to improve CPU efficiency  (GeV) |  | str
+`--cfgNoQA` | Boolean | QA Selection for TableMaker task |  | str.lower
+`--cfgDetailedQA` | Boolean | QA Details Activate/Disable Selection |  | str.lower
+`--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
+`--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
+`--cfgMCsignals` | String | Specify a predefined monte carlo signal selection from MCSignalLibrary.h |  | str
 
-* Visual Descriptions (TODO Refactor)
-
-
-Arg | Option | JSON |
---- | --- | --- | 
-`--aod` | no | Add your aod file with path  | 1 | str | - |
-`--outputjson` | no |  | 1 | str | `tempConfig.json` |
-`--onlySelect` | Main parameter for automate  | Special Option | 1 | str.lower | `false` |
-`--process` | d-q tasks activate/disable | `table-maker` | * | str |
-`--run` | `2` `3` | no| 1 |
-`-runData` | | `event-selection-task`</br> Special Option | 0 |
-`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
-`--muonSelection` | `0` `1` | `event-selection-task` | 1 |
-`--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--processStandart` | `true` `false` | `track-propagation` | 1 |
-`--processCovariance` | `true` `false` | `track-propagation` | 1 |
-`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
-`--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
-`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
-`--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
-`--d_bz` | all | `v0-selector` | 1 |
-`--v0cospa` | all | `v0-selector` | 1 |
-`--dcav0dau` | all | `v0-selector` | 1 |
-`--v0Rmin` | all | `v0-selector` | 1 |
-`--v0Rmax` | all | `v0-selector` | 1 |
-`--dcamin` | all | `v0-selector` | 1 |
-`--dcamax` | all | `v0-selector` |  1|
-`--mincrossedrows` | all | `v0-selector` | 1 |
-`--maxchi2tpc` | all | `v0-selector` | 1 |
-`--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
-`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
-`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
-`--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgBarrelLowPt` | all | `table-maker` | 1 |
-`--cfgMuonLowPt` | all | `table-maker` | 1 |
-`--cfgNoQA` | `true` `false` | `table-maker` | 1 |
-`--cfgDetailedQA` | `true` `false` | `table-maker` | 1 |
-`--cfgMinTpcSignal` | all | `table-maker` | 1 |
-`--cfgMaxTpcSignal` | all | `table-maker` | 1 |
-`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
 
 ## Design Notes
 
@@ -331,6 +281,8 @@ Arg | Option | JSON |
 * `Jul 23, 2022` CLI for TableMaker for automations and transaction management has been heavily refactored and some automations imported.
 * `Jul 24, 2022` In the CLI written for tableMaker, some options were refactored and automated. Version 2 released with minimal testing.
 * `Jul 25, 2022` A lot of tests have been done for the CLI written for tableMaker and the necessary refactor and automation tests have been done. CLI development for TableMaker is fully completed and Integrated to python script. Writing User Manual Documentation in progress.
+* `Jul 26, 2022` Readme completed for `IRunTableMaker.py`
+
 
 
 
