@@ -178,25 +178,25 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--outputjson` | all | Special Option | 1 |
-`--onlySelect` | `true` `false`  | Special Option | 1 |
+`--onlySelect` | `true`</br> `false`</br>  | Special Option | 1 |
 `--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
-`--run` | `2` `3` | Special Option | 1 |
+`--run` | `2`</br> `3`</br> | Special Option | 1 |
 `-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
 `-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
 `--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
 `--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
 `--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
-`--muonSelection` | `0` `1` | `event-selection-task` | 1 |
+`--syst` | `pp`</br> `PbPb`</br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`</br> `1`</br> | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--processStandart` | `true` `false` | `track-propagation` | 1 |
-`--processCovariance` | `true` `false` | `track-propagation` | 1 |
-`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
+`--processStandart` | `true`</br> `false`</br> | `track-propagation` | 1 |
+`--processCovariance` | `true`</br> `false`</br> | `track-propagation` | 1 |
+`--isProcessEvTime` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
-`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
-`--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
+`--processDummy` | `barrel`</br> `muon`</br> `event`</br> | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
+`--isBarrelSelectionTiny` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task` | 1 |
+`--est` | `VOM`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br>| `centrality-table` | |
+`--cfgWithQA` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
 `--d_bz` | all | `v0-selector` | 1 |
 `--v0cospa` | all | `v0-selector` | 1 |
 `--dcav0dau` | all | `v0-selector` | 1 |
@@ -206,8 +206,8 @@ Arg | Opt | Task | nargs |
 `--dcamax` | all | `v0-selector` |  1|
 `--mincrossedrows` | all | `v0-selector` | 1 |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
-`--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
-`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
+`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
+`--FilterPP` | `full`</br> `tiny`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
 `--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
 `--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
@@ -216,8 +216,8 @@ Arg | Opt | Task | nargs |
 `--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
 `--cfgBarrelLowPt` | all | `table-maker` | 1 |
 `--cfgMuonLowPt` | all | `table-maker` | 1 |
-`--cfgNoQA` | `true` `false` | `table-maker` | 1 |
-`--cfgDetailedQA` | `true` `false` | `table-maker` | 1 |
+`--cfgNoQA` | `true`</br> `false`</br> | `table-maker` | 1 |
+`--cfgDetailedQA` | `true`</br> `false`</br> | `table-maker` | 1 |
 `--cfgMinTpcSignal` | all | `table-maker` | 1 |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
