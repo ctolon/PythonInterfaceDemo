@@ -215,7 +215,7 @@ parser.add_argument('--processDummy', help="Process Selection options true or fa
 
 # d-q-track barrel-task
 
-parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower) #d-q barrel and d-q muon selection
+parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], default='false', type=str.lower) #d-q barrel and d-q muon selection
 # d-q event selection task
 #parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
@@ -451,15 +451,29 @@ for key, value in config.items():
                                                          
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
                     if len(fullSearch) > 0 and extrargs.runData:
+                        if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
-                            config["d-q-muons-selection"]["processSelection"] = "true"
-                            config["d-q-event-selection-task"]["processEventSelection"] = "true"
+                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
+                        if extrargs.isBarrelSelectionTiny == "true":
+                            config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
+                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
+
+                        config["d-q-muons-selection"]["processSelection"] = "true"
+                        config["d-q-event-selection-task"]["processEventSelection"] = "true"
                                    
                     if len(barrelSearch) > 0 and extrargs.runData:
+                        if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
+                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
+                        if extrargs.isBarrelSelectionTiny == "true":
+                            config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
+                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
+   
                     if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                            
+                            if extrargs.isBarrelSelectionTiny == "false":
+                                config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
+                                         
                     if len(muonSearch) > 0 and extrargs.runData:
                             config["d-q-muons-selection"]["processSelection"] = "true"
                     if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
