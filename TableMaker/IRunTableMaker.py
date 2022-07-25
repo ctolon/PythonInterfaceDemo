@@ -476,12 +476,12 @@ for key, value in config.items():
                                          
                     if len(muonSearch) > 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-muons-selection"]["processSelection"] = "true"
-                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
+                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-muons-selection"]["processSelection"] = "false"
                             
                     if len(bcsSearch) > 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
+                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run =='3':
                             config["d-q-event-selection-task"]["processEventSelection"] = "false"
                                                                         
                 elif extrargs.onlySelect == "true":
