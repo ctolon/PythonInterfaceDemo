@@ -1,12 +1,11 @@
 # Interfaced O2/DQ Workflows
-Python CLI Development and implematation Repository for Contains O2/DQ workflow json configuration files and python scripts to run them
+Python Automated CLI and Task Manager Development and implematation Repository for Contains O2/DQ workflow json configuration files and python scripts to run them (TableMaker, TableReader, DQEfficiency, FilterPP)
 
 ## Contact
 Ionut Christian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
 Cevat Batuhan Tolon
 
-Ida
 
 ## Main Scripts
 
@@ -102,6 +101,8 @@ TODO: Add schema
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
 
+* Old Versions should be versioned and can found in [`OldVersions`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/OldVersions/v1)
+
 ## Features
 
 TO BE ADDED
@@ -116,23 +117,29 @@ choices).
 must be converted to comma-separated strings
 
 ## TODO List
-* We need more meaningful explanations for argument explanations (helping comments).
-* The values that JSON values can take for transaction management should be classified and filtered with
+* `Open` We need more meaningful explanations for argument explanations (helping comments).
+* `Open` The values that JSON values can take for transaction management should be classified and filtered with
 choices and data types.
-* Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
+* `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
 automatically) so some error handling and automation should be done for transaction management.
-* Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
+* `Open` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
 valid for Run2 Run3 options). Therefore, when we configure this variable for data, it does not throw an error or
 make any changes. For this, the python script should be configured.
-* Python CLI only works by overriding values, so some of the unattached configurations should be integrated
+* `Open` Python CLI only works by overriding values, so some of the unattached configurations should be integrated
 into the TableMaker JSONs (Config MCRun2,MCRun3,DataRun2,Data Run3) in the O2DQWorkflows
 repository as default or null values.
-* Some Tasks arguments need to be refactored.
-* For faster development, the auto completion feature should be implemented for arguments with the tab like
-bash.
-* After the developments are finished, the user manual should be prepared.
-* For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
-* JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal.
+* `Finished` Some Tasks arguments need to be refactored.
+* `Finished` For faster development, the auto completion feature should be implemented for arguments with the tab like
+bash (Already Integrated for local).
+* `Finished` After the developments are finished, the user manual should be prepared.
+* `Open` For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
+* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal.
+* `Open` A transaction management should be written to search whether the entered aod file is in the location.
+* `Open` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
+* `Open` char refactor for prefixes
+* `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a message should be checked by checking that the parameters are entered as value more than once with a warning.
+
+
 
 # Instructions
 
@@ -164,6 +171,8 @@ TODO: Add Details
 
 
 # Available configs in Interface
+
+* For `IRunTableMaker.py`
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -213,10 +222,119 @@ Arg | Opt | Task | nargs |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
 
+* Details For `IRunTableMaker.py` (TODO Refactor)
+
+Arg | Automate | Desc | Only | Type | default
+--- | --- | --- | --- | --- | --- |
+`--aod` | no | Add your aod file with path  | 1 | str | - |
+`--outputjson` | no |  | 1 | str | `tempConfig.json` |
+`--onlySelect` | Main parameter for automate  | Special Option | 1 | str.lower | `false` |
+`--process` | d-q tasks activate/disable | `table-maker` | * | str |
+`--run` | `2` `3` | no| 1 |
+`-runData` | | `event-selection-task`</br> Special Option | 0 |
+`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
+`--muonSelection` | `0` `1` | `event-selection-task` | 1 |
+`--CustomDeltaBC` | all | `event-selection-task` | 1 |
+`--processStandart` | `true` `false` | `track-propagation` | 1 |
+`--processCovariance` | `true` `false` | `track-propagation` | 1 |
+`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
+`--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
+`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
+`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
+`--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
+`--d_bz` | all | `v0-selector` | 1 |
+`--v0cospa` | all | `v0-selector` | 1 |
+`--dcav0dau` | all | `v0-selector` | 1 |
+`--v0Rmin` | all | `v0-selector` | 1 |
+`--v0Rmax` | all | `v0-selector` | 1 |
+`--dcamin` | all | `v0-selector` | 1 |
+`--dcamax` | all | `v0-selector` |  1|
+`--mincrossedrows` | all | `v0-selector` | 1 |
+`--maxchi2tpc` | all | `v0-selector` | 1 |
+`--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
+`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
+`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
+`--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
+`--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
+`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgBarrelLowPt` | all | `table-maker` | 1 |
+`--cfgMuonLowPt` | all | `table-maker` | 1 |
+`--cfgNoQA` | `true` `false` | `table-maker` | 1 |
+`--cfgDetailedQA` | `true` `false` | `table-maker` | 1 |
+`--cfgMinTpcSignal` | all | `table-maker` | 1 |
+`--cfgMaxTpcSignal` | all | `table-maker` | 1 |
+`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
+
+* Visual Descriptions (TODO Refactor)
 
 
-TO BE ADDED
-Arg | Automate | nargs | Default | Only |
---- | --- | --- | --- | --- |
+Arg | Option | JSON |
+--- | --- | --- | 
+`--aod` | no | Add your aod file with path  | 1 | str | - |
+`--outputjson` | no |  | 1 | str | `tempConfig.json` |
+`--onlySelect` | Main parameter for automate  | Special Option | 1 | str.lower | `false` |
+`--process` | d-q tasks activate/disable | `table-maker` | * | str |
+`--run` | `2` `3` | no| 1 |
+`-runData` | | `event-selection-task`</br> Special Option | 0 |
+`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp` `PbPb` | `event-selection-task` | 1 |
+`--muonSelection` | `0` `1` | `event-selection-task` | 1 |
+`--CustomDeltaBC` | all | `event-selection-task` | 1 |
+`--processStandart` | `true` `false` | `track-propagation` | 1 |
+`--processCovariance` | `true` `false` | `track-propagation` | 1 |
+`--isProcessEvTime` | `true` `false` | `tof-pid-full tof-pid` | 1 |
+`--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--processDummy` | `barrel` `muon` `event` | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
+`--isBarrelSelectionTiny` | `true` `false` | `d-q-barrel-track-selection-task` | 1 |
+`--est` | `VOM` `Run2SPDtks` `Run2SPDcls` `Run2CL0` `Run2CL1`| `centrality-table` | |
+`--cfgWithQA` | `true` `false` | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
+`--d_bz` | all | `v0-selector` | 1 |
+`--v0cospa` | all | `v0-selector` | 1 |
+`--dcav0dau` | all | `v0-selector` | 1 |
+`--v0Rmin` | all | `v0-selector` | 1 |
+`--v0Rmax` | all | `v0-selector` | 1 |
+`--dcamin` | all | `v0-selector` | 1 |
+`--dcamax` | all | `v0-selector` |  1|
+`--mincrossedrows` | all | `v0-selector` | 1 |
+`--maxchi2tpc` | all | `v0-selector` | 1 |
+`--pid` | `el` `mu` `pi` `ka` `pr` `de` `tr` `he` `al` | `tof-pid tpc-pid` | * |
+`--FilterPP` | `full` `tiny`  `false` | `d-q-filter-p-p-task` | 1 |
+`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
+`--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
+`--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
+`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgBarrelLowPt` | all | `table-maker` | 1 |
+`--cfgMuonLowPt` | all | `table-maker` | 1 |
+`--cfgNoQA` | `true` `false` | `table-maker` | 1 |
+`--cfgDetailedQA` | `true` `false` | `table-maker` | 1 |
+`--cfgMinTpcSignal` | all | `table-maker` | 1 |
+`--cfgMaxTpcSignal` | all | `table-maker` | 1 |
+`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
+
+## Design Notes
+
+* `Jul 20, 2022` Developed pythonCLI version 1 for tablemaker in its simplest form, not integrated into main task.
+* `Jul 21, 2022` Fixed some important bugs.
+* `Jul 22, 2022` The repository has been refactored. The CLI written for TableMaker was integrated into the task, main python scripts were prepared for TableReader, DQEfficiency, and their CLIs were developed and integrated (Faulty versions).
+* `Jul 23, 2022` CLI for TableMaker for automations and transaction management has been heavily refactored and some automations imported.
+* `Jul 24, 2022` In the CLI written for tableMaker, some options were refactored and automated. Version 2 released with minimal testing.
+* `Jul 25, 2022` A lot of tests have been done for the CLI written for tableMaker and the necessary refactor and automation tests have been done. CLI development for TableMaker is fully completed and Integrated to python script. Writing User Manual Documentation in progress.
+
+
+
+
+
 
 
