@@ -225,7 +225,7 @@ Arg | Opt | Task | nargs |
 * Details parameters for `IRunTableMaker.py`
 
 Arg | Ref Type| Desc | Default | Real Type
---- | --- | --- | --- | --- | --- |
+--- | --- | --- | --- | --- |
 `--aod` | String | Add your aod file with path  |  | str |
 `--outputjson` | String | Configure option for output JSON file | `tempConfig.json` | str |
 `--onlySelect` | Boolean | Keep options for only selection in process, pid and centrality table (true is highly recomended)| `true` | str.lower |
