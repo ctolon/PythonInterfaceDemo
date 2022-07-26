@@ -712,6 +712,21 @@ if extrargs.process:
     for j in tempListProcess:
         if j not in tableMakerProcessSearch:
             print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!")
+            
+# Transaction Management for isProcessEvTime
+if extrargs.isProcessEvTime and (extrargs.run == '2' or extrargs.runMC):
+    print("[WARNING] isProcessEvTime Only valid Parameter on Run 3 Data. It will fixed by CLI")
+    
+# Transaction Management for V0 Selector TODO : Add other transcations
+V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+
+for key,value in configuredCommands.items():
+    if(value != None):
+        if type(value) == type(clist):
+            listToString(value)
+        if key in V0Parameters and extrargs.runMC:
+            print("[WARNING] V0 Selector parameters only for Data, not MC. It will fixed by CLI")
+        
                                   
 # Centrality table delete for pp processes
 if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
