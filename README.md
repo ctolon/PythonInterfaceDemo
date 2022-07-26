@@ -108,11 +108,13 @@ TODO: Add schema
 ### Automated Things In IRunTableMaker
 
 * In TableMaker process function for Data Run 3, 
-  * If process contains only Barrel related value, it will automatically enable d-q-barrel-track-selection-task, with d-q-event-selection-task the d-q-muons-selection task will be disabled
-  * `Automate` if process contains only Muons related value, it will automatically enable d-q-muons-selection, with d-q-event-selection-task it will deactivate d-q-barrel-track-selection-task
-  * `Automate` if process contains only BCs related value, it will automatically enable d-q-event-selection-task, with d-q-muon-selection-task it will disable d-q-barrel-track-selection-task
-  * `Automate` If process contains only values ​​related to Full, then d-q-event-selection-task, d-q-muon-selection-task and d-q-barrel-track-selection-task are automatically enabled
-  * `Automate` TODO ikili kombinasyonlarıda yaz, Filter içinde yaz, tinyleri de göz önünde bulunur
+  * `Automate` If process contains only Barrel related value, it will automatically enable d-q-barrel-track-selection-task , d-q-event-selection-task and d-q-muons-selection task will be disabled
+  * `Automate` if process contains only Muons related value, it will automatically enable d-q-muons-selection, d-q barrel-track-selection-task and d-q-event-selection-task it will disabled
+  * `Automate` if process contains only BCs related value, it will automatically enable d-q-event-selection-task, d-q-muon-selection-task and d-q-barrel-track-selection-task will be disabled
+  * `Automate` If process contains values ​​related to Full, then d-q-event-selection-task, d-q-muon-selection-task and d-q-barrel-track-selection-task are automatically enabled
+    * `Automate` P.S: For Binary, Selections for Process Function (eg. Barrel and Muon Only), It will activate Barrel and Muon tasks and disables event selection tasks 
+    * `Automate` P.S: For Three Selections for Process Function (eg. Barrel, BCs Muon Only), It will activate Barrel, Muon and BCs tasks 
+  * `Automate` If process contains values ​​related to Filter, then d-q-filter-p-p-task is automatically enabled, otherwise this task will disabled
 * For selections run <2|3> and run<MC|Data>
   * `Automate` if run 2 is selected, in JSON automatically processRun3 becomes false processRun2 becomes true, isRun2 becomes false
   * `Automate` if run 3 is selected, in JSON automatically processRun3 becomes true processRun2 becomes false, isRun2 becomes true
@@ -120,9 +122,9 @@ TODO: Add schema
   * `Automate` if MC Selected, in JSON automatically isMC becomes true. If Data Selected, isMC becomes false
 * For Centrality Table Task, If collision system pp is selected or not selected but original JSON also has pp selected
   * `Automate` if runData is selected, centrality-table is deleted from JSON, if MC is deleted, centrality-table is not deleted since it is not in JSON
-  * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They Will be removed in automation
+  * `Automate` if Table maker process function contains value related to Centrality (e.g. processMuonOnlyWithCent), Collision System pp can't be include related task about Centrality. They Will be removed in automation
   * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
-  * TODO Beauty format and add other automated thing
+  * `Automate` if you forget configure name your output JSON with --outputjson (with overrided values), it will created as tempConfig.json. Also If you misstyped your file extension in json or if you forget this (e.g configs/ConfigTableMakerMCRun3) this will automaticly fixed to Configs/ConfigTableMakerMCRun3.json
 
 ### Logger Things In IRunTableMaker
 
@@ -178,9 +180,18 @@ TODO: Add schema
         except:
           print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
           sys.exit()
+        
+        # AOD File Path Checking
+        if extrargs.aod != None:
+          if os.path.isfile(extrargs.aod) == False:
+          print("[ERROR]",extrargs.aod,"File not found in path!!!")
+          sys.exit()
+        elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+          print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+          sys.exit()
         ```
   * For Centrality Table task
-    * TODO Add information
+    * Centrality task only available for PbPb system selection so if we select pp over PbPb, It will give LOG messages for this issue. Message : ```Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!```
       * ```python 
           if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
           # delete centrality-table configurations for data. If it's MC don't delete from JSON
@@ -226,12 +237,12 @@ choices).
 must be converted to comma-separated strings
 
 ## TODO List
-* `Open` We need more meaningful explanations for argument explanations (helping comments).
+* `Closed` We need more meaningful explanations for argument explanations (helping comments).
 * `Open` The values that JSON values can take for transaction management should be classified and filtered with
 choices and data types.
 * `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
 automatically) so some error handling and automation should be done for transaction management.
-* `Open` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
+* `Closed` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
 valid for Run2 Run3 options). Therefore, when we configure this variable for data, it does not throw an error or
 make any changes. For this, the python script should be configured.
 * `Open` Python CLI only works by overriding values, so some of the unattached configurations should be integrated
@@ -242,11 +253,11 @@ repository as default or null values.
 bash (Already Integrated for local).
 * `Finished` After the developments are finished, the user manual should be prepared.
 * `Open` For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
-* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal.
-* `Open` A transaction management should be written to search whether the entered aod file is in the location.
-* `Open` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
+* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
+* `Closed` A transaction management should be written to search whether the entered aod file is in the location.
+* `Closed` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
 * `Open` char refactor for prefixes
-* `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a message should be checked by checking that the parameters are entered as value more than once with a warning.
+* `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a warning message should be checked by checking that the parameters are entered as value more than once with a warning.
 
 
 

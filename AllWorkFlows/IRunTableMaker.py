@@ -264,6 +264,37 @@ extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
 
+#####################################################
+# Selection Parameters for run number and data type #
+#####################################################
+# Selection Options for Run<Data|MC> Run<2|3> TODO : Integrate them over extrags checks
+run2Selected = False
+run3Selected = False
+MCSelected = False
+dataSelected = False
+
+run2MCSelected = False
+run2DataSelected = False
+run3MCSelected = False
+run3DataSelected = False
+
+if extrargs.run == '2':
+    run2Selected = True
+if extrargs.run == 3:
+    run3Selected = True
+if extrargs.runMC:
+    MCSelected = True
+if extrargs.runData:
+    dataSelected = True
+
+if extrargs.run == '2' and extrargs.runMC:
+    run2MCSelected = True
+if extrargs.run == '2' and extrargs.runData:
+    run2DataSelected = True
+if extrargs.run == '3' and extrargs.runMC:
+    run3MCSelected = True
+if extrargs.run == '3' and extrargs.runData:
+    run3DataSelected = True
 
 
 ######################
@@ -721,6 +752,17 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 except:
                     print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                     sys.exit()
+                    
+# AOD File checker TODO Enable it for checker
+
+if extrargs.aod != None:
+    if os.path.isfile(extrargs.aod) == False:
+        print("[ERROR]",extrargs.aod,"File not found in path!!!")
+        sys.exit()
+elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+        sys.exit()
+
 
 
 ###########################
