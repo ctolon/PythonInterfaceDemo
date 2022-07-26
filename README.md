@@ -207,7 +207,7 @@ Arg | Opt | Task | nargs |
 `--mincrossedrows` | all | `v0-selector` | 1 |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--FilterPP` | `full`</br> `tiny`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
+`--isFilterPPTiny` | `true`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
 `--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
 `--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
@@ -257,7 +257,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--mincrossedrows` | Float | V0 related param  |  | str
 `--maxchi2tpc` | Float | V0 related param  |  | str
 `--pid` | String | PID Selections for TPC and TOF |  | str.lower
-`--FilterPP` | String | Filter PP task activated/disabled selection |  | str.lower
+`--isFilterPPTiny` | Boolean | Filter PP Tiny instead of normal activated/disabled selection |  | str.lower
 `--cfgPairCuts` | String | Pair Cut Selection |  | str
 `--cfgBarrelSels` | String | `d-q-filter-p-p-task` |  | str
 `--cfgMuonSels` | String | `d-q-filter-p-p-task` |  | str
