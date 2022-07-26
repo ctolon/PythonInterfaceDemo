@@ -712,12 +712,8 @@ if extrargs.process:
     for j in tempListProcess:
         if j not in tableMakerProcessSearch:
             print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!")
-            
-# Transaction Management for isProcessEvTime
-if extrargs.isProcessEvTime and (extrargs.run == '2' or extrargs.runMC):
-    print("[WARNING] isProcessEvTime Only valid Parameter on Run 3 Data. It will fixed by CLI")
-    
-# Transaction Management for V0 Selector TODO : Add other transcations
+                
+# Transaction Management for Most of Parameters for debugging, monitoring and logging
 V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
 
 for key,value in configuredCommands.items():
@@ -725,9 +721,28 @@ for key,value in configuredCommands.items():
         if type(value) == type(clist):
             listToString(value)
         if key in V0Parameters and extrargs.runMC:
-            print("[WARNING] V0 Selector parameters only for Data, not MC. It will fixed by CLI")
-        
-                                  
+            print("[WARNING]","--"+key+" Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI")
+        if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI")
+        if key == 'est' and extrargs.runMC:
+            print("[WARNING]","--"+key+" Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI")
+        if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI")
+        if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgMCsignals' and extrargs.runData:
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI")
+        if key == 'isProcessEvTime' and (extrargs.run == '2' or extrargs.runMC):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+                                         
 # Centrality table delete for pp processes
 if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # delete centrality-table configurations for data. If it's MC don't delete from JSON
