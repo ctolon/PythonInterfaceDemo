@@ -106,6 +106,10 @@ def binary_selector(v):
     else:
         raise argparse.ArgumentTypeError('Misstyped value!')
     
+def stringToList(string):
+    li = list(string.split(" "))
+    return li
+    
 ###################################
 # Interface Predefined Selections #
 ###################################
@@ -385,10 +389,26 @@ taskNameInCommandLine = "o2-analysis-dq-table-maker"
 if runOverMC == True:
   taskNameInConfig = "table-maker-m-c"
   taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
+  
+# Check table-maker and tablemaker-m-c dependencies
+if extrargs.runMC:
+    try:
+        if config["table-maker-m-c"]:
+            pass
+    except:
+        print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+        sys.exit()
+if extrargs.runData:
+    try:
+        if config["table-maker"]:
+            pass
+    except:
+        print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+        sys.exit()
 
-if not taskNameInConfig in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
+#if not taskNameInConfig in config:
+  #print("ERROR: Task to be run not found in the configuration file!")
+  #sys.exit()
   
 """
 if not tasksInDataRun3 in config:
@@ -425,13 +445,8 @@ for key, value in configuredCommands.items():
 #############################
 
 for key, value in config.items():
-    #print("key List = ", key)
-    #print("value List = ", value)
-    #print(type(value))
     if type(value) == type(config):
-        #print(value, type(value))
         for value, value2 in value.items():
-            #print(value)
             
             # aod
             if value =='aod-file' and extrargs.aod:
@@ -618,13 +633,14 @@ for key, value in config.items():
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
                 
-            # tof-pid-full, tof-pid for run3
-            if value == 'processEvTime' and extrargs.isProcessEvTime == "true":
-                config[key][value] = "true"
-                config[key]["processNoEvTime"] = "false"
-            elif value == 'processEvTime' and extrargs.isProcessEvTime == "false":
-                config[key][value] = "false"
-                config[key]["processNoEvTime"] = "true"
+            # tof-pid-full, tof-pid for data run 3                
+            if value == 'processEvTime' and extrargs.runData and extrargs.run == '3': 
+                if extrargs.isProcessEvTime == "true":
+                    config[key][value] = "true"
+                    config[key]["processNoEvTime"] = "false"
+                if extrargs.isProcessEvTime == "false":
+                    config[key][value] = "false"
+                    config[key]["processNoEvTime"] = "true"
                     
             # all d-q tasks and selections TODO Eğer TableMakerdakiyle aynı şeyi isterlerse refactor
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
@@ -647,6 +663,35 @@ for key, value in config.items():
                     config['d-q-filter-p-p-task']['processDummy'] = "true"
                 if extrargs.processDummy == "barrel":
                     config['d-q-barrel-track-selection-task']['processDummy'] = "true"
+                                                     
+# Centrality table delete for pp processes
+if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
+    # delete centrality-table configurations
+    del(config["centrality-table"])
+    # check for is TableMaker includes task related to Centrality?
+    processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
+    if len(processCentralityMatch) > 0:
+        print("[WARNING] Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
+        for paramValueTableMaker in processCentralityMatch:
+            # Centrality process should be false
+            if extrargs.runMC:
+                try:       
+                    config["table-maker-m-c"][paramValueTableMaker] = 'false'
+                    #for key in paramValueTableMaker:
+                        # TODO make print to new process
+                except:
+                    print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+                    sys.exit()
+            if extrargs.runData:
+                try:       
+                    config["table-maker"][paramValueTableMaker] = 'false'
+                    #for key in paramValueTableMaker:
+                        #print(key)
+                        # TODO make print to new process
+                except:
+                    print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+                    sys.exit()
+
 
 ###########################
 # End Interface Processes #
