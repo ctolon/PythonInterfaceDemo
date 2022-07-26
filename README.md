@@ -179,7 +179,7 @@ Arg | Opt | Task | nargs |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--outputjson` | all | Special Option | 1 |
 `--onlySelect` | `true`</br> `false`</br>  | Special Option | 1 |
-`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
+`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyWithEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
 `--run` | `2`</br> `3`</br> | Special Option | 1 |
 `-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
 `-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |

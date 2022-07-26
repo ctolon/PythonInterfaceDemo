@@ -116,20 +116,20 @@ def stringToList(string):
    
 
 tablemakerProcessAllSelections = ["Full","FullTiny","FullWithCov","FullWithCent",
-        "BarrelOnlyWithV0Bits","BarrelOnlyEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly",
+        "BarrelOnlyWithV0Bits","BarrelOnlyWithEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly",
         "MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter",
         "OnlyBCs"]
 tablemakerProcessFullSelections = ["Full","FullTiny","FullWithCov","FullWithCent"]
-tablemakerProcessBarrelSelections = ["BarrelOnlyWithV0Bits","BarrelOnlyEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly"]
+tablemakerProcessBarrelSelections = ["BarrelOnlyWithV0Bits","BarrelOnlyWithEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly"]
 tablemakerProcessMuonSelections = ["MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter"]
 tablemakerProcessBCsSelections = ["OnlyBCs"]
 
 tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
-        "processBarrelOnlyWithV0Bits","processBarrelOnlyEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
+        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
         "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
         "processOnlyBCs"]
 tablemakerProcessFullParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent"]
-tablemakerProcessBarrelParameters = ["processBarrelOnlyWithV0Bits","processBarrelOnlyEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly"]
+tablemakerProcessBarrelParameters = ["processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly"]
 tablemakerProcessMuonParameters = ["processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter"]
 tablemakerProcessBCsParameters = ["processOnlyBCs"]
 
@@ -502,6 +502,11 @@ for key, value in config.items():
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
                     config[key][value] = value2
+             
+            # TODO Write transcation management for MC, MC don't includes all process functions.        
+            #if (value not in tablemakerProcessAllParameters) and extrargs.process:
+                    #print(value) 
+                        #print(value,"degil!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     
             # Filter PP Selections        
             if value =='cfgPairCuts' and extrargs.cfgPairCuts:
@@ -666,8 +671,13 @@ for key, value in config.items():
                                                      
 # Centrality table delete for pp processes
 if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
-    # delete centrality-table configurations
-    del(config["centrality-table"])
+    # delete centrality-table configurations for data. If it's MC don't delete from JSON
+    # Firstly try for Data then if not data it gives warning message for MC
+    try:
+        del(config["centrality-table"])
+    except:
+        if extrargs.runMC:
+            print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
     # check for is TableMaker includes task related to Centrality?
     processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
     if len(processCentralityMatch) > 0:
