@@ -269,20 +269,37 @@ Add extrac tables and converters with:
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
 
 
+* Minimum Required Parameter List:
+  * `python3`
+  * `IRunTableMaker.py`
+  * `--run <2|3>`  
+    * Usage (only select one value): `--run 2` or `--run 3`
+  *  `-run<MC|Data>` 
+     *  Usage (only select one value): `-runMC` or `-runData`
+  *  `--process <Value>` 
+     *  Usage examples (can take several value) : `--process MuonsOnly` or `--process BarrelOnly MuonOnly BarrelOnlyWithEventFilter`
 
 Examples(in AllWorkFlows):
-- Run TableMaker on Data run3 With Minimum Commands
+- Run TableMaker on Data run3 With Minimum Commands for Barrel Only
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --process BarrelOnly
   ```
-- Run TableMaker on MC run3 with Minimum Commands
+- Run TableMaker on MC run3 with Minimum Commands for Barrel Only
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process BarrelOnly
+  ```
+- Run TableMaker on Data run2 With Minimum Commands for Barrel Only
+  ```ruby
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --run 2 --process BarrelOnly
+  ```
+- Run TableMaker on MC run2 with Minimum Commands for Barrel Only
+  ```ruby
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --run 2 --process BarrelOnly
   ```
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod aodff --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly BarrelOnlyWithV0Bits --run 3 --syst PbPb --muonSelection 1 --processStandard false --isProcessEvTime false --processDummy barrel --isBarrelSelectionTiny false --cfgWithQA false --pid el mu --cfgPairCuts jpsiPIDnsigma electronPID2  --cfgEventCuts jpsiPIDnsigma --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts jpsiPIDnsigma --cfgNoQA false --cfgDetailedQA true --cfgMCsignals alicePrimary eeFromCC
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --aod Datas/AO2D_LHC21i3.root --process BarrelOnly BarrelOnlyWithV0Bits --syst pp --muonSelection 0 --processStandard true --isProcessEvTime false --processDummy barrel --cfgWithQA true --pid el mu --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts muonQualityCuts --cfgNoQA false --cfgDetailedQA true
   ```
 
 
