@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+# PYTHON_ARGCOMPLETE_OK
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
 ## This program is free software: you can redistribute it and/or modify it ##
@@ -19,14 +19,47 @@ import json
 import os
 import argparse
 
+"""
+argcomplete - Bash tab completion for argparse
+Documentation https://kislyuk.github.io/argcomplete/
+Instalation Steps
+pip install argcomplete
+sudo activate-global-python-argcomplete
+Only Works On Local not in O2
+Activate libraries in below and activate #argcomplete.autocomplete(parser) line
+"""
+#import argcomplete  
+#from argcomplete.completers import ChoicesCompleter
+
 #################################
 # JSON Database Read and Upload #
 #################################
+"""
+Predefined Analysis Cuts, MCSignals and Histograms From O2-DQ Framework.
+MCSignals --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h
+Analysis Cuts --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h
 
-json_cut_database = json.load(open('AnalysisCutDatabase.json'))
-json_mcsignal_database = json.load(open('MCSignalDatabase.json'))
+Parameters
+------------------------------------------------
+analysisCutDatabaseJSON: JSON
+    analysisCutDatabaseJSON is a JSON file for take the analysis cut parameters
+    
+analysisCutDatabase : list
+    analysisCutDatabase is a List for take analysis cut parameters from JSON database
+
+MCSignalDatabaseJSON: JSON
+    MCSignalDatabaseJSON is a JSON file for take the MC signals parameters
+    
+MCSignalDatabase: list
+    MCSignalDatabase is a List for take MC Signals from JSON database
+"""
+json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
+json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
 cut_database = []
 mcsignal_database =[]
+
+# control list for type control
+clist=[]
 
 # Cut Database
 for key, value in json_cut_database.items():
@@ -36,14 +69,55 @@ for key, value in json_cut_database.items():
 for key, value in json_mcsignal_database.items():
     mcsignal_database.append(value)
     
+    
+    
+"""
+ListToString provides converts lists to strings.
+This function is written to save as string type instead of list 
+when configuring JSON values for multiple selection in CLI.
+
+Parameters
+------------------------------------------------
+s: list
+A simple Python List
+"""
+def listToString(s):
+    if len(s) > 1:
+        # initialize an empty string
+        str1 =","
+   
+        # return string 
+        return (str1.join(s))
+    else:
+        str1 = " "
+        
+        return (str1.join(s))
+
+# defination for binary check TODO: Need to be integrated
+def binary_selector(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
+        return "true"
+        #return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
+        return "false"
+        #return False
+    else:
+        raise argparse.ArgumentTypeError('Misstyped value!')
+    
+###################
+# Main Parameters #
+###################
+    
 parser = argparse.ArgumentParser(description='Arguments to pass')
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 #parser.add_argument('-runData', help="Run over data", action="store_true")
 #parser.add_argument('-runMC', help="Run over MC", action="store_true")
 
-##################
-# Interface Part #
-##################
+########################
+# Interface Parameters #
+########################
 
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
@@ -124,7 +198,11 @@ parser.add_argument('--cfgLeptonCuts', help="Configure Cuts with commas", choice
 #parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
 #parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
 
+"""Activate For Autocomplete. See to Libraries for Info"""
+#argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
+
+configuredCommands = vars(extrargs) # for get extrargs
 
 
 
@@ -133,7 +211,7 @@ extrargs = parser.parse_args()
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   print("ERROR: Invalid syntax! The command line should look like this:")
-  print("  ./IRunDQEfficiency.py <yourConfig.json> [task|param|value] ...")
+  print("  ./IRunDQEfficiency.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -159,8 +237,8 @@ if sys.argv[2] == "runMC":
 
 runOverMC = True
 
-# Get all the user required modifications to the configuration file
 """
+# Get all the user required modifications to the configuration file
 for count in range(3, len(sys.argv)):
   param = sys.argv[count].split(":")
   if len(param) != 3:
@@ -172,16 +250,19 @@ for count in range(3, len(sys.argv)):
 
 #taskNameInConfig = "d-q-filter-p-p-task"
 taskNameInCommandLine = "o2-analysis-dq-efficiency"
-if runOverMC == True:
+#if runOverMC == True:
   #taskNameInConfig = "d-q-filter-p-p-task"
-  taskNameInCommandLine = "o2-analysis-dq-efficiency"
+  #taskNameInCommandLine = "o2-analysis-dq-efficiency"
 """
 if not taskNameInConfig in config:
   print("ERROR: Task to be run not found in the configuration file!")
   sys.exit()
 """
 
-###
+#############################
+# Start Interface Processes #
+#############################
+
 for key, value in config.items():
     #print("key List = ", key)
     #print("value List = ", value)
@@ -287,15 +368,40 @@ for key, value in config.items():
                 config[key][value] = extrargs.Skimmed
             if value == 'processDummy' and extrargs.processDummy:
                 config[key][value] = extrargs.processDummy
-
-
+                
+###########################
+# End Interface Processes #
+###########################   
 
 
 # Write the updated configuration file into a temporary file
-#TODO: Config file json outputunu demodaki gibi transcation management yap.
 updatedConfigFileName = "tempConfig.json"
-with open(updatedConfigFileName,'w') as outputFile:
-  json.dump(config, outputFile)
+
+"""
+Transaction Management for Json File Name
+"""
+if(extrargs.outputjson == None):       
+    config_output_json = open(updatedConfigFileName,'w')
+    config_output_json.write(json.dumps(config, indent= 2))
+    print("[WARNING] Forget to Give output JSON name. Output JSON will created as tempConfig.json")
+elif(extrargs.outputjson[-5:] == ".json"):
+    updatedConfigFileName = extrargs.outputjson
+    config_output_json = open(updatedConfigFileName,'w')
+    config_output_json.write(json.dumps(config, indent= 2))
+elif(extrargs.outputjson[-5:] != ".json"):
+    if '.' in extrargs.outputjson:
+        print("[ERROR] Wrong formatted input for JSON output!!! Script will Stopped.")
+        sys.exit()
+    temp = extrargs.outputjson
+    temp = temp+'.json'
+    updatedConfigFileName = temp
+    config_output_json = open(updatedConfigFileName,'w')
+    config_output_json.write(json.dumps(config, indent= 2))
+else:
+    print("Logical json input error. Report it!!!")
+    
+#with open(updatedConfigFileName,'w') as outputFile:
+  #json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run
 """
@@ -304,7 +410,7 @@ for dep in commonDeps:
   depsToRun[dep] = 1
 """
       
-commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b"
+commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -aod-memory-rate-limit 1000000000" + " --aod-reader-json Configs/readerConfiguration_reducedEventMC.json -b"
 """
 for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"

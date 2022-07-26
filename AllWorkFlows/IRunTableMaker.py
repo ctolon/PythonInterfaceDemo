@@ -344,7 +344,7 @@ specificTables = {
 # Make some checks on provided arguments
 if len(sys.argv) < 3:
   print("ERROR: Invalid syntax! The command line should look like this:")
-  print("  ./IRunTableMaker.py <yourConfig.json> <runData|runMC> --param value [task:param:value] ...")
+  print("  ./IRunTableMaker.py <yourConfig.json> <runData|runMC> --run <2|3> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
