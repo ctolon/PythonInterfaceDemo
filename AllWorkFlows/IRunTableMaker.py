@@ -227,7 +227,7 @@ parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options t
 parser.add_argument('--cfgPairCuts', help="Configure Cuts with spaces", action="store", choices=analysisCutDatabase, nargs='*', type=str) # run3
 parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection example jpsiO2MCdebugCuts2::1 ", action="store", type=str) # run2 
 parser.add_argument('--cfgMuonSels', help="Configure Muon Selection example muonHighPt::1", action="store", type=str) # run 2
-parser.add_argument('--FilterPP', help="Process Selection options true or false (string)", action="store", choices=['full','tiny','false'], type=str.lower)
+parser.add_argument('--isFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 
@@ -444,6 +444,9 @@ for key, value in configuredCommands.items():
 # Start Interface Processes #
 #############################
 
+# For adding a process function from TableMaker and all process should be added only once so set type used
+tableMakerProcessSearch= set ()
+
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
@@ -458,14 +461,27 @@ for key, value in config.items():
                     value2 = "true"
                     config[key][value] = value2
                     
+                    # For find all process parameters for TableMaker/TableMakerMC in Orginal JSON
+                    for s in config[key].keys():
+                        #print(s)
+                        if s in tablemakerProcessAllParameters:
+                            tableMakerProcessSearch.add(s)
+                            
+
+                    
                     # check extraargs is contain Full Barrel Muon or Bcs
                     fullSearch = [s for s in extrargs.process if "Full" in s]
                     barrelSearch = [s for s in extrargs.process if "Barrel" in s]
                     muonSearch = [s for s in extrargs.process if "Muon" in s]
-                    bcsSearch = [s for s in extrargs.process if "BCs" in s]   
+                    bcsSearch = [s for s in extrargs.process if "BCs" in s]
+                    
+                    #check extrargs is contain Filter for automatize Filter PP task
+                    filterSearch = [s for s in extrargs.process if "Filter" in s]   
                                                          
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
                     if len(fullSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                        config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
+                        
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
@@ -486,8 +502,7 @@ for key, value in config.items():
    
                     if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                            if extrargs.isBarrelSelectionTiny == "false":
-                                config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
+                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
                                          
                     if len(muonSearch) > 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-muons-selection"]["processSelection"] = "true"
@@ -498,6 +513,18 @@ for key, value in config.items():
                             config["d-q-event-selection-task"]["processEventSelection"] = "true"
                     if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run =='3':
                             config["d-q-event-selection-task"]["processEventSelection"] = "false"
+                            
+                    # Automatization for Activate or Disable d-q filter pp run3
+                    if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                        config["d-q-filter-p-p-task"]["processFilterPP"] == "true"
+                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
+                        if extrargs.isFilterPPTiny == 'true':
+                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true"
+                                 
+                    if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
+                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
@@ -517,6 +544,8 @@ for key, value in config.items():
                 config[key][value] = extrargs.cfgBarrelSels
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                 config[key][value] = extrargs.cfgMuonSels
+                
+            """    
             if value =='processFilterPP' and extrargs.FilterPP == 'full':
                 config[key][value] = "true"
                 config[key]["processFilterPPTiny"] = "false"
@@ -525,7 +554,8 @@ for key, value in config.items():
                 config[key]["processFilterPP"] = "false"    
             if (value =='processFilterPPTiny' or value == 'processFilterPP') and extrargs.FilterPP == 'false':
                 config[key]["processFilterPPTiny"] = "false"
-                config[key]["processFilterPP"] = "false"       
+                config[key]["processFilterPP"] = "false"     
+            """      
                     
             # Run 2/3 and MC/DATA Selections for automations            
             if extrargs.run == "2":
@@ -656,9 +686,9 @@ for key, value in config.items():
             if value == 'processCovariance' and extrargs.processCovariance:
                 config[key][value] = extrargs.processCovariance
             # dq-barrel-track-selection-task
-            if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == "true":
-                config[key][value] = extrargs.isBarrelSelectionTiny
-                config[key]["processSelection"] = "false"
+            #if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == "true":
+                #config[key][value] = extrargs.isBarrelSelectionTiny
+                #config[key]["processSelection"] = "false"
                 
             # dummy selection
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
@@ -668,7 +698,21 @@ for key, value in config.items():
                     config['d-q-filter-p-p-task']['processDummy'] = "true"
                 if extrargs.processDummy == "barrel":
                     config['d-q-barrel-track-selection-task']['processDummy'] = "true"
-                                                     
+
+
+# Transaction Management for process function in TableMaker/TableMakerMC Task
+
+# set to List convert for tableMakerProcessSearch
+tableMakerProcessSearch = list(tableMakerProcessSearch)
+tempListProcess = []
+for i in configuredCommands["process"]:
+    tempListProcess.append(i)
+
+if extrargs.process:
+    for j in tempListProcess:
+        if j not in tableMakerProcessSearch:
+            print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!")
+                                  
 # Centrality table delete for pp processes
 if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # delete centrality-table configurations for data. If it's MC don't delete from JSON
