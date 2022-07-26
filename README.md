@@ -103,9 +103,118 @@ TODO: Add schema
 
 * Old Versions should be versioned and can found in [`OldVersions`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/OldVersions/v1)
 
-## Features
+## Features for IRunTableMaker
 
-TO BE ADDED
+### Automated Things In IRunTableMaker
+
+* In TableMaker process function for Data Run 3, 
+  * If process contains only Barrel related value, it will automatically enable d-q-barrel-track-selection-task, with d-q-event-selection-task the d-q-muons-selection task will be disabled
+  * `Automate` if process contains only Muons related value, it will automatically enable d-q-muons-selection, with d-q-event-selection-task it will deactivate d-q-barrel-track-selection-task
+  * `Automate` if process contains only BCs related value, it will automatically enable d-q-event-selection-task, with d-q-muon-selection-task it will disable d-q-barrel-track-selection-task
+  * `Automate` If process contains only values ​​related to Full, then d-q-event-selection-task, d-q-muon-selection-task and d-q-barrel-track-selection-task are automatically enabled
+  * `Automate` TODO ikili kombinasyonlarıda yaz, Filter içinde yaz, tinyleri de göz önünde bulunur
+* For selections run <2|3> and run<MC|Data>
+  * `Automate` if run 2 is selected, in JSON automatically processRun3 becomes false processRun2 becomes true, isRun2 becomes false
+  * `Automate` if run 3 is selected, in JSON automatically processRun3 becomes true processRun2 becomes false, isRun2 becomes true
+  * `Automate` if run 2 and MC selected, in JSON automatically isRun2MC becomes true, otherwise isRun2MC becomes false
+  * `Automate` if MC Selected, in JSON automatically isMC becomes true. If Data Selected, isMC becomes false
+* For Centrality Table Task, If collision system pp is selected or not selected but original JSON also has pp selected
+  * `Automate` if runData is selected, centrality-table is deleted from JSON, if MC is deleted, centrality-table is not deleted since it is not in JSON
+  * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They Will be removed in automation
+  * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
+  * TODO Beauty format and add other automated thing
+
+### Logger Things In IRunTableMaker
+
+* For TableMaker Process Function
+  * If the value related to the process function is not defined in the tablemakerMC, the message that it is not defined is printed on the screen. This situation is handled automatically in the CLI and no error is thrown 
+    * ```python
+      print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!") 
+      ```
+    * ```bash
+      # Example for MC Run3. commands are python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC 
+      [WARNING] processBarrelOnlyWithEventFilter is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!
+      ``` 
+* Other Loggers based on parameters, MC and Data
+  * If parameters in not valid for Orginal JSON, it will give a log message. You can check Avaible Loggers in below
+
+    * ```python 
+        # Parameter Checking 
+        if key in V0Parameters and extrargs.runMC:
+            print("[WARNING]","--"+key+" Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI")
+        if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI")
+        if key == 'est' and extrargs.runMC:
+            print("[WARNING]","--"+key+" Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI")
+        if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI")
+        if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        if key == 'cfgMCsignals' and extrargs.runData:
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI")
+        if key == 'isProcessEvTime' and (extrargs.run == '2' or extrargs.runMC):
+            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI") 
+
+        # TableMaker/TableMakerMC Task Checking
+        if extrargs.runMC:
+          try:
+        if config["table-maker-m-c"]:
+            pass
+        except:
+        print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+        sys.exit()
+        if extrargs.runData:
+        try:
+          if config["table-maker"]:
+            pass
+        except:
+          print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+          sys.exit()
+        ```
+  * For Centrality Table task
+    * TODO Add information
+      * ```python 
+          if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
+          # delete centrality-table configurations for data. If it's MC don't delete from JSON
+          # Firstly try for Data then if not data it gives warning message for MC
+            try:
+              del(config["centrality-table"])
+            except:
+                if extrargs.runMC:
+                    print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
+            # check for is TableMaker includes task related to Centrality?
+            processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
+            if len(processCentralityMatch) > 0:
+                print("[WARNING] Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
+                for paramValueTableMaker in processCentralityMatch:
+                    # Centrality process should be false
+                    if extrargs.runMC:
+                        try:       
+                            config["table-maker-m-c"][paramValueTableMaker] = 'false'
+                            #for key in paramValueTableMaker:
+                                # TODO make print to new process
+                        except:
+                            print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+                            sys.exit()
+                    if extrargs.runData:
+                        try:       
+                            config["table-maker"][paramValueTableMaker] = 'false'
+                            #for key in paramValueTableMaker:
+                                #print(key)
+                                # TODO make print to new process
+                        except:
+                            print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+                            sys.exit()  
+          ```
+
 
 ## Some Things You Should Be Careful For Using and Development
 

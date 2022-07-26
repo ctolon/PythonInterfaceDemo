@@ -409,37 +409,7 @@ if extrargs.runData:
 #if not taskNameInConfig in config:
   #print("ERROR: Task to be run not found in the configuration file!")
   #sys.exit()
-  
-"""
-if not tasksInDataRun3 in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
-if not tasksInDataRun2 in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
-if not tasksInMCRun3 in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
-if not tasksInMCRun2 in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
-"""
-
-# List for config JSON values
-configValueList=[]
-#print(configuredCommands)
-
-for key, value in config.items():
-    if type(value) == type(config):
-        for value,value2 in value.items():
-            configValueList += [value]  
-"""
-for key, value in configuredCommands.items():
-    #print(type(value))
-    if value != None and (not key in coreArgs):
-        print(key)
-"""
-                
+                  
 #############################
 # Start Interface Processes #
 #############################
@@ -463,12 +433,9 @@ for key, value in config.items():
                     
                     # For find all process parameters for TableMaker/TableMakerMC in Orginal JSON
                     for s in config[key].keys():
-                        #print(s)
                         if s in tablemakerProcessAllParameters:
                             tableMakerProcessSearch.add(s)
                             
-
-                    
                     # check extraargs is contain Full Barrel Muon or Bcs
                     fullSearch = [s for s in extrargs.process if "Full" in s]
                     barrelSearch = [s for s in extrargs.process if "Barrel" in s]
@@ -529,12 +496,7 @@ for key, value in config.items():
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
                     config[key][value] = value2
-             
-            # TODO Write transcation management for MC, MC don't includes all process functions.        
-            #if (value not in tablemakerProcessAllParameters) and extrargs.process:
-                    #print(value) 
-                        #print(value,"degil!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    
+                                 
             # Filter PP Selections        
             if value =='cfgPairCuts' and extrargs.cfgPairCuts:
                 if type(extrargs.cfgPairCuts) == type(clist):
@@ -544,19 +506,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.cfgBarrelSels
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                 config[key][value] = extrargs.cfgMuonSels
-                
-            """    
-            if value =='processFilterPP' and extrargs.FilterPP == 'full':
-                config[key][value] = "true"
-                config[key]["processFilterPPTiny"] = "false"
-            if value =='processFilterPPTiny' and extrargs.FilterPP == 'tiny':
-                config[key][value] = "true"
-                config[key]["processFilterPP"] = "false"    
-            if (value =='processFilterPPTiny' or value == 'processFilterPP') and extrargs.FilterPP == 'false':
-                config[key]["processFilterPPTiny"] = "false"
-                config[key]["processFilterPP"] = "false"     
-            """      
-                    
+                                    
             # Run 2/3 and MC/DATA Selections for automations            
             if extrargs.run == "2":
                 if value == 'isRun3':
@@ -685,10 +635,6 @@ for key, value in config.items():
                 config[key][value] = extrargs.processStandard
             if value == 'processCovariance' and extrargs.processCovariance:
                 config[key][value] = extrargs.processCovariance
-            # dq-barrel-track-selection-task
-            #if value =='processSelectionTiny' and extrargs.isBarrelSelectionTiny == "true":
-                #config[key][value] = extrargs.isBarrelSelectionTiny
-                #config[key]["processSelection"] = "false"
                 
             # dummy selection
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
