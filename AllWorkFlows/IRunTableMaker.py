@@ -483,15 +483,15 @@ for key, value in config.items():
                             
                     # Automatization for Activate or Disable d-q filter pp run3
                     if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
-                        config["d-q-filter-p-p-task"]["processFilterPP"] == "true"
-                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
+                        config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
+                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
                         if extrargs.isFilterPPTiny == 'true':
-                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
-                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true"
+                            config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
                                  
                     if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
-                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
-                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
+                            config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
