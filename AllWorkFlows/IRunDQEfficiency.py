@@ -111,6 +111,7 @@ def stringToList(string):
     return li
 
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
+writerPath = 'Config/writerConfiguration_dileptonMC.json'
     
 ###################
 # Main Parameters #
@@ -126,6 +127,7 @@ parser.add_argument('cfgFileName', metavar='text', default='config.json', help='
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
+parser.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
 
 # json output
@@ -335,12 +337,12 @@ for key, value in config.items():
                 
             # MC Signals For Dilepton Tracks
             if key == 'analysis-dilepton-track':
-                if value == 'cfgDileptonBarrelMCRecSignals' and extrargs.cfgDileptonBarrelMCRecSignals:
+                if value == 'cfgDileptonBarrelMCRecSignals' and extrargs.cfgBarrelDileptonMCRecSignals:
                     extrargs.cfgBarrelDileptonMCRecSignals = ",".join(extrargs.cfgBarrelDileptonMCRecSignals)
                     config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
-                if value == 'cfgBarrelMCGenSignals' and extrargs.cfgDileptonBarrelMCGenSignals:
+                if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
                     extrargs.cfgBarrelDileptonMCGenSignals = ",".join(extrargs.cfgBarrelDileptonMCGenSignals)
-                    config[key][value] = extrargs.cfgDileptonBarrelMCGenSignals
+                    config[key][value] = extrargs.cfgBarrelDileptonMCGenSignals
         
 # AOD and JSON Reader File Checker
                 
@@ -372,7 +374,7 @@ updatedConfigFileName = "tempConfig.json"
 
 """
 #Transaction Management for Json File Name
-"""
+
 if(extrargs.outputjson == None):       
     config_output_json = open(updatedConfigFileName,'w')
     config_output_json.write(json.dumps(config, indent= 2))
@@ -392,9 +394,10 @@ elif(extrargs.outputjson[-5:] != ".json"):
     config_output_json.write(json.dumps(config, indent= 2))
 else:
     print("Logical json input error. Report it!!!")
+"""
     
-#with open(updatedConfigFileName,'w') as outputFile:
-  #json.dump(config, outputFile ,indent=2)
+with open(updatedConfigFileName,'w') as outputFile:
+  json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run
 
@@ -403,7 +406,7 @@ else:
   #depsToRun[dep] = 1
 
       
-commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -aod-memory-rate-limit 1000000000" + " --aod-reader-json://" + extrargs.reader + " -b"
+commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + extrargs.writer
 
 #for dep in depsToRun.keys():
 #commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"

@@ -120,6 +120,7 @@ def stringToList(string):
     return li
 
 readerPath = 'Configs/readerConfiguration_reducedEvent.json'
+writerPath = 'Config/writerConfiguration_dileptons.json'
 
 eventMixingSkimmedList = ["processBarrelSkimmed", "processMuonSkimmed", "processBarrelMuonSkimmed" ]
 eventMixingSkimmedfalseCounter = 0 # We have 3 Skimmed process for event mixing. We count all false values for automate
@@ -138,6 +139,7 @@ parser.add_argument('cfgFileName', metavar='text', default='config.json', help='
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
+parser.add_argument('--writer', help="Add your AOD Reader JSON with path", action="store", default=writerPath, type=str)
 
 #json output
 parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
@@ -401,7 +403,7 @@ updatedConfigFileName = "tempConfig.json"
 
 """
 Transaction Management for Json File Name
-"""
+
 if(extrargs.outputjson == None):       
     config_output_json = open(updatedConfigFileName,'w')
     config_output_json.write(json.dumps(config, indent= 2))
@@ -422,8 +424,11 @@ elif(extrargs.outputjson[-5:] != ".json"):
 else:
     print("Logical json input error. Report it!!!")
        
+"""
+with open(updatedConfigFileName,'w') as outputFile:
+  json.dump(config, outputFile ,indent=2)
       
-commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000" + " --aod-reader-json://" + extrargs.reader + " -b"
+commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
 print("====================================================================================================================")
 print("Command to run:")

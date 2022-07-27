@@ -143,6 +143,9 @@ PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr",
 
 processDummySelections =["filter","event","barrel"]
 
+noDeleteNeedForCent = True
+processLeftAfterCentDelete = True
+
 
 
 #track_prop = ["Standart","Covariance"]
@@ -388,7 +391,7 @@ if len(sys.argv) < 3:
 
 # Load the configuration file provided as the first parameter
 config = {}
-cfgFileName = 'configTableMakerDataRun3.json'
+#cfgFileName = 'configTableMakerDataRun3.json'
 with open(extrargs.cfgFileName) as configFile:
   config = json.load(configFile)
 
@@ -740,7 +743,8 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # Firstly try for Data then if not data it gives warning message for MC
     noDeleteNeedForCent = False
     try:
-        del(config["centrality-table"])
+            print("[INFO] JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
+        #del(config["centrality-table"])
     except:
         if extrargs.runMC:
             print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
@@ -770,7 +774,6 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                         sys.exit()
     except:
         print("[WARNING] No process function provided so no need delete related to centrality-table dependency")
-        noDeleteNeedForCent = True
          
     # After deleting centrality we need to check if we have process function
     processLeftAfterCentDelete = True
@@ -821,10 +824,10 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfig.json"
+# TODO Fix and implemente it
+"""
+Transaction Management for Json File Name TODO : Fix and implemente it
 
-"""
-Transaction Management for Json File Name
-"""
 if(extrargs.outputjson == None):       
     config_output_json = open(updatedConfigFileName,'w')
     config_output_json.write(json.dumps(config, indent= 2))
@@ -844,9 +847,10 @@ elif(extrargs.outputjson[-5:] != ".json"):
     config_output_json.write(json.dumps(config, indent= 2))
 else:
     print("Logical json input error. Report it!!!")
+"""
     
-#with open(updatedConfigFileName,'w') as outputFile:
-  #json.dump(config, outputFile ,indent=2)
+with open(updatedConfigFileName,'w') as outputFile:
+  json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run  
 depsToRun = {}
