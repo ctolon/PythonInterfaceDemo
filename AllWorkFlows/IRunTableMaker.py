@@ -136,10 +136,14 @@ tablemakerProcessBCsParameters = ["processOnlyBCs"]
 centralityTableSelections = ["V0M", "Run2SPDtks","Run2SPDcls","Run2CL0","Run2CL1"]
 centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
 
+V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+
 PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 processDummySelections =["filter","event","barrel"]
+
+
 
 #track_prop = ["Standart","Covariance"]
 
@@ -682,17 +686,24 @@ for key, value in config.items():
 # set to List convert for tableMakerProcessSearch
 tableMakerProcessSearch = list(tableMakerProcessSearch)
 tempListProcess = []
+validProcessListAfterDataMCFilter = []
 for i in configuredCommands["process"]:
     tempListProcess.append(i)
 
 if extrargs.process:
     for j in tempListProcess:
         if j not in tableMakerProcessSearch:
-            print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!")
+            if extrargs.runData:
+                print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker regarding to Orginal JSON Config File!!! It will fix by CLI")
+            if extrargs.runMC:
+                print("[WARNING]", j ,"is Not valid Configurable Option for TableMakerMC regarding to Orginal JSON Config File!!! It will fix by CLI")
+        if j in tableMakerProcessSearch:
+            validProcessListAfterDataMCFilter.append(j)
+print("[INFO] Valid processes are after MC/Data Filter: ",validProcessListAfterDataMCFilter)
+
+            
                 
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
-V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
-
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
@@ -752,6 +763,34 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 except:
                     print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                     sys.exit()
+         
+    # After deleting centrality we need to check if we have process function
+    processLeftAfterCentDelete = True
+    leftProcessAfterDeleteCent =[] 
+    if extrargs.runData:
+        for deletedParamTableMaker in config["table-maker"]:
+            if "process" not in deletedParamTableMaker: 
+                continue
+            elif config["table-maker"].get(deletedParamTableMaker) == 'true':
+                processLeftAfterCentDelete = True
+                leftProcessAfterDeleteCent.append(deletedParamTableMaker)
+
+    
+    if extrargs.runMC:
+        for deletedParamTableMaker in config["table-maker-m-c"]:
+            if "process" not in deletedParamTableMaker: 
+                continue
+            elif config["table-maker-m-c"].get(deletedParamTableMaker) == 'true':
+                processLeftAfterCentDelete = True
+                leftProcessAfterDeleteCent.append(deletedParamTableMaker)
+
+# Logger Message
+print("[INFO]","After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: ",leftProcessAfterDeleteCent)
+ 
+if processLeftAfterCentDelete == False:
+    print("[ERROR] After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
+    sys.exit()       
+ 
                     
 # AOD File checker TODO Enable it for checker
 
@@ -897,10 +936,14 @@ print("=========================================================================
 # Listing Added Commands
 print("Args provided configurations List")
 print("====================================================================================================================")
+forgetParams = []
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
         print("--"+key,":", value)
+        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
+            forgetParams.append(key)
+print("[WARNING] Your forget assign a value to for this parameters: ", forgetParams)
 
 os.system(commandToRun)

@@ -136,10 +136,14 @@ tablemakerProcessBCsParameters = ["processOnlyBCs"]
 centralityTableSelections = ["V0M", "Run2SPDtks","Run2SPDcls","Run2CL0","Run2CL1"]
 centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
 
+V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+
 PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 processDummySelections =["filter","event","barrel"]
+
+
 
 #track_prop = ["Standart","Covariance"]
 
@@ -264,6 +268,37 @@ extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
 
+#####################################################
+# Selection Parameters for run number and data type #
+#####################################################
+# Selection Options for Run<Data|MC> Run<2|3> TODO : Integrate them over extrags checks
+run2Selected = False
+run3Selected = False
+MCSelected = False
+dataSelected = False
+
+run2MCSelected = False
+run2DataSelected = False
+run3MCSelected = False
+run3DataSelected = False
+
+if extrargs.run == '2':
+    run2Selected = True
+if extrargs.run == 3:
+    run3Selected = True
+if extrargs.runMC:
+    MCSelected = True
+if extrargs.runData:
+    dataSelected = True
+
+if extrargs.run == '2' and extrargs.runMC:
+    run2MCSelected = True
+if extrargs.run == '2' and extrargs.runData:
+    run2DataSelected = True
+if extrargs.run == '3' and extrargs.runMC:
+    run3MCSelected = True
+if extrargs.run == '3' and extrargs.runData:
+    run3DataSelected = True
 
 
 ######################
@@ -483,15 +518,15 @@ for key, value in config.items():
                             
                     # Automatization for Activate or Disable d-q filter pp run3
                     if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
-                        config["d-q-filter-p-p-task"]["processFilterPP"] == "true"
-                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
+                        config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
+                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
                         if extrargs.isFilterPPTiny == 'true':
-                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
-                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true"
+                            config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
                                  
                     if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
-                            config["d-q-filter-p-p-task"]["processFilterPP"] == "false"
-                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false"
+                            config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
@@ -651,17 +686,24 @@ for key, value in config.items():
 # set to List convert for tableMakerProcessSearch
 tableMakerProcessSearch = list(tableMakerProcessSearch)
 tempListProcess = []
+validProcessListAfterDataMCFilter = []
 for i in configuredCommands["process"]:
     tempListProcess.append(i)
 
 if extrargs.process:
     for j in tempListProcess:
         if j not in tableMakerProcessSearch:
-            print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!")
+            if extrargs.runData:
+                print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker regarding to Orginal JSON Config File!!! It will fix by CLI")
+            if extrargs.runMC:
+                print("[WARNING]", j ,"is Not valid Configurable Option for TableMakerMC regarding to Orginal JSON Config File!!! It will fix by CLI")
+        if j in tableMakerProcessSearch:
+            validProcessListAfterDataMCFilter.append(j)
+print("[INFO] Valid processes are after MC/Data Filter: ",validProcessListAfterDataMCFilter)
+
+            
                 
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
-V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
-
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
@@ -721,6 +763,45 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 except:
                     print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                     sys.exit()
+         
+    # After deleting centrality we need to check if we have process function
+    processLeftAfterCentDelete = True
+    leftProcessAfterDeleteCent =[] 
+    if extrargs.runData:
+        for deletedParamTableMaker in config["table-maker"]:
+            if "process" not in deletedParamTableMaker: 
+                continue
+            elif config["table-maker"].get(deletedParamTableMaker) == 'true':
+                processLeftAfterCentDelete = True
+                leftProcessAfterDeleteCent.append(deletedParamTableMaker)
+
+    
+    if extrargs.runMC:
+        for deletedParamTableMaker in config["table-maker-m-c"]:
+            if "process" not in deletedParamTableMaker: 
+                continue
+            elif config["table-maker-m-c"].get(deletedParamTableMaker) == 'true':
+                processLeftAfterCentDelete = True
+                leftProcessAfterDeleteCent.append(deletedParamTableMaker)
+
+# Logger Message
+print("[INFO]","After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: ",leftProcessAfterDeleteCent)
+ 
+if processLeftAfterCentDelete == False:
+    print("[ERROR] After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
+    sys.exit()       
+ 
+                    
+# AOD File checker TODO Enable it for checker
+
+if extrargs.aod != None:
+    if os.path.isfile(extrargs.aod) == False:
+        print("[ERROR]",extrargs.aod,"File not found in path!!!")
+        sys.exit()
+elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+        sys.exit()
+
 
 
 ###########################
@@ -855,10 +936,14 @@ print("=========================================================================
 # Listing Added Commands
 print("Args provided configurations List")
 print("====================================================================================================================")
+forgetParams = []
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
         print("--"+key,":", value)
+        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
+            forgetParams.append(key)
+print("[WARNING] Your forget assign a value to for this parameters: ", forgetParams)
 
 os.system(commandToRun)
