@@ -66,31 +66,11 @@ Main File | Data Model | Description
 [`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | for data
 [`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | for MC
 
-## Test Python Scripts
-
-xxxDemo.py python scripts only overrides JSON level 2 values. They are creating for QA and user acceptane tests before Implementation to O2DQWorkflows. With these prepared scripts, it enables to control whether the configuration values in JSON are manipulated correctly without running O2. It does not need O2 or analysis to run. It just override values in JSON files. They are contains only the Python CLI part.
-
-* Contains test python scripts for only Interface
-[`TestInterface`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TestInterface)
-
-* Test Script for Interfaced IRunTableMaker.py
-[`IRunTableMakerDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IRunTableMakerDemo.py).
-* Test Script for Interfaced IRunTableReader.py 
-[`IRunTableReaderDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IRunTableReaderDemo.py).
-* Test Script for Interfaced IRunDQEfficiency.py  
-[`IRunDQEfficiencyDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IRunDQEfficiencyDemo.py).
-* Test script for Interfaced IRunFilterPP.py
-[`IRunFilterPPDemo.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/TestInterface/IFilterPPDemo.py).
-* Config and database files are also added in this folder.
-
 ## Repository Organization and Development Strategy
 
 While developing, python CLIs are prepared by creating python scripts with enough functions to override configuration values in JSON only (independent of O2). Then, O2DQWorkflow files are prepared that do not contain python CLI and can run the analysis with O2, then they are integrated into the previously prepared Python CLI O2DQWorkflows.
 
 TODO: Add schema
-
-* Contains test python scripts for only Interface.After the tests are done here, new developments should be implemented in level 2 folders where single tasks are located.
-[`TestInterface`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TestInterface)
 
 * For O2DQWorkflow, a folder has been created for the 2nd stage tests containing python scripts to run inside O2 for each task. If the tests in the TestInteface folder pass, new developments are transferred here, where analysis tests are performed in O2.
 [`TableMaker`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableMaker)
@@ -101,7 +81,6 @@ TODO: Add schema
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
 
-* Old Versions should be versioned and can found in [`OldVersions`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/OldVersions/v1)
 
 ## Features for IRunTableMaker
 
@@ -419,6 +398,7 @@ Arg | Ref Type| Desc | Default | Real Type
 * `Jul 24, 2022` In the CLI written for tableMaker, some options were refactored and automated. Version 2 released with minimal testing.
 * `Jul 25, 2022` A lot of tests have been done for the CLI written for tableMaker and the necessary refactor and automation tests have been done. CLI development for TableMaker is fully completed and Integrated to python script. Writing User Manual Documentation in progress.
 * `Jul 26, 2022` Readme completed for `IRunTableMaker.py` and TableReader DQEfficiency workflows CLI based v1 released. processEvTime transaction management refactoring, for pp collisionsi centrality-table o2 task and JSON configs deleting automatized. New checker for Run/MC added.
+* `Jul 27, 2022` Fixed a bug for filterpp tiny selection in Tablemaker, AOD File Checker added to TableMaker, readme updated (instructions added), New Critical Transaction Managements Added, For TableMaker process Function, Workflow Decision Tree Added   
 
 
 
