@@ -53,8 +53,8 @@ MCSignalDatabaseJSON: JSON
 MCSignalDatabase: list
     MCSignalDatabase is a List for take MC Signals from JSON database
 """
-json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
-json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
+json_cut_database = json.load(open('AnalysisCutDatabase.json'))
+json_mcsignal_database = json.load(open('MCSignalDatabase.json'))
 cut_database = []
 mcsignal_database =[]
 
@@ -106,14 +106,18 @@ def binary_selector(v):
     else:
         raise argparse.ArgumentTypeError('Misstyped value!')
     
+def stringToList(string):
+    li = list(string.split(" "))
+    return li
+
+readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
+    
 ###################
 # Main Parameters #
 ###################
     
 parser = argparse.ArgumentParser(description='Arguments to pass')
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
-#parser.add_argument('-runData', help="Run over data", action="store_true")
-#parser.add_argument('-runMC', help="Run over MC", action="store_true")
 
 ########################
 # Interface Parameters #
@@ -121,82 +125,43 @@ parser.add_argument('cfgFileName', metavar='text', default='config.json', help='
 
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
 
-#json output
+
+# json output
 parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
-# analysis-event-selection
-## For Only Data
-parser.add_argument('--cfgMixingVars', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
-## For Both MC And Data
-parser.add_argument('--cfgEventCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str)
-parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# Skimmed process Dummy Selections for analysis
+# todo: add skimmed for same event and dilepton
+parser.add_argument('--analysisSkimmed', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','dimuonMuon'], nargs='*', type=str)
+parser.add_argument('--analysisDummy', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 
-# analysis-muon-selection
-## For Both MC And Data
-parser.add_argument('--cfgMuonCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-## For MC
-parser.add_argument('--cfgMuonMCSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-## For Both MC And Data
-#parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str)
-#parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# cfg for QA
+parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str.lower)
+
+# analysis-event-selection
+parser.add_argument('--cfgEventCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
 
 # analysis-track-selection
-## For Both MC And Data
-parser.add_argument('--cfgTrackCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-## For MC
-parser.add_argument('--cfgTrackMCSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-## For Both MC And Data
-#parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str)
-#parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+parser.add_argument('--cfgTrackCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackMCSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
 
-# analysis-event-mixing ONLY FOR DATA
-"""
-#parser.add_argument('--cfgTrackCuts', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
-#parser.add_argument('--cfgMuonCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--processBarrelSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processMuonSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processBarrelMuonSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-"""
+# analysis-muon-selection
+parser.add_argument('--cfgMuonCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonMCSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
 
-# analysis-same-event-pairing TODO: CCDB parts Can be added. cfgFlatTables can added.
-## For Both MC And Data
-#parser.add_argument('--cfgTrackCuts', help="Configure Cuts with commas", choices=cut_database, nargs='*', action="store", type=str)
-#parser.add_argument('--cfgMuonCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-## FOR MC
-parser.add_argument('--cfgBarrelMCRecSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelMCGenSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-## For Both MC And Data
-parser.add_argument('--processJpsiToEESkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processJpsiToMuMuSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processJpsiToMuMuVertexingSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-## For Data
-"""
-parser.add_argument('--processElectronMuonSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-parser.add_argument('--processAllSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-"""
-## For Both MC And Data
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# analysis-same-event-pairing
+parser.add_argument('--processSameEventPairing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], default='true', type=str.lower)
+parser.add_argument('--isVertexing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
-# analysis-dilepton-hadron ONLY FOR DATA
+parser.add_argument('--cfgBarrelMCRecSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCGenSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
 
-parser.add_argument('--cfgLeptonCuts', help="Configure Cuts with commas", choices=cut_database,nargs='*', action="store", type=str)
-"""
-#parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-"""
 
-# analysis-dilepton-track ONLY FOR MC
-# TODO: cfgLeptoncuts and cfgFillCandidateTable can be added.
-#parser.add_argument('--cfgBarrelMCRecSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-#parser.add_argument('--cfgBarrelMCGenSignals', help="Configure Cuts with commas", choices=mcsignal_database,nargs='*', action="store", type=str)
-#parser.add_argument('--processSkimmed', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
+# analysis-dilepton-track ONLY FOR MC TODO: cfgLeptoncuts and cfgFillCandidateTable can be added.
+
+parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
 
 """Activate For Autocomplete. See to Libraries for Info"""
 #argcomplete.autocomplete(parser)
@@ -220,39 +185,8 @@ config = {}
 with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
 
-#sys.argv[2] = "runMC"
-
-"""
-# Check whether we run over data or MC
-if not ((sys.argv[2] == "runMC") or (sys.argv[2] == "runData")):
-  print("ERROR: You have to specify either runMC or runData !")
-  sys.exit()
-"""
-
-"""
-runOverMC = False
-if sys.argv[2] == "runMC":
-  runOverMC = True
-"""
-
-runOverMC = True
-
-"""
-# Get all the user required modifications to the configuration file
-for count in range(3, len(sys.argv)):
-  param = sys.argv[count].split(":")
-  if len(param) != 3:
-    print("ERROR: Wrong parameter syntax: ", param)
-    sys.exit()
-  config[param[0]][param[1]] = param[2]
-"""
-
-
-#taskNameInConfig = "d-q-filter-p-p-task"
 taskNameInCommandLine = "o2-analysis-dq-efficiency"
-#if runOverMC == True:
-  #taskNameInConfig = "d-q-filter-p-p-task"
-  #taskNameInCommandLine = "o2-analysis-dq-efficiency"
+
 """
 if not taskNameInConfig in config:
   print("ERROR: Task to be run not found in the configuration file!")
@@ -264,42 +198,91 @@ if not taskNameInConfig in config:
 #############################
 
 for key, value in config.items():
-    #print("key List = ", key)
-    #print("value List = ", value)
-    #print(type(value))
     if type(value) == type(config):
-        #print(value, type(value))
         for value, value2 in value.items():
-            #print(value)
+
             #aod
             if value =='aod-file' and extrargs.aod:
-                config[key][value] = extrargs.aod                
-                # analysis-event-selection
-            if value == 'cfgMixingVars' and extrargs.cfgMixingVars:
-                extrargs.cfgEventCuts = ",".join(extrargs.cfgMixingVars)
-                config[key][value] = extrargs.cfgMixingVars
+                config[key][value] = extrargs.aod
+            # reader    
+            if value =='aod-reader-json' and extrargs.reader:
+                config[key][value] = extrargs.reader
+                
+            # analysis-skimmed-selections
+            if value =='processSkimmed' and extrargs.analysisSkimmed:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'analysisSkimmed': #  Only Select key for skimmed
+                            
+                            if key == 'analysis-event-selection':
+                                if 'event' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'event' not in valueCfg:
+                                    config[key][value] = 'false' 
+                                   
+                            if key == 'analysis-track-selection':                      
+                                if 'track' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'track' not in valueCfg:
+                                    config[key][value] = 'false'  
+                                                      
+                            if key == 'analysis-muon-selection':
+                                if 'muon' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'muon' not in valueCfg:
+                                    config[key][value] = 'false'
+                                    
+                            if key == 'analysis-dilepton-track':
+                                if 'dimuonMuon' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'dimuonMuon' not in valueCfg:
+                                    config[key][value] = 'false' 
+                                            
+            # analysis-dummy-selections
+            if value =='processDummy' and extrargs.analysisDummy:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'analysisDummy': #  Only Select key for dummies
+                        
+                            if key == 'analysis-event-selection':
+                                if 'event' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'event' not in valueCfg:
+                                    config[key][value] = 'false' 
+                                    
+                            if key == 'analysis-track-selection':                        
+                                if 'track' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'track' not in valueCfg:
+                                    config[key][value] = 'false' 
+                                    
+                            if key == 'analysis-muon-selection':
+                                if 'muon' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'muon' not in valueCfg:
+                                    config[key][value] = 'false'
+                                    
+                            if key == 'analysis-same-event-pairing':
+                                if 'sameEventPairing' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'sameEventPairing' not in valueCfg:
+                                    config[key][value] = 'false'  
+
+                            if key == 'analysis-dilepton-track':
+                                if 'dilepton' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'dilepton' not in valueCfg:
+                                    config[key][value] = 'false' 
+                 
+            # QA selections  
+            if value =='cfgQA' and extrargs.cfgQA:
+                config[key][value] = extrargs.cfgQA
+                              
+            # analysis-event-selection
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 extrargs.cfgEventCuts = ",".join(extrargs.cfgEventCuts)
                 config[key][value] = extrargs.cfgEventCuts
-            if value =='cfgQA' and extrargs.cfgQA:
-                config[key][value] = extrargs.cfgQA
-            if value == 'processSkimmed' and extrargs.processSkimmed:
-                config[key][value] = extrargs.processSkimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
-            # analysis-muon-selection
-            if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
-                config[key][value] = extrargs.cfgMuonCuts
-            if value == 'cfgMuonMCSignals' and extrargs.cfgMuonMCSignals:
-                extrargs.cfgMuonMCSignals = ",".join(extrargs.cfgMuonMCSignals)
-                config[key][value] = extrargs.cfgMuonMCSignals
-            if value == 'cfgQA' and extrargs.cfgQA:
-                config[key][value] = extrargs.cfgQA
-            if value =='processSkimmed' and extrargs.processSkimmed:
-                config[key][value] = extrargs.processSkimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
+
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
                 extrargs.cfgTrackCuts = ",".join(extrargs.cfgTrackCuts)
@@ -307,67 +290,77 @@ for key, value in config.items():
             if value == 'cfgTrackMCSignals' and extrargs.cfgTrackMCSignals:
                 extrargs.cfgTrackMCSignals = ",".join(extrargs.cfgTrackMCSignals)
                 config[key][value] = extrargs.cfgTrackMCSignals
-            if value == 'cfgQA' and extrargs.cfgQA:
-                config[key][value] = extrargs.cfgQA
-            if value =='processSkimmed' and extrargs.processSkimmed:
-                config[key][value] = extrargs.processSkimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
-            # analysis-event-mixing ONLY FOR DATA
-            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:                   
-                extrargs.cfgTrackCuts = ",".join(extrargs.cfgTrackCuts)
-                config[key][value] = extrargs.cfgTrackCuts
+                
+            # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
                 config[key][value] = extrargs.cfgMuonCuts
-            if value == 'processBarrelSkimmed' and extrargs.processBarrelSkimmed:
-                config[key][value] = extrargs.processBarrelSkimmed
-            if value == 'processMuonSkimmed' and extrargs.processMuonSkimmed:
-                config[key][value] = extrargs.processMuonSkimmed
-            if value == 'processBarrelMuonSkimmed' and extrargs.processBarrelMuonSkimmed:
-                config[key][value] = extrargs.processBarrelMuonSkimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
-            # analysis-same-event-pairing TODO: CCDB parts Can be added
-            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:                   
-                extrargs.cfgTrackCuts = ",".join(extrargs.cfgTrackCuts)
-            if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
-            if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
-                extrargs.cfgBarrelMCRecSignals = ",".join(extrargs.cfgBarrelMCRecSignals)
-                config[key][value] = extrargs.cfgBarrelMCRecSignals
-            if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
-                extrargs.cfgBarrelMCGenSignals = ",".join(extrargs.cfgBarrelMCGenSignals)
-                config[key][value] = extrargs.cfgBarrelMCGenSignals
-            if value =='processJpsiToEESkimmed' and extrargs.processJpsiToEESkimmed:
-                config[key][value] = extrargs.processJpsiToEESkimmed
-            if value == 'processJpsiToMuMuSkimmed' and extrargs.processJpsiToMuMuSkimmed:
-                config[key][value] = extrargs.processJpsiToMuMuSkimmed
-            if value == 'processJpsiToMuMuVertexingSkimmed' and extrargs.processJpsiToMuMuVertexingSkimmed:
-                config[key][value] = extrargs.processJpsiToMuMuVertexingSkimmed
-            if value =='processElectronMuonSkimmed' and extrargs.processElectronMuonSkimmed:
-                config[key][value] = extrargs.processElectronMuonSkimmed
-            if value == 'processAllSkimmed' and extrargs.processAllSkimmed:
-                config[key][value] = extrargs.processAllSkimmed
-            # analysis-dilepton-hadron ONLY FOR DATA
-            if value == 'cfgLeptonCuts' and extrargs.cfgLeptonCuts:
-                extrargs.cfgLeptonCuts = ",".join(extrargs.cfgLeptonCuts)
-                config[key][value] = extrargs.cfgLeptonCuts
-            if value == 'processSkimmed' and extrargs.processSkimmed:
-                config[key][value] = extrargs.Skimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
-            # analysis-dilepton-track ONLY FOR MC
-            if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
-                extrargs.cfgBarrelMCRecSignals = ",".join(extrargs.cfgBarrelMCRecSignals)
-                config[key][value] = extrargs.cfgBarrelMCRecSignals
-            if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
-                extrargs.cfgBarrelMCGenSignals = ",".join(extrargs.cfgBarrelMCGenSignals)
-                config[key][value] = extrargs.cfgBarrelMCGenSignals
-            if value == 'processSkimmed' and extrargs.processSkimmed:
-                config[key][value] = extrargs.Skimmed
-            if value == 'processDummy' and extrargs.processDummy:
-                config[key][value] = extrargs.processDummy
+            if value == 'cfgMuonMCSignals' and extrargs.cfgMuonMCSignals:
+                extrargs.cfgMuonMCSignals = ",".join(extrargs.cfgMuonMCSignals)
+                config[key][value] = extrargs.cfgMuonMCSignals
+            
+            # analysis-same-event-pairing
+            if extrargs.processSameEventPairing == 'true': # Automate activated
+                
+                # Track automate
+                if config["analysis-track-selection"]["processSkimmed"] == 'true':
+                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'true'  
+                                
+                if config["analysis-track-selection"]["processSkimmed"] == 'false':
+                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'false'    
+                    
+                # Muon automate     
+                if config["analysis-muon-selection"]["processSkimmed"] == 'true':
+                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'true'
+                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                    if extrargs.isVertexing == 'true':
+                        config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
+                        config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'true'
+                                
+                if config["analysis-muon-selection"]["processSkimmed"] == 'false':
+                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
+                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                
+            if extrargs.processSameEventPairing == 'false': # Automate disabled
+                continue
+
+            # MC Signals For Same Event Pairing
+            if key == 'analysis-same-event-pairing':
+                if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
+                    extrargs.cfgBarrelMCRecSignals = ",".join(extrargs.cfgBarrelMCRecSignals)
+                    config[key][value] = extrargs.cfgBarrelMCRecSignals
+                if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
+                    extrargs.cfgBarrelMCGenSignals = ",".join(extrargs.cfgBarrelMCGenSignals)
+                    config[key][value] = extrargs.cfgBarrelMCGenSignals
+                
+            # MC Signals For Dilepton Tracks
+            if key == 'analysis-dilepton-track':
+                if value == 'cfgDileptonBarrelMCRecSignals' and extrargs.cfgDileptonBarrelMCRecSignals:
+                    extrargs.cfgBarrelDileptonMCRecSignals = ",".join(extrargs.cfgBarrelDileptonMCRecSignals)
+                    config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
+                if value == 'cfgBarrelMCGenSignals' and extrargs.cfgDileptonBarrelMCGenSignals:
+                    extrargs.cfgBarrelDileptonMCGenSignals = ",".join(extrargs.cfgBarrelDileptonMCGenSignals)
+                    config[key][value] = extrargs.cfgDileptonBarrelMCGenSignals
+        
+# AOD and JSON Reader File Checker
+                
+if extrargs.aod != None:
+    if os.path.isfile(extrargs.aod) == False:
+        print("[ERROR]",extrargs.aod,"File not found in path!!!")
+        sys.exit()
+elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+        sys.exit()
+        
+if extrargs.reader != None:
+    if os.path.isfile(extrargs.reader) == False:
+        print("[ERROR]",extrargs.reader,"File not found in path!!!")
+        sys.exit()
+elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == False:
+        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-reader-json"],"File not found in path!!!")
+        sys.exit()
+            
+            
                 
 ###########################
 # End Interface Processes #
@@ -378,7 +371,7 @@ for key, value in config.items():
 updatedConfigFileName = "tempConfig.json"
 
 """
-Transaction Management for Json File Name
+#Transaction Management for Json File Name
 """
 if(extrargs.outputjson == None):       
     config_output_json = open(updatedConfigFileName,'w')
@@ -404,20 +397,37 @@ else:
   #json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run
-"""
-depsToRun = {}
-for dep in commonDeps:
-  depsToRun[dep] = 1
-"""
+
+#depsToRun = {}
+#for dep in commonDeps:
+  #depsToRun[dep] = 1
+
       
-commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -aod-memory-rate-limit 1000000000" + " --aod-reader-json Configs/readerConfiguration_reducedEventMC.json -b"
-"""
-for dep in depsToRun.keys():
-  commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
-"""
+commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -aod-memory-rate-limit 1000000000" + " --aod-reader-json://" + extrargs.reader + " -b"
+
+#for dep in depsToRun.keys():
+#commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
+
 
 print("====================================================================================================================")
 print("Command to run:")
 print(commandToRun)
 print("====================================================================================================================")
+os.system(commandToRun)
+
+# Listing Added Commands
+
+print("Args provided configurations List")
+print("====================================================================================================================")
+forgetParams = []
+for key,value in configuredCommands.items():
+    if(value != None):
+        if type(value) == type(clist):
+            listToString(value)
+        print("--"+key,":", value)
+        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
+            forgetParams.append(key)
+print("[WARNING] Your forget assign a value to for this parameters: ", forgetParams)
+
+
 os.system(commandToRun)

@@ -36,17 +36,14 @@
         "cfgMuonCuts": "muonQualityCuts",
         "cfgBarrelMCRecSignals": "eeFromJpsi,eeFromLMeeLF,dielectron",
         "cfgBarrelMCGenSignals": "Jpsi",
-        "cfgFlatTables" : "false",
         "processJpsiToEESkimmed": "true",
         "processJpsiToMuMuSkimmed": "false",
         "processJpsiToMuMuVertexingSkimmed": "false",
         "processDummy": "false"
     },
     "analysis-dilepton-track": {
-        "cfgLeptonCuts": "jpsiO2MCdebugCuts2",
         "cfgBarrelMCRecSignals": "mumuFromJpsiFromBc,mumumuFromBc",
         "cfgBarrelMCGenSignals": "Jpsi",
-        "cfgFillCandidateTable" : "false",
         "processDimuonMuonSkimmed": "false",
         "processDummy": "true"
     },

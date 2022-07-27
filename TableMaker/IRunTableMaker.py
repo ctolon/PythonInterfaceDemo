@@ -54,8 +54,8 @@ MCSignalDatabaseJSON: JSON
 MCSignalDatabase: list
     MCSignalDatabase is a List for take MC Signals from JSON database
 """
-analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
-MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
+analysisCutDatabaseJSON = json.load(open('AnalysisCutDatabase.json'))
+MCSignalDatabaseJSON = json.load(open('MCSignalDatabase.json'))
 analysisCutDatabase = []
 MCSignalDatabase =[]
 
