@@ -687,19 +687,22 @@ for key, value in config.items():
 tableMakerProcessSearch = list(tableMakerProcessSearch)
 tempListProcess = []
 validProcessListAfterDataMCFilter = []
-for i in configuredCommands["process"]:
-    tempListProcess.append(i)
+try:
+    for i in configuredCommands["process"]:
+        tempListProcess.append(i)
 
-if extrargs.process:
-    for j in tempListProcess:
-        if j not in tableMakerProcessSearch:
-            if extrargs.runData:
-                print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker regarding to Orginal JSON Config File!!! It will fix by CLI")
-            if extrargs.runMC:
-                print("[WARNING]", j ,"is Not valid Configurable Option for TableMakerMC regarding to Orginal JSON Config File!!! It will fix by CLI")
-        if j in tableMakerProcessSearch:
-            validProcessListAfterDataMCFilter.append(j)
-print("[INFO] Valid processes are after MC/Data Filter: ",validProcessListAfterDataMCFilter)
+    if extrargs.process:
+        for j in tempListProcess:
+            if j not in tableMakerProcessSearch:
+                if extrargs.runData:
+                    print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker regarding to Orginal JSON Config File!!! It will fix by CLI")
+                if extrargs.runMC:
+                    print("[WARNING]", j ,"is Not valid Configurable Option for TableMakerMC regarding to Orginal JSON Config File!!! It will fix by CLI")
+            if j in tableMakerProcessSearch:
+                validProcessListAfterDataMCFilter.append(j)
+    print("[INFO] Valid processes are after MC/Data Filter: ",validProcessListAfterDataMCFilter)
+except:
+    print("[WARNING] No process function provided in args, CLI Will not Check process validation for tableMaker/tableMakerMC process")
 
             
                 
@@ -735,34 +738,39 @@ for key,value in configuredCommands.items():
 if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # delete centrality-table configurations for data. If it's MC don't delete from JSON
     # Firstly try for Data then if not data it gives warning message for MC
+    noDeleteNeedForCent = False
     try:
         del(config["centrality-table"])
     except:
         if extrargs.runMC:
             print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
     # check for is TableMaker includes task related to Centrality?
-    processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
-    if len(processCentralityMatch) > 0:
-        print("[WARNING] Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
-        for paramValueTableMaker in processCentralityMatch:
-            # Centrality process should be false
-            if extrargs.runMC:
-                try:       
-                    config["table-maker-m-c"][paramValueTableMaker] = 'false'
-                    #for key in paramValueTableMaker:
-                        # TODO make print to new process
-                except:
-                    print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
-                    sys.exit()
-            if extrargs.runData:
-                try:       
-                    config["table-maker"][paramValueTableMaker] = 'false'
-                    #for key in paramValueTableMaker:
-                        #print(key)
-                        # TODO make print to new process
-                except:
-                    print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
-                    sys.exit()
+    try:
+        processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
+        if len(processCentralityMatch) > 0:
+            print("[WARNING] Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
+            for paramValueTableMaker in processCentralityMatch:
+                # Centrality process should be false
+                if extrargs.runMC:
+                    try:       
+                        config["table-maker-m-c"][paramValueTableMaker] = 'false'
+                        #for key in paramValueTableMaker:
+                            # TODO make print to new process
+                    except:
+                        print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+                        sys.exit()
+                if extrargs.runData:
+                    try:       
+                        config["table-maker"][paramValueTableMaker] = 'false'
+                        #for key in paramValueTableMaker:
+                            #print(key)
+                            # TODO make print to new process
+                    except:
+                        print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+                        sys.exit()
+    except:
+        print("[WARNING] No process function provided so no need delete related to centrality-table dependency")
+        noDeleteNeedForCent = True
          
     # After deleting centrality we need to check if we have process function
     processLeftAfterCentDelete = True
@@ -785,9 +793,10 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 leftProcessAfterDeleteCent.append(deletedParamTableMaker)
 
 # Logger Message
-print("[INFO]","After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: ",leftProcessAfterDeleteCent)
+if noDeleteNeedForCent == False: 
+    print("[INFO]","After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: ",leftProcessAfterDeleteCent)
  
-if processLeftAfterCentDelete == False:
+if processLeftAfterCentDelete == False and noDeleteNeedForCent == False:
     print("[ERROR] After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
     sys.exit()       
  
