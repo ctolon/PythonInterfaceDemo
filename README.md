@@ -22,7 +22,7 @@ Cevat Batuhan Tolon
 
 MC signals, analysis cuts and histograms, which are configuration variables for analysis are kept in JSON files. This is for transaction management and autocompletion suggestion in Python CLI.
 
-* Database Contains configuration variables for MCSignals, Analysis Cuts and Histograms based on O2Physics
+* Database Contains configuration variables for MCSignals, Analysis Cuts, Histograms and Event Mixing Selections based on O2Physics PWG-DQ.
 [`Database`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows/Database)
 
 * JSON Database List in Table
@@ -32,6 +32,7 @@ Main File | Based on O2Physics | Description
 [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | [`CutsLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h) | Analysis Cuts in DQ
 [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | [`MCSignalLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h) | MC Signals in DQ
 `HistogramDatabase.json` | [`HistogramManager.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramManager.h) | Histograms in DQ
+[`MixingDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MixingDatabase.json) | [`MixingLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h) | Histograms in DQ
 
 ## Config Files
 
@@ -80,6 +81,56 @@ TODO: Add schema
 
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
+
+## argcomplete - Bash tab completion for argparse
+
+Argcomplete provides easy, extensible command line tab completion of arguments for your Python script.
+
+It makes two assumptions:
+
+    You’re using bash as your shell (limited support for zsh, fish, and tcsh is available)
+
+    You’re using argparse to manage your command line arguments/options
+
+Argcomplete is particularly useful if your program has lots of options or subparsers, and if your program can dynamically suggest completions for your argument/option values (for example, if the user is browsing resources over the network).
+
+Owner of Orginal Code: `Andrey Kislyuk` 
+Licensed under the terms of the Apache License, Version 2.0.
+
+Orginal Documentation:
+
+https://kislyuk.github.io/argcomplete/index.html#
+
+## Instalation Guide for argcomplete
+
+### Local Instalation (Not Need For O2)
+
+For Local İnstallation (If you have virtual env, disable it first)
+
+`pip install argcomplete`
+`activate-global-python-argcomplete`
+
+### O2 Installation
+
+For in O2
+
+Firstly, activate your Alienv e.g.
+
+`alienv enter O2Physics/latest-master-o2`
+
+Then install the package:
+
+`pip install argcomplete`
+
+And go your Folder which includes your run scripts with cd commands (e.g.):
+
+`cd ~/allWorkFlows`
+
+And then, source your argcomplete script for autocomplete:
+
+`source argcomplete.sh`
+
+IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!!
 
 
 ## Features for IRunTableMaker
@@ -204,7 +255,34 @@ TODO: Add schema
                             print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                             sys.exit()  
           ```
+## Features for IRunTableReader
 
+TODO Add Details
+
+### Automated Things In IRunTableMaker
+
+
+TODO Add Details
+
+### Logger Things In IRunTableMaker
+
+
+TODO Add Details
+
+## Features for IRunDQEfficiency
+
+
+TODO Add Details
+
+### Automated Things In IRunDQEfficiency
+
+
+TODO Add Details
+
+### Logger Things In IRunDQEfficiency
+
+
+TODO Add Details
 
 ## Some Things You Should Be Careful For Using and Development
 
@@ -215,32 +293,8 @@ choices).
 * If the argument can take more than one value, when adding a new property choices is a list and the values
 must be converted to comma-separated strings
 
-## TODO List
-* `Closed` We need more meaningful explanations for argument explanations (helping comments).
-* `Open` The values that JSON values can take for transaction management should be classified and filtered with
-choices and data types.
-* `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
-automatically) so some error handling and automation should be done for transaction management.
-* `Closed` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
-valid for Run2 Run3 options). Therefore, when we configure this variable for data, it does not throw an error or
-make any changes. For this, the python script should be configured.
-* `Open` Python CLI only works by overriding values, so some of the unattached configurations should be integrated
-into the TableMaker JSONs (Config MCRun2,MCRun3,DataRun2,Data Run3) in the O2DQWorkflows
-repository as default or null values.
-* `Finished` Some Tasks arguments need to be refactored.
-* `Finished` For faster development, the auto completion feature should be implemented for arguments with the tab like
-bash (Already Integrated for local).
-* `Finished` After the developments are finished, the user manual should be prepared.
-* `Open` For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
-* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
-* `Closed` A transaction management should be written to search whether the entered aod file is in the location.
-* `Closed` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
-* `Open` char refactor for prefixes
-* `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a warning message should be checked by checking that the parameters are entered as value more than once with a warning.
 
-
-
-# Instructions
+# Instructions for IRunTableMaker.py
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -251,6 +305,8 @@ Add extrac tables and converters with:
 * Minimum Required Parameter List:
   * `python3`
   * `IRunTableMaker.py`
+  * JSON Config File
+    * Example usage: Configs/configTableMakerDataRun3.json 
   * `--run <2|3>`  
     * Usage (only select one value): `--run 2` or `--run 3`
   *  `-run<MC|Data>` 
@@ -281,12 +337,7 @@ In case of multiple configs example
   python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --aod Datas/AO2D_LHC21i3.root --process BarrelOnly BarrelOnlyWithV0Bits --syst pp --muonSelection 0 --processStandard true --isProcessEvTime false --processDummy barrel --cfgWithQA true --pid el mu --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts muonQualityCuts --cfgNoQA false --cfgDetailedQA true
   ```
 
-
-
-TODO: Add Details
-
-
-# Available configs in Interface
+# Available configs in IRunTableMaker Interface
 
 * For `IRunTableMaker.py` Selections
 
@@ -389,6 +440,120 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMCsignals` | String | Specify a predefined monte carlo signal selection from MCSignalLibrary.h |  | str
 
 
+
+# Instructions for IRunTableReader.py
+
+* Minimum Required Parameter List:
+  * `python3`
+  * `IRunTableReader.py`
+  * JSON Config File
+    * Example For Most common usage: Configs/configAnalysisData.json  
+
+Examples(in AllWorkFlows):
+- Run TableReader on Data run3 With Minimum Commands
+  ```ruby
+  python3 IRunTableReader.py Configs/configAnalysisData.json
+  ```
+
+In case of multiple configs example
+  ```ruby
+  python3 IrunDQEfficiency.py Configs/configAnalysisData.json --aod Datas/AO2D_LHC21i3.root
+  ```
+
+
+TODO Add Details
+
+# Available configs in IRunTableReader Interface
+
+Arg | Opt | Task | nargs |
+--- | --- | --- | --- |
+`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--outputjson` | all | Special Option | 1 |
+`--reader` | all | Special Option | 1 |
+`--writer` | all | Special Option | 1 |
+`--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`eventMixingBarrel`</br> `eventMixingMuon` </br> `eventMixingBarrelMuon` </br> `dileptonHadron`  | Special Option | * |
+`--analysisAllSkimmed` | `true`</br> `false`</br>  | `table-maker` | 1 |
+`--analysisDummy` |  `event`</br>`track`</br>`muon`</br>`eventMixing`</br>`sameEventPairing`</br> `dileptonHadron`  | `event-selection-task`</br> | * |
+`--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
+`--cfgMixingVars` | [`MixingDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MixingDatabase.json)  | `analysis-event-selection`</br>  | * |
+`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json)  | `analysis-event-selection`</br>  | * |
+`--cfgTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-track-selection`</br> | * |
+`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-muon-selection` | * |
+`--processSameEventPairing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
+`--isVertexing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
+`--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
+# Instructions for IRunDQEfficiency.py
+
+* Minimum Required Parameter List:
+  * `python3`
+  * `IRunDQEfficiency.py`
+  * JSON Config File
+    * Example For Most common usage: Configs/configAnalysisMC.json  
+
+Examples(in AllWorkFlows):
+- Run DQEfficiency on Data run3 With Minimum Commands
+  ```ruby
+  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json
+  ```
+
+In case of multiple configs example
+  ```ruby
+  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod Datas/AO2D_LHC21i3.root
+  ```
+
+
+TODO Add Details
+
+# Available configs in IRunDQEfficiency Interface
+
+* For `IRunDQEfficiency.py` Selections
+
+Arg | Opt | Task | nargs |
+--- | --- | --- | --- |
+`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--outputjson` | all | Special Option | 1 |
+`--reader` | all | Special Option | 1 |
+`--writer` | all | Special Option | 1 |
+`--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`dimuonMuon`</br>| Special Option | * |
+`--analysisDummy` |  `event`</br>`track`</br>`muon`</br>`sameEventPairing`</br> `dilepton`  | `event-selection-task`</br> | * |
+`--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
+`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json)  | `analysis-event-selection`</br>  | * |
+`--cfgTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-track-selection`</br> | * |
+`--cfgTrackMCSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-track-selection` | * |
+`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-muon-selection` | * |
+`--cfgMuonMCSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-muon-selection` | * |
+`--processSameEventPairing` | `true`</br> `false`</br>  | `analysis-same-event-pairing` | 1 |
+`--isVertexing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
+`--cfgBarrelMCRecSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-same-event-pairing` | * |
+`--cfgBarrelMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-same-event-pairing` | * |
+`--cfgBarrelDileptonMCRecSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
+`--cfgBarrelDileptonMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
+
+
+## TODO List For IRunTableMaker
+* `Closed` We need more meaningful explanations for argument explanations (helping comments).
+* `Open` The values that JSON values can take for transaction management should be classified and filtered with
+choices and data types.
+* `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
+automatically) so some error handling and automation should be done for transaction management.
+* `Closed` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
+valid for Run2 Run3 options). Therefore, when we configure this variable for data, it does not throw an error or
+make any changes. For this, the python script should be configured.
+* `Open` Python CLI only works by overriding values, so some of the unattached configurations should be integrated
+into the TableMaker JSONs (Config MCRun2,MCRun3,DataRun2,Data Run3) in the O2DQWorkflows
+repository as default or null values.
+* `Finished` Some Tasks arguments need to be refactored.
+* `Finished` For faster development, the auto completion feature should be implemented for arguments with the tab like
+bash (Already Integrated for local).
+* `Finished` After the developments are finished, the user manual should be prepared.
+* `Open` For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
+* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
+* `Closed` A transaction management should be written to search whether the entered aod file is in the location.
+* `Closed` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
+* `Open` char refactor for prefixes
+* `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a warning message should be checked by checking that the parameters are entered as value more than once with a warning.
+
+
 ## Design Notes
 
 * `Jul 20, 2022` Developed pythonCLI version 1 for tablemaker in its simplest form, not integrated into main task.
@@ -399,6 +564,7 @@ Arg | Ref Type| Desc | Default | Real Type
 * `Jul 25, 2022` A lot of tests have been done for the CLI written for tableMaker and the necessary refactor and automation tests have been done. CLI development for TableMaker is fully completed and Integrated to python script. Writing User Manual Documentation in progress.
 * `Jul 26, 2022` Readme completed for `IRunTableMaker.py` and TableReader DQEfficiency workflows CLI based v1 released. processEvTime transaction management refactoring, for pp collisionsi centrality-table o2 task and JSON configs deleting automatized. New checker for Run/MC added.
 * `Jul 27, 2022` Fixed a bug for filterpp tiny selection in Tablemaker, AOD File Checker added to TableMaker, readme updated (instructions added), New Critical Transaction Managements Added, For TableMaker process Function, Workflow Decision Tree Added   
+* `Jul 28, 2022` Workflows with CLI for TableReader and DQEfficiency Completed. Demo versions and Old Version Deleted. JSON path's for single workflows updated. Mixing Library added for Skimmed processes, runtime errors fixed, writer configs added to CLI, CommandToRun Fixed in TableReader in DQEfficiency, MC Rec Gen Signals fixed for dileptons in DQEfficiency, only-select automation parameter will implemnt for TableReader and DQEfficiency, installation guide for argcomplate added, Instructions and avaiable commands added readme for TableMaker DQ Efficiency
 
 
 
