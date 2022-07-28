@@ -315,26 +315,26 @@ Add extrac tables and converters with:
      *  Usage examples (can take several value) : `--process MuonsOnly` or `--process BarrelOnly MuonOnly BarrelOnlyWithEventFilter`
 
 Examples(in AllWorkFlows):
-- Run TableMaker on Data run3 With Minimum Commands for Barrel Only
+- Run TableMaker on Data run3 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --process BarrelOnly --onlySelect true
   ```
-- Run TableMaker on MC run3 with Minimum Commands for Barrel Only
+- Run TableMaker on MC run3 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process BarrelOnly --onlySelect true
   ```
-- Run TableMaker on Data run2 With Minimum Commands for Barrel Only
+- Run TableMaker on Data run2 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --run 2 --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --run 2 --process BarrelOnly --onlySelect true
   ```
-- Run TableMaker on MC run2 with Minimum Commands for Barrel Only
+- Run TableMaker on MC run2 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --run 2 --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --run 2 --process BarrelOnly --onlySelect true
   ```
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --aod Datas/AO2D_LHC21i3.root --process BarrelOnly BarrelOnlyWithV0Bits --syst pp --muonSelection 0 --processStandard true --isProcessEvTime false --processDummy barrel --cfgWithQA true --pid el mu --cfgBarrelTrackCuts jpsiPIDnsigma --cfgMuonCuts muonQualityCuts --cfgNoQA false --cfgDetailedQA true
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
   ```
 
 # Available configs in IRunTableMaker Interface
@@ -353,11 +353,10 @@ Arg | Opt | Task | nargs |
 `--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
 `--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
 `--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp`</br> `PbPb`</br> | `event-selection-task` | 1 |
-`--muonSelection` | `0`</br> `1`</br> | `event-selection-task` | 1 |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--processStandart` | `true`</br> `false`</br> | `track-propagation` | 1 |
-`--processCovariance` | `true`</br> `false`</br> | `track-propagation` | 1 |
+`--isCovariance` | `true`</br> `false`</br> | `track-propagation` | 1 |
 `--isProcessEvTime` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--processDummy` | `barrel`</br> `muon`</br> `event`</br> | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
@@ -394,8 +393,8 @@ Arg | Opt | Task | nargs |
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `--aod` | String | Add your aod file with path  |  | str |
-`--onlySelect` | Boolean | Keep options for only selection in process, pid and centrality table (true is highly recomended for automation)| `false` | str.lower |
-`--autoDummy` | Boolean | if DQ Task not activated, it will processes as dummy selection (true is highly recomended for automation)) | `true` | str.lower |
+`--onlySelect` | Boolean | An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)"| `false` | str.lower |
+`--autoDummy` | Boolean | Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa) | `true` | str.lower |
 `--process` | String | process selection for skimmed data model in tablemaker |  | str |
 `--run` | Integer | Data run option for ALICE 2/3 |  | str
 `-runData` | no Param |  Data Selection instead of MC |   | str
@@ -404,40 +403,39 @@ Arg | Ref Type| Desc | Default | Real Type
 `--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
 `--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--syst` | String | Collision system selection |  | str
-`--muonSelection` | Integer | Muon Selection |  | str
-`--CustomDeltaBC` | all | Delta BC param for `event-selection-task` |  | str
-`--processStandart` | Boolean | Process standart activate/disable for `track-propagation` |  | str.lower
-`--processCovariance` | Boolean | Process Covariance activate/disable for `track-propagation` |  | str.lower
+`--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
+`--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
+`--processCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
 `--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
-`--tof-expreso` | Float | an TOF Paramater |  | str
-`--processDummy` | String | Dummy selector for task of -> `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  |  | str.lower
-`--isBarrelSelectionTiny` | Boolean | Barrel Tiny Selector for `d-q-barrel-track-selection-task` |  | str.lower
-`--est` | String | `centrality-table` Parameters | | str
-`--cfgWithQA` | Boolean | QA Activate/Disable for `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> |  | str.lower
-`--d_bz` | Float | V0 related param  |  | str
-`--v0cospa` | Float | V0 related param  |  | str
-`--dcav0dau` | Float | V0 related param  |  | str
-`--v0Rmin` | Float | V0 related param  |  | str
-`--v0Rmax` | Float | V0 related param  |  | str
-`--dcamin` | Float | V0 related param  |  | str
-`--dcamax` | Float | V0 related param  |  | str
-`--mincrossedrows` | Float | V0 related param  |  | str
-`--maxchi2tpc` | Float | V0 related param  |  | str
-`--pid` | String | PID Selections for TPC and TOF |  | str.lower
-`--isFilterPPTiny` | Boolean | Filter PP Tiny instead of normal activated/disabled selection |  | str.lower
-`--cfgPairCuts` | String | Pair Cut Selection |  | str
-`--cfgBarrelSels` | String | `d-q-filter-p-p-task` |  | str
-`--cfgMuonSels` | String | `d-q-filter-p-p-task` |  | str
-`--cfgEventCuts` | String | Specify a predefined event selection from CutsLibrary.h |  | str
-`--cfgBarrelTrackCuts` | String | Specify a predefined barrel track selection from CutsLibrary.h |  | str
-`--cfgMuonCuts` | String | Specify a predefined muon selection from CutsLibrary.h  |  | str
+`--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--processDummy` | String | Dummy function (No need If autoDummy is true) |  | str.lower
+`--isBarrelSelectionTiny` | Boolean | Run barrel track selection instead of normal(process func. for barrel selection must be true) |  | str.lower
+`--est` | String | Produces centrality percentiles parameters | | str
+`--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
+`--d_bz` | Float | bz field |  | str
+`--v0cospa` | Float | v0cospa |  | str
+`--dcav0dau` | Float | DCA V0 Daughters |  | str
+`--v0Rmin` | Float | V0min |  | str
+`--v0Rmax` | Float | V0max|  | str
+`--dcamin` | Float | dcamin  |  | str
+`--dcamax` | Float | dcamax |  | str
+`--mincrossedrows` | Float | Min crossed rows  |  | str
+`--maxchi2tpc` | Float | max chi2/NclsTPC  |  | str
+`--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
+`--isFilterPPTiny` | Boolean | Run filter tiny task instead of normal (processFilterPP must be true) |  | str.lower
+`--cfgPairCuts` | String | Space separated list of pair cuts |  | str
+`--cfgBarrelSels` | String | Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1|  | str
+`--cfgMuonSels` | String | Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1|  | str
+`--cfgEventCuts` | String | Space separated list of event cuts |  | str
+`--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts  |  | str
 `--cfgBarrelLowPt` | Float | Specify the lowest pt cut for electrons; used in a Partition expression to improve CPU efficiency (GeV) |  | str
 `--cfgMuonLowPt` | Float | Specify the lowest pt cut for muons; used in a Partition expression to improve CPU efficiency  (GeV) |  | str
-`--cfgNoQA` | Boolean | QA Selection for TableMaker task |  | str.lower
-`--cfgDetailedQA` | Boolean | QA Details Activate/Disable Selection |  | str.lower
+`--cfgNoQA` | Boolean | If true, no QA histograms |  | str.lower
+`--cfgDetailedQA` | Boolean | If true, include more QA histograms (BeforeCuts classes and more) |  | str.lower
 `--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
 `--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
-`--cfgMCsignals` | String | Specify a predefined monte carlo signal selection from MCSignalLibrary.h |  | str
+`--cfgMCsignals` | String | SSpace separated list of MC signals |  | str
 
 
 
@@ -482,6 +480,26 @@ Arg | Opt | Task | nargs |
 `--processSameEventPairing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
 `--isVertexing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
 `--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
+
+* Details parameters for `IRunTableReader.py`
+
+Arg | Ref Type| Desc | Default | Real Type
+--- | --- | --- | --- | --- |
+`--aod` | String | Add your AOD File with path | - | str
+`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
+`--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEvent.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptons.json` | str
+`--analysisSkimmed` | String | Skimmed process selections for analysis | - | str
+`--analysisAllSkimmed` | Boolean | All Skimmed Selection as boolean | - | str.lower
+`--analysisDummy` | String | Dummy Selections (if autoDummy true, you don't need it) | - | str
+`--cfgQA` | Boolean | If true, fill QA histograms | - | str
+`--cfgMixingVars` | String | Mixing configs separated by a space | - | str
+`--cfgEventCuts` |  String | Space separated list of event cuts | - | str
+`--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--processSameEventPairing` | Boolean | This option automatically activates  same-event-pairing based on analysis track, muon, event and event mixing | - | str.lower
+`--isVertexing` | Boolean | Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection) | - | str.lower
+`--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 # Instructions for IRunDQEfficiency.py
 
 * Minimum Required Parameter List:
@@ -498,11 +516,8 @@ Examples(in AllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod Datas/AO2D_LHC21i3.root
+  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysisSkimmed muon event --aod reducedAod.root --cfgMuonCuts muonQualityCuts --cfgMuonMCSignals muFromJpsi --cfgQA true
   ```
-
-
-TODO Add Details
 
 # Available configs in IRunDQEfficiency Interface
 
@@ -528,6 +543,29 @@ Arg | Opt | Task | nargs |
 `--cfgBarrelMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-same-event-pairing` | * |
 `--cfgBarrelDileptonMCRecSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
 `--cfgBarrelDileptonMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
+
+* Details parameters for `IRunDQEfficiency.py`
+
+Arg | Ref Type| Desc | Default | Real Type
+--- | --- | --- | --- | --- |
+`--aod` | String | Add your AOD File with path | - | str
+`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
+`--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEventMC.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptonMC.json` | str
+`--analysisSkimmed` | String | Skimmed process selections for analysis | - | str
+`--analysisDummy` | String | Dummy Selections (if autoDummy true, you don't need it) | - | str
+`--cfgQA` | Boolean | If true, fill QA histograms | - | str
+`--cfgEventCuts` |  String | Space separated list of event cuts | - | str
+`--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
+`--cfgTrackMCSignals` | String | Space separated list of MC signals | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--cfgMuonMCSignals` | String | Space separated list of MC signals | - | str
+`--processSameEventPairing` | Boolean | This option automatically activates same-event-pairing based on analysis track, muon and event | - | str.lower
+`--isVertexing` | Boolean | Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection) | - | str.lower
+`----cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
+`--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
+`--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
+`--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
 
 
 ## TODO List For IRunTableMaker
@@ -565,6 +603,7 @@ bash (Already Integrated for local).
 * `Jul 26, 2022` Readme completed for `IRunTableMaker.py` and TableReader DQEfficiency workflows CLI based v1 released. processEvTime transaction management refactoring, for pp collisionsi centrality-table o2 task and JSON configs deleting automatized. New checker for Run/MC added.
 * `Jul 27, 2022` Fixed a bug for filterpp tiny selection in Tablemaker, AOD File Checker added to TableMaker, readme updated (instructions added), New Critical Transaction Managements Added, For TableMaker process Function, Workflow Decision Tree Added   
 * `Jul 28, 2022` Workflows with CLI for TableReader and DQEfficiency Completed. Demo versions and Old Version Deleted. JSON path's for single workflows updated. Mixing Library added for Skimmed processes, runtime errors fixed, writer configs added to CLI, CommandToRun Fixed in TableReader in DQEfficiency, MC Rec Gen Signals fixed for dileptons in DQEfficiency, only-select automation parameter will implemnt for TableReader and DQEfficiency, installation guide for argcomplate added, Instructions and avaiable commands added readme for TableMaker DQ Efficiency
+* `Jul 29, 2022` All Tests passed for workflows and development is completed. Only some parts need refactoring for clean code and readme will updated.
 
 
 

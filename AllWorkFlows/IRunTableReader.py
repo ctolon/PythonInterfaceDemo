@@ -140,7 +140,7 @@ parser.add_argument('cfgFileName', metavar='text', default='config.json', help='
 # aod
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
-parser.add_argument('--writer', help="Add your AOD Reader JSON with path", action="store", default=writerPath, type=str)
+parser.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
 #json output
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
