@@ -29,8 +29,8 @@ sudo activate-global-python-argcomplete
 Only Works On Local not in O2
 Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
-#import argcomplete  
-#from argcomplete.completers import ChoicesCompleter
+import argcomplete  
+from argcomplete.completers import ChoicesCompleter
 
 #################################
 # JSON Database Read and Upload #
@@ -176,7 +176,7 @@ parser.add_argument('--cfgLeptonCuts', help="Configure Cuts with spaces", choice
 
 
 """Activate For Autocomplete. See to Libraries for Info"""
-#argcomplete.autocomplete(parser)
+argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
