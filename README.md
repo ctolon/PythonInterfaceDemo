@@ -344,8 +344,8 @@ In case of multiple configs example
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--outputjson` | all | Special Option | 1 |
 `--onlySelect` | `true`</br> `false`</br>  | Special Option | 1 |
+`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyWithEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
 `--run` | `2`</br> `3`</br> | Special Option | 1 |
 `-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
@@ -394,8 +394,8 @@ Arg | Opt | Task | nargs |
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `--aod` | String | Add your aod file with path  |  | str |
-`--outputjson` | String | Configure option for output JSON file | `tempConfig.json` | str |
-`--onlySelect` | Boolean | Keep options for only selection in process, pid and centrality table (true is highly recomended)| `true` | str.lower |
+`--onlySelect` | Boolean | Keep options for only selection in process, pid and centrality table (true is highly recomended for automation)| `false` | str.lower |
+`--autoDummy` | Boolean | if DQ Task not activated, it will processes as dummy selection (true is highly recomended for automation)) | `true` | str.lower |
 `--process` | String | process selection for skimmed data model in tablemaker |  | str |
 `--run` | Integer | Data run option for ALICE 2/3 |  | str
 `-runData` | no Param |  Data Selection instead of MC |   | str
@@ -468,7 +468,7 @@ TODO Add Details
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--outputjson` | all | Special Option | 1 |
+`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
 `--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`eventMixingBarrel`</br> `eventMixingMuon` </br> `eventMixingBarrelMuon` </br> `dileptonHadron`  | Special Option | * |
@@ -511,7 +511,7 @@ TODO Add Details
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--outputjson` | all | Special Option | 1 |
+`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
 `--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`dimuonMuon`</br>| Special Option | * |

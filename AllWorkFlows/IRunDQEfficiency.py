@@ -132,12 +132,13 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 
 
 # json output
-parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
+#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed process Dummy Selections for analysis
 # todo: add skimmed for same event and dilepton
 parser.add_argument('--analysisSkimmed', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','dimuonMuon'], nargs='*', type=str)
 parser.add_argument('--analysisDummy', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
+parser.add_argument('--autoDummy', help="Process Selection options true or false (string)", action="store", choices=["true","false"], default='true', type=str.lower)
 
 # cfg for QA
 parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str.lower)
@@ -241,7 +242,7 @@ for key, value in config.items():
                                 if 'dimuonMuon' not in valueCfg:
                                     config[key][value] = 'false' 
                                             
-            # analysis-dummy-selections
+            # analysis-dummy-selections (We have automated thins so not need most of time)
             if value =='processDummy' and extrargs.analysisDummy:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -344,6 +345,35 @@ for key, value in config.items():
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
                     extrargs.cfgBarrelDileptonMCGenSignals = ",".join(extrargs.cfgBarrelDileptonMCGenSignals)
                     config[key][value] = extrargs.cfgBarrelDileptonMCGenSignals
+                    
+            # Dummy automizer
+            if value == 'processDummy' and extrargs.autoDummy:
+                
+                if config["analysis-event-selection"]["processSkimmed"] == "true":
+                    config["analysis-event-selection"]["processDummy"] = "false"
+                if config["analysis-event-selection"]["processSkimmed"] == 'false':
+                    config["analysis-event-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-track-selection"]["processSkimmed"] == "true":
+                    config["analysis-track-selection"]["processDummy"] = "false"
+                if config["analysis-track-selection"]["processSkimmed"] == 'false':
+                    config["analysis-track-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-muon-selection"]["processSkimmed"] == "true":
+                    config["analysis-muon-selection"]["processDummy"] = "false"
+                if config["analysis-muon-selection"]["processSkimmed"] == 'false':
+                    config["analysis-muon-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "true":
+                    config["analysis-same-event-pairing"]["processDummy"] = "false"                    
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "false":
+                    config["analysis-same-event-pairing"]["processDummy"] = "true"
+                    
+                if config["analysis-dilepton-track"]["processDimuonMuonSkimmed"] == "true":
+                    config["analysis-dilepton-track"]["processDummy"] = "false"
+                if config["analysis-dilepton-track"]["processDimuonMuonSkimmed"] == 'false':
+                    config["analysis-dilepton-track"]["processDummy"] = "true"
+                    
         
 # AOD and JSON Reader File Checker
                 
@@ -371,7 +401,7 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == F
 
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfig.json"
+updatedConfigFileName = "tempConfigDQEfficiency.json"
 
 """
 #Transaction Management for Json File Name

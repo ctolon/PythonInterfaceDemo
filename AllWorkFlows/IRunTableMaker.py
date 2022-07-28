@@ -174,7 +174,7 @@ coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_tr
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
 # json output
-parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
+#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # only select
 parser.add_argument('--onlySelect', help="Activate only selected JSON configs", action="store",choices=["true","false"], default="false", type=str.lower)
@@ -223,6 +223,7 @@ parser.add_argument('--tof-expreso', help="Tof expreso Input Type Number", actio
 
 # dummies
 parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
+parser.add_argument('--autoDummy', help="Process Selection options true or false (string)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
 # d-q-track barrel-task
 
@@ -682,6 +683,30 @@ for key, value in config.items():
                     config['d-q-filter-p-p-task']['processDummy'] = "true"
                 if extrargs.processDummy == "barrel":
                     config['d-q-barrel-track-selection-task']['processDummy'] = "true"
+                    
+            # dummy automizer TODO: dummy icin transcation logger lazım
+            if value == 'processDummy' and extrargs.autoDummy and extrargs.runData and extrargs.run == '3':
+                
+                if config["d-q-barrel-track-selection-task"]["processSelection"] == "true" or config["d-q-barrel-track-selection-task"]["processSelectionTiny"] == "true":
+                    config["d-q-barrel-track-selection-task"]["processDummy"] = "false"
+                if config["d-q-barrel-track-selection-task"]["processSelection"] == 'false' and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
+                    config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
+                    
+                #TODO: We need automizer for muons selection
+                #if config["d-q-muons-selection"]["processSelection"] == "true":
+                    #config["d-q-muons-selection"]["processDummy"] = "false"
+                #if config["d-q-muons-selection"]["processSelection"] == "false":
+                    #config["d-q-muons-selection"]["processDummy"] = "true"
+                    
+                if config["d-q-event-selection-task"]["processEventSelection"] == "true":
+                    config["d-q-event-selection-task"]["processDummy"] = "false"
+                if config["d-q-event-selection-task"]["processEventSelection"] == "false":
+                    config["d-q-event-selection-task"]["processDummy"] = "true"
+                    
+                if config["d-q-filter-p-p-task"]["processFilterPP"] =="true" or config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true":
+                    config["d-q-filter-p-p-task"]["processDummy"] = "false"
+                if config["d-q-filter-p-p-task"]["processFilterPP"] == "false" and config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false" :
+                    config["d-q-filter-p-p-task"]["processDummy"] = "true"
 
 
 # Transaction Management for process function in TableMaker/TableMakerMC Task
@@ -728,8 +753,8 @@ for key,value in configuredCommands.items():
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI")
-        if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logger bug
+            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'cfgMCsignals' and extrargs.runData:
@@ -823,7 +848,7 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
 
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfig.json"
+updatedConfigFileName = "tempConfigTableMaker.json"
 # TODO Fix and implemente it
 """
 Transaction Management for Json File Name TODO : Fix and implemente it

@@ -143,11 +143,12 @@ parser.add_argument('--reader', help="Add your AOD Reader JSON with path", actio
 parser.add_argument('--writer', help="Add your AOD Reader JSON with path", action="store", default=writerPath, type=str)
 
 #json output
-parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
+#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed processes and Dummy Selections for analysis
 parser.add_argument('--analysisSkimmed', help="Process Selection options true or false (string)", action="store", choices=['event','muon','track','eventMixingBarrel','eventMixingMuon','eventMixingBarrelMuon','dileptonHadron'], nargs='*', type=str)
 parser.add_argument('--analysisDummy', help="Process Selection options true or false (string)", action="store", choices=['event','muon','track','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
+parser.add_argument('--autoDummy', help="Process Selection options true or false (string)", action="store", choices=["true","false"], default='true', type=str.lower)
 parser.add_argument('--analysisAllSkimmed', help="QA Selection true or false", action="store", choices=["true","false"], default=["false"], type=str.lower)
 
 # cfg for QA
@@ -271,7 +272,7 @@ for key, value in config.items():
                                 if 'eventMixingBarrelMuon' not in valueCfg:
                                     config[key]["processBarrelMuonSkimmed"] = 'false'
                                            
-            # analysis-dummy-selections
+            # analysis-dummy-selections (We have automated thins so not need most of time)
             if value =='processDummy' and extrargs.analysisDummy:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -375,6 +376,42 @@ for key, value in config.items():
                                 
             if extrargs.processSameEventPairing == 'false': # Automate disabled
                 continue
+            
+            # dummy automizer
+            
+                        # Dummy automizer
+            if value == 'processDummy' and extrargs.autoDummy:
+                
+                if config["analysis-event-selection"]["processSkimmed"] == "true":
+                    config["analysis-event-selection"]["processDummy"] = "false"
+                if config["analysis-event-selection"]["processSkimmed"] == 'false':
+                    config["analysis-event-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-muon-selection"]["processSkimmed"] == "true":
+                    config["analysis-muon-selection"]["processDummy"] = "false"
+                if config["analysis-muon-selection"]["processSkimmed"] == 'false':
+                    config["analysis-muon-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-track-selection"]["processSkimmed"] == "true":
+                    config["analysis-track-selection"]["processDummy"] = "false"
+                if config["analysis-track-selection"]["processSkimmed"] == "false":
+                    config["analysis-track-selection"]["processDummy"] = "true"
+                    
+                if config["analysis-event-mixing"]["processBarrelSkimmed"] == "true" or config["analysis-event-mixing"]["processMuonSkimmed"] == "true" or config["analysis-event-mixing"]["processBarrelMuonSkimmed"] == "true":
+                    config["analysis-event-mixing"]["processDummy"] = "false"
+                if config["analysis-event-mixing"]["processBarrelSkimmed"] == "false" and config["analysis-event-mixing"]["processMuonSkimmed"] == "false" and config["analysis-event-mixing"]["processBarrelMuonSkimmed"] == "false":
+                    config["analysis-event-mixing"]["processDummy"] = "true"  
+                    
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "true" or config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "true" or config["analysis-same-event-pairing"]["processAllSkimmed"] == "true":
+                    config["analysis-same-event-pairing"]["processDummy"] = "false"
+                            
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "false" and config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "false" and config["analysis-same-event-pairing"]["processAllSkimmed"] == "false":
+                    config["analysis-same-event-pairing"]["processDummy"] = "true"
+                    
+                if config["analysis-dilepton-hadron"]["processSkimmed"] == "true":
+                    config["analysis-dilepton-hadron"]["processDummy"] = "false"
+                if config["analysis-dilepton-hadron"]["processSkimmed"] == "false":
+                    config["analysis-dilepton-nadron"]["processDummy"] = "true"
                             
 # AOD and JSON Reader File Checker #TODO: add .root checker like jsons
                 
@@ -400,7 +437,7 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == F
 
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfig.json"
+updatedConfigFileName = "tempConfigTableReader.json"
 
 """
 Transaction Management for Json File Name
