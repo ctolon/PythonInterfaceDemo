@@ -201,7 +201,7 @@ parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choi
 #parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # event-selection-task
-parser.add_argument('--syst', help="Collision System Selection ex. pp", action="store", choices=["PbPb", "pp, pPb, Pbp, XeXe"], type=str)
+parser.add_argument('--syst', help="Collision System Selection ex. pp", action="store", choices=["PbPb", "pp", "pPb", "Pbp", "XeXe"], type=str)
 parser.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts",choices=["0","1","2"], action="store", type=str)
 parser.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 #parser.add_argument('--isMC', help="Is it Monte Carlo options true or false", action="store", choices=["true","false"],default="false", type=str, required=True) # no need
