@@ -146,34 +146,34 @@ parser.add_argument('--writer', help="Add your AOD Reader JSON with path", actio
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed processes and Dummy Selections for analysis
-parser.add_argument('--analysisSkimmed', help="Process Selection options true or false (string)", action="store", choices=['event','muon','track','eventMixingBarrel','eventMixingMuon','eventMixingBarrelMuon','dileptonHadron'], nargs='*', type=str)
-parser.add_argument('--analysisDummy', help="Process Selection options true or false (string)", action="store", choices=['event','muon','track','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
-parser.add_argument('--autoDummy', help="Process Selection options true or false (string)", action="store", choices=["true","false"], default='true', type=str.lower)
-parser.add_argument('--analysisAllSkimmed', help="QA Selection true or false", action="store", choices=["true","false"], default=["false"], type=str.lower)
+parser.add_argument('--analysisSkimmed', help="Skimmed process selections for analysis", action="store", choices=['event','muon','track','eventMixingBarrel','eventMixingMuon','eventMixingBarrelMuon','dileptonHadron'], nargs='*', type=str)
+parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','muon','track','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
+parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower)
+parser.add_argument('--analysisAllSkimmed', help="All Skimmed Selection as boolean", action="store", choices=["true","false"], default=["false"], type=str.lower)
 
 # cfg for QA
-parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str.lower)
+parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
 
 # analysis-event-selection
-parser.add_argument('--cfgMixingVars', help="Configure Cuts with spaces", choices=mixing_database, nargs='*', action="store", type=str)
-parser.add_argument('--cfgEventCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", choices=mixing_database, nargs='*', action="store", type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=cut_database,nargs='*', action="store", type=str)
 
 # analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=cut_database,nargs='*', action="store", type=str)
 
 # analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=cut_database,nargs='*', action="store", type=str)
 
 # analysis-event-mixing
 # see in skimmed options and cuts are configured in muon and track selection
 
-# analysis-same-event-pairing TODO: CCDB parts Can be added
-parser.add_argument('--processSameEventPairing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], default='true', type=str.lower)
-parser.add_argument('--isVertexing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+# analysis-same-event-pairing
+parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon, event and event mixing", action="store", choices=['true','false'], default='true', type=str.lower)
+parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
 
 
 # analysis-dilepton-hadron
-parser.add_argument('--cfgLeptonCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", choices=cut_database,nargs='*', action="store", type=str)
 
 
 """Activate For Autocomplete. See to Libraries for Info"""
@@ -190,7 +190,6 @@ if len(sys.argv) < 2:
   sys.exit()
 
 # Load the configuration file provided as the first parameter
-#TODO: Config file gerçekten pathimizde var mı? bunun için transacation management yaz.
 config = {}
 with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
@@ -249,7 +248,7 @@ for key, value in config.items():
                                 if 'dileptonHadron' not in valueCfg:
                                     config[key][value] = 'false'
                                     
-            # Analysis Event Mixing Selections #TODO :Refactor
+            # Analysis Event Mixing Selections #TODO Refactor
             if value == 'processBarrelSkimmed' or value == 'processMuonSkimmed' or value == 'processBarrelMuonSkimmed' and extrargs.analysisSkimmed:                        
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -413,7 +412,7 @@ for key, value in config.items():
                 if config["analysis-dilepton-hadron"]["processSkimmed"] == "false":
                     config["analysis-dilepton-nadron"]["processDummy"] = "true"
                             
-# AOD and JSON Reader File Checker #TODO: add .root checker like jsons
+# AOD and JSON Reader File Checker
                 
 if extrargs.aod != None:
     if os.path.isfile(extrargs.aod) == False:

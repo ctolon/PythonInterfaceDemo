@@ -135,37 +135,36 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed process Dummy Selections for analysis
-# todo: add skimmed for same event and dilepton
-parser.add_argument('--analysisSkimmed', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','dimuonMuon'], nargs='*', type=str)
-parser.add_argument('--analysisDummy', help="Process Selection options true or false (string)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
-parser.add_argument('--autoDummy', help="Process Selection options true or false (string)", action="store", choices=["true","false"], default='true', type=str.lower)
+parser.add_argument('--analysisSkimmed', help="Skimmed process selections for analysis", action="store", choices=['event','track','muon','dimuonMuon'], nargs='*', type=str)
+parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
+parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
 
 # cfg for QA
-parser.add_argument('--cfgQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str.lower)
+parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
 
 # analysis-event-selection
-parser.add_argument('--cfgEventCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=cut_database,nargs='*', action="store", type=str)
 
 # analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgTrackMCSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", choices=mcsignal_database,nargs='*', action="store", type=str)
 
 # analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Configure Cuts with spaces", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonMCSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", choices=mcsignal_database,nargs='*', action="store", type=str)
 
 # analysis-same-event-pairing
-parser.add_argument('--processSameEventPairing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], default='true', type=str.lower)
-parser.add_argument('--isVertexing', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon and event", action="store", choices=['true','false'], default='true', type=str.lower)
+parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
 
-parser.add_argument('--cfgBarrelMCRecSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelMCGenSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", choices=mcsignal_database,nargs='*', action="store", type=str)
 
 
-# analysis-dilepton-track ONLY FOR MC TODO: cfgLeptoncuts and cfgFillCandidateTable can be added.
+# analysis-dilepton-track ONLY FOR MC
 
-parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Configure Cuts with spaces", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", choices=mcsignal_database,nargs='*', action="store", type=str)
 
 """Activate For Autocomplete. See to Libraries for Info"""
 argcomplete.autocomplete(parser)
@@ -184,7 +183,6 @@ if len(sys.argv) < 2:
   sys.exit()
 
 # Load the configuration file provided as the first parameter
-#TODO: Config file gerçekten pathimizde var mı? bunun için transacation management yaz.
 config = {}
 with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
