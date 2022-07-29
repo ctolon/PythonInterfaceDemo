@@ -282,23 +282,28 @@ for key, value in config.items():
                               
             # analysis-event-selection
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
-                extrargs.cfgEventCuts = ",".join(extrargs.cfgEventCuts)
+                if type(extrargs.cfgEventCuts) == type(clist):
+                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
 
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
-                extrargs.cfgTrackCuts = ",".join(extrargs.cfgTrackCuts)
+                if type(extrargs.cfgTrackCuts) == type(clist):
+                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
             if value == 'cfgTrackMCSignals' and extrargs.cfgTrackMCSignals:
-                extrargs.cfgTrackMCSignals = ",".join(extrargs.cfgTrackMCSignals)
+                if type(extrargs.cfgTrackMCSignals) == type(clist):
+                    extrargs.cfgTrackMCSignals = listToString(extrargs.cfgTrackMCSignals) 
                 config[key][value] = extrargs.cfgTrackMCSignals
                 
             # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
+                if type(extrargs.cfgMuonCuts) == type(clist):
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
             if value == 'cfgMuonMCSignals' and extrargs.cfgMuonMCSignals:
-                extrargs.cfgMuonMCSignals = ",".join(extrargs.cfgMuonMCSignals)
+                if type(extrargs.cfgMuonMCSignals) == type(clist):
+                    extrargs.cfgMuonMCSignals = listToString(extrargs.cfgMuonMCSignals) 
                 config[key][value] = extrargs.cfgMuonMCSignals
             
             # analysis-same-event-pairing
@@ -329,19 +334,25 @@ for key, value in config.items():
             # MC Signals For Same Event Pairing
             if key == 'analysis-same-event-pairing':
                 if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
-                    extrargs.cfgBarrelMCRecSignals = ",".join(extrargs.cfgBarrelMCRecSignals)
+                    if type(extrargs.cfgBarrelMCRecSignals) == type(clist):
+                        extrargs.cfgBarrelMCRecSignals = listToString(extrargs.cfgBarrelMCRecSignals) 
                     config[key][value] = extrargs.cfgBarrelMCRecSignals
+                    
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
-                    extrargs.cfgBarrelMCGenSignals = ",".join(extrargs.cfgBarrelMCGenSignals)
+                    if type(extrargs.cfgBarrelMCGenSignals) == type(clist):
+                        extrargs.cfgBarrelMCGenSignals = listToString(extrargs.cfgBarrelMCGenSignals) 
                     config[key][value] = extrargs.cfgBarrelMCGenSignals
                 
             # MC Signals For Dilepton Tracks
             if key == 'analysis-dilepton-track':
                 if value == 'cfgDileptonBarrelMCRecSignals' and extrargs.cfgBarrelDileptonMCRecSignals:
-                    extrargs.cfgBarrelDileptonMCRecSignals = ",".join(extrargs.cfgBarrelDileptonMCRecSignals)
+                    if type(extrargs.cfgBarrelDileptonMCRecSignals) == type(clist):
+                        extrargs.cfgBarrelDileptonMCRecSignals = listToString(extrargs.cfgBarrelDileptonMCRecSignals) 
                     config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
+                    
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
-                    extrargs.cfgBarrelDileptonMCGenSignals = ",".join(extrargs.cfgBarrelDileptonMCGenSignals)
+                    if type(extrargs.cfgBarrelDileptonMCGenSignals) == type(clist):
+                        extrargs.cfgBarrelDileptonMCGenSignals = listToString(extrargs.cfgBarrelDileptonMCGenSignals) 
                     config[key][value] = extrargs.cfgBarrelDileptonMCGenSignals
                     
             # Dummy automizer

@@ -323,25 +323,30 @@ for key, value in config.items():
                               
             # analysis-event-selection
             if value == 'cfgMixingVars' and extrargs.cfgMixingVars:
-                extrargs.cfgMixingVars = ",".join(extrargs.cfgMixingVars)
+                if type(extrargs.cfgMixingVars) == type(clist):
+                    extrargs.cfgMixingVars = listToString(extrargs.cfgMixingVars) 
                 config[key][value] = extrargs.cfgMixingVars
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
-                extrargs.cfgEventCuts = ",".join(extrargs.cfgEventCuts)
+                if type(extrargs.cfgEventCuts) == type(clist):
+                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
 
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
-                extrargs.cfgTrackCuts = ",".join(extrargs.cfgTrackCuts)
+                if type(extrargs.cfgTrackCuts) == type(clist):
+                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
                 
             # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
-                extrargs.cfgMuonCuts = ",".join(extrargs.cfgMuonCuts)
+                if type(extrargs.cfgMuonCuts) == type(clist):
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
                 
             # analysis-dilepton-hadron
             if value =='cfgLeptonCuts' and extrargs.cfgLeptonCuts:
-                extrargs.cfgLeptonCuts = ",".join(extrargs.cfgLeptonCuts)
+                if type(extrargs.cfgLeptonCuts) == type(clist):
+                    extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts) 
                 config[key][value] = extrargs.cfgLeptonCuts
             
             # analysis-same-event-pairing
