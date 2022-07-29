@@ -299,7 +299,11 @@ must be converted to comma-separated strings
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
 2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.` 
 
 
 * Minimum Required Parameter List:
