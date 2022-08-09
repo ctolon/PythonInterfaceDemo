@@ -19,6 +19,7 @@ import logging
 from ast import parse
 import os
 import argparse
+import re
 
 """
 argcomplete - Bash tab completion for argparse
@@ -29,8 +30,8 @@ sudo activate-global-python-argcomplete
 Only Works On Local not in O2
 Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
-#import argcomplete  
-#from argcomplete.completers import ChoicesCompleter
+import argcomplete  
+from argcomplete.completers import ChoicesCompleter
 
 #################################
 # JSON Database Read and Upload #
@@ -53,9 +54,9 @@ MCSignalDatabaseJSON: JSON
     
 MCSignalDatabase: list
     MCSignalDatabase is a List for take MC Signals from JSON database
-"""
-analysisCutDatabaseJSON = json.load(open('AnalysisCutDatabase.json'))
-MCSignalDatabaseJSON = json.load(open('MCSignalDatabase.json'))
+
+analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
+MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
 analysisCutDatabase = []
 MCSignalDatabase =[]
 
@@ -69,7 +70,8 @@ for key, value in analysisCutDatabaseJSON.items():
 # MCSignal Database
 for key, value in MCSignalDatabaseJSON.items():
     MCSignalDatabase.append(value)
-    
+
+"""    
 
 """
 ListToString provides converts lists to strings.
@@ -93,7 +95,7 @@ def listToString(s):
         
         return (str1.join(s))
 
-# defination for binary check TODO: Need to be integrated
+# defination for binary check #TODO Need to be integrated
 def binary_selector(v):
     if isinstance(v, bool):
         return v
@@ -109,6 +111,72 @@ def binary_selector(v):
 def stringToList(string):
     li = list(string.split(" "))
     return li
+
+# control list for type control
+clist=[]
+allValuesCfg = [] # counter for provided args
+allCuts = [] # all analysis cuts
+allMCSignals =[] # all MC Signals
+allPairCuts = [] # only pair cuts
+nAddedAllCutsList = [] # e.g. muonQualityCuts::2
+nAddedPairCutsList = [] # e.g paircutMass::3
+SelsStyle1  =[ ] # track/muon cut::paircut::n
+allSels = [] # track/muon cut::n
+namespaceDef = "::" # Namespace reference
+
+MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
+AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+with open(MCSignalsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getSignals = re.findall('"([^"]*)"', i)
+            allMCSignals = allMCSignals + getSignals
+            
+with open(AnalysisCutsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            getPairCuts = [y for y in getAnalysisCuts # get pair cuts
+                        if 'pair' in y] 
+            if getPairCuts: # if pair cut list is not empty
+                allPairCuts = allPairCuts + getPairCuts
+                namespacedPairCuts = [x + namespaceDef for x in allPairCuts]
+            allCuts = allCuts + getAnalysisCuts
+            nameSpacedAllCuts = [x + namespaceDef for x in allCuts]
+
+# in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n>. For Manage this issue:
+for k in range (1,4):
+    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCuts]
+    nAddedAllCutsList = nAddedAllCutsList + nAddedAllCuts
+    nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
+    nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
+    
+# Style 1 <track-cut>:[<pair-cut>]:<n>:
+for i in nAddedPairCutsList:
+    Style1 = [x + i for x in nameSpacedAllCuts]
+    SelsStyle1 = SelsStyle1 + Style1
+      
+#Style 2 <track-cut>:<n> --> nAddedAllCutsList
+
+# Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
+allSels = SelsStyle1 + nAddedAllCutsList
+
+
+# Debug Print Options
+
+#print(allCuts)
+#print(allPairCuts)
+#print(allMCSignals)
+#print(allPairCuts)
+#print(namespacedPairCuts)
+#print(nameSpacedAllCuts)
+#print(nAddedAllCutsList)
+#print(nAddedPairCutsList)
+#print(SelsStyle1)
+#print(nAddedAllCutsList)
+#print(allSels)
     
 ###################################
 # Interface Predefined Selections #
@@ -143,6 +211,9 @@ PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr",
 
 processDummySelections =["filter","event","barrel"]
 
+noDeleteNeedForCent = True
+processLeftAfterCentDelete = True
+
 
 
 #track_prop = ["Standart","Covariance"]
@@ -160,7 +231,7 @@ parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to 
 parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
 parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
 
-coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_track_prop"]
+#coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_track_prop"]
 
 ########################
 # Interface Parameters #
@@ -171,72 +242,74 @@ coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_tr
 parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
 # json output
-parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
+#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # only select
-parser.add_argument('--onlySelect', help="Activate only selected JSON configs", action="store",choices=["true","false"], default="false", type=str.lower)
+parser.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store",choices=["true","false"], default="true", type=str.lower)
 
 # table-maker cfg
-parser.add_argument('--cfgEventCuts', help="Configure Cuts with spaces", choices=analysisCutDatabase, nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelTrackCuts', help="Configure Cuts with spaces", choices=analysisCutDatabase,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonCuts', help="Configure Cuts with spaces", action="store", choices=analysisCutDatabase, nargs='*', type=str)
-parser.add_argument('--cfgBarrelLowPt', help="Input type number", action="store", type=str)
-parser.add_argument('--cfgMuonLowPt', help="Input type number", action="store", type=str)
-parser.add_argument('--cfgNoQA', help="QA Selection true or false", action="store", choices=["true","false"], type=str.lower)
-parser.add_argument('--cfgDetailedQA', help="QA Detail Selection true or false", action="store", choices=["true","false"], type=str.lower)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str)
+parser.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
+parser.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
+parser.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", choices=["true","false"], type=str.lower)
+parser.add_argument('--cfgDetailedQA', help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", choices=["true","false"], type=str.lower)
 #parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
-parser.add_argument('--cfgMinTpcSignal', help="Input type number", action="store", type=str)
-parser.add_argument('--cfgMaxTpcSignal', help="Input type number", action="store", type=str)
-parser.add_argument('--cfgMCsignals', help="Configure MCSignals with spaces", action="store",choices=MCSignalDatabase, nargs='*', type=str)
+parser.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
+parser.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
+parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=allMCSignals, nargs='*', type=str)
 
 # table-maker process
-parser.add_argument('--process', help="Process Selection options true or false (string)", action="store", choices=tablemakerProcessAllSelections, nargs='*', type=str)
+parser.add_argument('--process', help="Process Selection options for TableMaker Data Processing and Skimming", action="store", choices=tablemakerProcessAllSelections, nargs='*', type=str)
 
 # Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
-parser.add_argument('--run', help="Run Selection", action="store", choices=['2','3'], type=str, required=True)
+parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choices=['2','3'], type=str, required=True)
 #parser.add_argument('--processRun2', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 #parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # event-selection-task
-parser.add_argument('--syst', help="Collision System Selection Input pp or PbPb", action="store", choices=['pp','PbPb'], type=str)
-parser.add_argument('--muonSelection', help="Muon Selection Input Type Number", action="store", type=str)
-parser.add_argument('--customDeltaBC', help="CustomDeltaBC Input Type Number", action="store", type=str)
+parser.add_argument('--syst', help="Collision System Selection ex. pp", action="store", choices=["PbPb", "pp", "pPb", "Pbp", "XeXe"], type=str)
+parser.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts",choices=["0","1","2"], action="store", type=str)
+parser.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 #parser.add_argument('--isMC', help="Is it Monte Carlo options true or false", action="store", choices=["true","false"],default="false", type=str, required=True) # no need
 
 # track-propagation
-parser.add_argument('--processStandard', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
-parser.add_argument('--processCovariance', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--isCovariance', help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store", choices=['true','false'], type=str.lower)
+#parser.add_argument('--processStandard', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+#parser.add_argument('--processCovariance', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
 # tof-pid-full, tof-pid for run3 ???
-parser.add_argument('--isProcessEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need
 #parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)#no need
 
 #tof-pid-beta
-parser.add_argument('--tof-expreso', help="Tof expreso Input Type Number", action="store", type=str)
+parser.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
 
 #parser.add_argument('--processSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #d-q barrel and d-q muon selection no need automatic with process tablemaker
 #parser.add_argument('--processSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #only d-q barrel no need automatic with process tablemaker
 
 # dummies
-parser.add_argument('--processDummy', help="Process Selection options true or false (string)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
+parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy is true)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
+parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
 # d-q-track barrel-task
 
-parser.add_argument('--isBarrelSelectionTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], default='false', type=str.lower) #d-q barrel and d-q muon selection
+parser.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", choices=['true','false'], default='false', type=str.lower) #d-q barrel and d-q muon selection
 # d-q event selection task
 #parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # d-q-filter-p-p-task
-parser.add_argument('--cfgPairCuts', help="Configure Cuts with spaces", action="store", choices=analysisCutDatabase, nargs='*', type=str) # run3
-parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection example jpsiO2MCdebugCuts2::1 ", action="store", type=str) # run2 
-parser.add_argument('--cfgMuonSels', help="Configure Muon Selection example muonHighPt::1", action="store", type=str) # run 2
-parser.add_argument('--isFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str) # run3
+parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str) # run2 
+parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str) # run 2
+parser.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 
 # centrality-table
-parser.add_argument('--est', help="Configure to centrality Table", action="store", choices=centralityTableSelections,nargs="*", type=str)
+parser.add_argument('--est', help="Produces centrality percentiles parameters", action="store", choices=centralityTableSelections,nargs="*", type=str)
 
 # timestamp-task
 #parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
@@ -245,25 +318,23 @@ parser.add_argument('--est', help="Configure to centrality Table", action="store
 #parser.add_argument('--isRun3', help="Add track propagation to the innermost layer (TPC or ITS)", action="store", choices=['true','false'], type=str)
 
 #all d-q tasks and selections
-parser.add_argument('--cfgWithQA', help="Selection Configure QA options true or false", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", choices=['true','false'], type=str.lower)
 
 # v0-selector
-parser.add_argument('--d_bz', help="Input Type Number", action="store", type=str)
-parser.add_argument('--v0cospa', help="Input Type Number", action="store", type=str)
-parser.add_argument('--dcav0dau', help="Input Type Number", action="store", type=str)
-parser.add_argument('--v0Rmin', help="Input Type Number", action="store", type=str)
-parser.add_argument('--v0Rmax', help="Input Type Number", action="store", type=str)
-parser.add_argument('--dcamin', help="Input Type Number", action="store", type=str)
-parser.add_argument('--dcamax', help="Input Type Number", action="store", type=str)
-parser.add_argument('--mincrossedrows', help="Input Type Number", action="store", type=str)
-parser.add_argument('--maxchi2tpc', help="Input Type Number", action="store", type=str)
+parser.add_argument('--d_bz', help="bz field", action="store", type=str)
+parser.add_argument('--v0cospa', help="v0cospa", action="store", type=str)
+parser.add_argument('--dcav0dau', help="DCA V0 Daughters", action="store", type=str)
+parser.add_argument('--v0Rmin', help="v0Rmin", action="store", type=str)
+parser.add_argument('--v0Rmax', help="v0Rmax", action="store", type=str)
+parser.add_argument('--dcamin', help="dcamin", action="store", type=str)
+parser.add_argument('--dcamax', help="dcamax", action="store", type=str)
+parser.add_argument('--mincrossedrows', help="Min crossed rows", action="store", type=str)
+parser.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", type=str)
 
 # pid
-parser.add_argument('--pid', help="pid selection input", action="store", choices=PIDSelections, nargs='*', type=str.lower)
+parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
 
-
-"""Activate For Autocomplete. See to Libraries for Info"""
-#argcomplete.autocomplete(parser)
+argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
@@ -271,7 +342,9 @@ configuredCommands = vars(extrargs) # for get extrargs
 #####################################################
 # Selection Parameters for run number and data type #
 #####################################################
-# Selection Options for Run<Data|MC> Run<2|3> TODO : Integrate them over extrags checks
+
+# Selection Options for Run<Data|MC> Run<2|3> #TODO  Integrate them over extrags checks
+
 run2Selected = False
 run3Selected = False
 MCSelected = False
@@ -388,7 +461,7 @@ if len(sys.argv) < 3:
 
 # Load the configuration file provided as the first parameter
 config = {}
-cfgFileName = 'configTableMakerDataRun3.json'
+#cfgFileName = 'configTableMakerDataRun3.json'
 with open(extrargs.cfgFileName) as configFile:
   config = json.load(configFile)
 
@@ -410,14 +483,6 @@ if extrargs.analysisString != "":
   for arg in args:
     config[arg[0]][arg[1]] = arg[2]
 """
-
-"""
-Transaction Management TODO
-"""
-#tasksInDataRun3 = ["internal-dpl-clock, internal-dpl-aod-reader, internal-dpl-aod-spawner, internal-dpl-aod-index-builder, timestamp-task, track-propagation, tof-pid-full, tpc-pid-full, bc-selection-task, multiplicity-table, centrality-table, tof-signal, track-extension, weak-decay-indices-v0, tof-pid, event-selection-task, tof-pid-beta, tof-event-time, track-selection, weak-decay-indices-cascades, v0-selector, d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, track-pid-qa, v0-gamma-qa, table-maker, internal-dpl-aod-global-analysis-file-sink, internal-dpl-aod-writer"]
-#tasksInDataRun2 = ["internal-dpl-clock, internal-dpl-aod-reader, internal-dpl-aod-spawner, internal-dpl-aod-index-builder, timestamp-task, tof-pid-full, tpc-pid-full, bc-selection-task, multiplicity-table, centrality-table, tof-signal, track-extension, weak-decay-indices-v0, tof-pid, event-selection-task, tof-pid-beta, track-selection, weak-decay-indices-cascades, v0-selector, d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, track-pid-qa, v0-gamma-qa, table-maker, internal-dpl-aod-global-analysis-file-sink, internal-dpl-aod-writer"]
-#tasksInMCRun3 = ["internal-dpl-clock, internal-dpl-aod-reader, internal-dpl-aod-spawner, internal-dpl-aod-index-builder, mc-converter, timestamp-task, track-propagation, tof-pid-full, tpc-pid-full, bc-selection-task, tof-signal, track-extension, tof-pid, event-selection-task, tof-pid-beta, track-selection, table-maker-m-c, multiplicity-table, internal-dpl-aod-global-analysis-file-sink, internal-dpl-aod-writer"]
-#tasksInMCRun2 = ["internal-dpl-clock, internal-dpl-aod-reader, internal-dpl-aod-spawner, internal-dpl-aod-index-builder, mc-converter, timestamp-task, tof-pid-full, tpc-pid-full, bc-selection-task, multiplicity-table, tof-signal, track-extension, tof-pid, event-selection-task, tof-pid-beta, track-selection, table-maker-m-c, internal-dpl-aod-global-analysis-file-sink, internal-dpl-aod-writer"]
 
 taskNameInConfig = "table-maker"
 taskNameInCommandLine = "o2-analysis-dq-table-maker"
@@ -662,14 +727,18 @@ for key, value in config.items():
                     config[key][value] = "false"
                     config[key]["processNoEvTime"] = "true"
                     
-            # all d-q tasks and selections TODO Eğer TableMakerdakiyle aynı şeyi isterlerse refactor
+            # all d-q tasks and selections
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
-                config[key][value] = extrargs.cfgWithQA                  
+                config[key][value] = extrargs.cfgWithQA
+                                  
             # track-propagation
-            if value =='processStandard' and extrargs.processStandard:
-                config[key][value] = extrargs.processStandard
-            if value == 'processCovariance' and extrargs.processCovariance:
-                config[key][value] = extrargs.processCovariance
+            if extrargs.isCovariance:
+                if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'false' :
+                    config[key]["processStandard"] = "true"
+                    config[key]["processCovariance"] = "false"
+                if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'true' :
+                    config[key]["processStandard"] = "false"
+                    config[key]["processCovariance"] = "true"
                 
             # dummy selection
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
@@ -679,6 +748,30 @@ for key, value in config.items():
                     config['d-q-filter-p-p-task']['processDummy'] = "true"
                 if extrargs.processDummy == "barrel":
                     config['d-q-barrel-track-selection-task']['processDummy'] = "true"
+                    
+            # dummy automizer #TODO: for transaction manag. we need logger for dummy
+            if value == 'processDummy' and extrargs.autoDummy and extrargs.runData and extrargs.run == '3':
+                
+                if config["d-q-barrel-track-selection-task"]["processSelection"] == "true" or config["d-q-barrel-track-selection-task"]["processSelectionTiny"] == "true":
+                    config["d-q-barrel-track-selection-task"]["processDummy"] = "false"
+                if config["d-q-barrel-track-selection-task"]["processSelection"] == 'false' and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
+                    config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
+                    
+                #TODO: We need automizer for muons selection
+                #if config["d-q-muons-selection"]["processSelection"] == "true":
+                    #config["d-q-muons-selection"]["processDummy"] = "false"
+                #if config["d-q-muons-selection"]["processSelection"] == "false":
+                    #config["d-q-muons-selection"]["processDummy"] = "true"
+                    
+                if config["d-q-event-selection-task"]["processEventSelection"] == "true":
+                    config["d-q-event-selection-task"]["processDummy"] = "false"
+                if config["d-q-event-selection-task"]["processEventSelection"] == "false":
+                    config["d-q-event-selection-task"]["processDummy"] = "true"
+                    
+                if config["d-q-filter-p-p-task"]["processFilterPP"] =="true" or config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true":
+                    config["d-q-filter-p-p-task"]["processDummy"] = "false"
+                if config["d-q-filter-p-p-task"]["processFilterPP"] == "false" and config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false" :
+                    config["d-q-filter-p-p-task"]["processDummy"] = "true"
 
 
 # Transaction Management for process function in TableMaker/TableMakerMC Task
@@ -725,8 +818,8 @@ for key,value in configuredCommands.items():
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI")
-        if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logger bug
+            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
             print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'cfgMCsignals' and extrargs.runData:
@@ -740,7 +833,8 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # Firstly try for Data then if not data it gives warning message for MC
     noDeleteNeedForCent = False
     try:
-        del(config["centrality-table"])
+            print("[INFO] JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
+        #del(config["centrality-table"])
     except:
         if extrargs.runMC:
             print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
@@ -754,23 +848,17 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 if extrargs.runMC:
                     try:       
                         config["table-maker-m-c"][paramValueTableMaker] = 'false'
-                        #for key in paramValueTableMaker:
-                            # TODO make print to new process
                     except:
                         print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
                         sys.exit()
                 if extrargs.runData:
                     try:       
                         config["table-maker"][paramValueTableMaker] = 'false'
-                        #for key in paramValueTableMaker:
-                            #print(key)
-                            # TODO make print to new process
                     except:
                         print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                         sys.exit()
     except:
         print("[WARNING] No process function provided so no need delete related to centrality-table dependency")
-        noDeleteNeedForCent = True
          
     # After deleting centrality we need to check if we have process function
     processLeftAfterCentDelete = True
@@ -799,10 +887,8 @@ if noDeleteNeedForCent == False:
 if processLeftAfterCentDelete == False and noDeleteNeedForCent == False:
     print("[ERROR] After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
     sys.exit()       
- 
-                    
-# AOD File checker TODO Enable it for checker
-
+  
+# AOD File checker 
 if extrargs.aod != None:
     if os.path.isfile(extrargs.aod) == False:
         print("[ERROR]",extrargs.aod,"File not found in path!!!")
@@ -820,11 +906,11 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
 
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfig.json"
-
+updatedConfigFileName = "tempConfigTableMaker.json"
+# TODO Fix and implemente it
 """
 Transaction Management for Json File Name
-"""
+
 if(extrargs.outputjson == None):       
     config_output_json = open(updatedConfigFileName,'w')
     config_output_json.write(json.dumps(config, indent= 2))
@@ -844,9 +930,10 @@ elif(extrargs.outputjson[-5:] != ".json"):
     config_output_json.write(json.dumps(config, indent= 2))
 else:
     print("Logical json input error. Report it!!!")
+"""
     
-#with open(updatedConfigFileName,'w') as outputFile:
-  #json.dump(config, outputFile ,indent=2)
+with open(updatedConfigFileName,'w') as outputFile:
+  json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run  
 depsToRun = {}
