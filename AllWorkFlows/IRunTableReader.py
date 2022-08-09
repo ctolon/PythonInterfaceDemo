@@ -124,8 +124,10 @@ def stringToList(string):
     li = list(string.split(" "))
     return li
 
+isSameEventPairing = False
+
 readerPath = 'Configs/readerConfiguration_reducedEvent.json'
-writerPath = 'Config/writerConfiguration_dileptons.json'
+writerPath = 'Configs/writerConfiguration_dileptons.json'
 
 # control list for type control
 clist=[]
@@ -377,6 +379,9 @@ for key, value in config.items():
                 if(valueCfg != None): # Skipped None types, because can't iterate in None type
                     if keyCfg == 'process' or keyCfg == 'analysis': # Select analysis and process keys
                         if key == 'analysis-same-event-pairing' and extrargs.process:
+                            if isSameEventPairing == False:
+                                print("[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
+                                isSameEventPairing == True
                             allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
                     
                             if 'JpsiToEE' in valueCfg:
@@ -423,6 +428,14 @@ for key, value in config.items():
                                     sys.exit()
                             if 'All' not in valueCfg:
                                 config[key]["processAllSkimmed"] = 'false'
+                                
+                        if key == 'analysis-same-event-pairing' and extrargs.process == None and isSameEventPairing == False:
+                            config[key]["processJpsiToEESkimmed"] = 'false'
+                            config[key]["processJpsiToMuMuSkimmed"] = 'false'
+                            config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                            config[key]["processElectronMuonSkimmed"] = 'false'
+                            config[key]["processAllSkimmed"] = 'false'
+                            
   
             
             """

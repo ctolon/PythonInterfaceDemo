@@ -118,11 +118,11 @@ allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
 allMCSignals =[] # all MC Signals
 allPairCuts = [] # only pair cuts
-nAddedAllCutsList = []
-nAddedPairCutsList = []
+nAddedAllCutsList = [] # e.g. muonQualityCuts::2
+nAddedPairCutsList = [] # e.g paircutMass::3
 SelsStyle1  =[ ] # track/muon cut::paircut::n
 allSels = [] # track/muon cut::n
-namespaceDef = "::"
+namespaceDef = "::" # Namespace reference
 
 MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
 AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
@@ -160,15 +160,16 @@ for i in nAddedPairCutsList:
       
 #Style 2 <track-cut>:<n> --> nAddedAllCutsList
 
-# Merge All possible styles for Sels
+# Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
 allSels = SelsStyle1 + nAddedAllCutsList
 
+
+# Debug Print Options
 
 #print(allCuts)
 #print(allPairCuts)
 #print(allMCSignals)
-print(allPairCuts)
-
+#print(allPairCuts)
 #print(namespacedPairCuts)
 #print(nameSpacedAllCuts)
 #print(nAddedAllCutsList)
@@ -278,7 +279,7 @@ parser.add_argument('--isCovariance', help="track-propagation : If false, Proces
 #parser.add_argument('--processStandard', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processCovariance', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
-# tof-pid-full, tof-pid for run3 ??? #TODO: Help message need
+# tof-pid-full, tof-pid for run3 ???
 parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need
 #parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)#no need

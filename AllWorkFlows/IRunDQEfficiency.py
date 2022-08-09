@@ -110,7 +110,9 @@ def stringToList(string):
     return li
 
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
-writerPath = 'Config/writerConfiguration_dileptonMC.json'
+writerPath = 'Configs/writerConfiguration_dileptonMC.json'
+
+isSameEventPairing = False
 
 # control list for type control
 clist=[]
@@ -161,7 +163,7 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 # Skimmed process Dummy Selections for analysis
 parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dimuonMuonSelection'], nargs='*', type=str)
 parser.add_argument('--process', help="Skimmed process selections for same event pairing", action="store", choices=['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing'], nargs='*', type=str)
-parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
+#parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
 
 # cfg for QA
@@ -258,6 +260,12 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                 if 'dimuonMuonSelection' not in valueCfg:
                                     config[key][value] = 'false' 
+                            if key == 'analysis-same-event-pairing':                               
+                                if 'sameEventPairing' in valueCfg:
+                                    isSameEventPairing = True
+                                if 'sameEventPairing' not in valueCfg:
+                                    isSameEventPairing = False
+                                    
                                             
             # analysis-dummy-selections (We have automated thins so not need most of time)
             """
@@ -332,6 +340,9 @@ for key, value in config.items():
                 if(valueCfg != None): # Skipped None types, because can't iterate in None type
                     if keyCfg == 'process' or keyCfg == 'analysis': # Select analysis and process keys
                         if key == 'analysis-same-event-pairing' and extrargs.process:
+                            if isSameEventPairing == False:
+                                print("[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
+                                isSameEventPairing == True
                             allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
                     
                             if 'JpsiToEE' in valueCfg:
@@ -360,6 +371,11 @@ for key, value in config.items():
                                     sys.exit()
                             if 'JpsiToMuMuVertexing' not in valueCfg:
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                                
+                        if key == 'analysis-same-event-pairing' and extrargs.process == None and isSameEventPairing == False:
+                            config[key]["processJpsiToEESkimmed"] = 'false'
+                            config[key]["processJpsiToMuMuSkimmed"] = 'false'
+                            config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
             
             
             """

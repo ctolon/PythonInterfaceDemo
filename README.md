@@ -2,7 +2,7 @@
 Python Automated CLI and Task Manager Development and implematation Repository for Contains O2/DQ workflow json configuration files and python scripts to run them (TableMaker, TableReader, DQEfficiency, FilterPP)
 
 ## Contact
-Ionut Christian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
+Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
 Cevat Batuhan Tolon
 
@@ -17,22 +17,6 @@ Cevat Batuhan Tolon
 [`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQEfficiency..py).
 * Produces a decision table for pp collisions. The decisions require that at least a selected pair (or just two tracks) exists for a given event. Currently up to 64 simultaneous decisions can be made, to facilitate studies for optimizing cuts. 
 [`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunFilterPP.py).
-
-## JSON Databases
-
-MC signals, analysis cuts and histograms, which are configuration variables for analysis are kept in JSON files. This is for transaction management and autocompletion suggestion in Python CLI.
-
-* Database Contains configuration variables for MCSignals, Analysis Cuts, Histograms and Event Mixing Selections based on O2Physics PWG-DQ.
-[`Database`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows/Database)
-
-* JSON Database List in Table
-
-Main File | Based on O2Physics | Description
---- | --- | ---
-[`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | [`CutsLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h) | Analysis Cuts in DQ
-[`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | [`MCSignalLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h) | MC Signals in DQ
-`HistogramDatabase.json` | [`HistogramManager.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramManager.h) | Histograms in DQ
-[`MixingDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MixingDatabase.json) | [`MixingLibrary.h`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h) | Histograms in DQ
 
 ## Config Files
 
@@ -51,7 +35,7 @@ Main File | Related Task on O2Physics | Description
 [`configAnalysisData.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configAnalysisData.json) | [`TableReader.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx) | run with tableReader.cxx
 [`configAnalysisMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configAnalysisMC.json) | [`dqEfficiency.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx) | run with dqEfficiency.cxx
 [`configFilterPPRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
-[`configFilterPPDataRun2.`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
+[`configFilterPPDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
 
 * JSON Reader Configuations for the DQ skimmed tables
 
@@ -378,19 +362,19 @@ Arg | Opt | Task | nargs |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
 `--isFilterPPTiny` | `true`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
-`--cfgPairCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `d-q-filter-p-p-task` | * |
-`--cfgBarrelSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgMuonSels` | all | `d-q-filter-p-p-task` | * |
-`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgBarrelTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
-`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `table-maker` | * |
+`--cfgPairCuts` | `allPairCuts` | `d-q-filter-p-p-task` | * |
+`--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
+`--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
+`--cfgEventCuts` | `allCuts` | `table-maker` | * |
+`--cfgBarrelTrackCuts` | [`allCuts` | `table-maker` | * |
+`--cfgMuonCuts` | `allCuts` | `table-maker` | * |
 `--cfgBarrelLowPt` | all | `table-maker` | 1 |
 `--cfgMuonLowPt` | all | `table-maker` | 1 |
 `--cfgNoQA` | `true`</br> `false`</br> | `table-maker` | 1 |
 `--cfgDetailedQA` | `true`</br> `false`</br> | `table-maker` | 1 |
 `--cfgMinTpcSignal` | all | `table-maker` | 1 |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
-`--cfgMCsignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `table-maker` | * |
+`--cfgMCsignals` | `allSignals` | `table-maker` | * |
 
 * Details parameters for `IRunTableMaker.py`
 
@@ -428,8 +412,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--isFilterPPTiny` | Boolean | Run filter tiny task instead of normal (processFilterPP must be true) |  | str.lower
 `--cfgPairCuts` | String | Space separated list of pair cuts |  | str
-`--cfgBarrelSels` | String | Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1|  | str
-`--cfgMuonSels` | String | Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1|  | str
+`--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
+`--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts  |  | str
@@ -466,6 +450,7 @@ In case of multiple configs example
 TODO Add Details
 
 # Available configs in IRunTableReader Interface
+['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing','ElectronMuon','All']
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -473,16 +458,14 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`eventMixingBarrel`</br> `eventMixingMuon` </br> `eventMixingBarrelMuon` </br> `dileptonHadron`  | Special Option | * |
-`--analysisAllSkimmed` | `true`</br> `false`</br>  | `table-maker` | 1 |
-`--analysisDummy` |  `event`</br>`track`</br>`muon`</br>`eventMixing`</br>`sameEventPairing`</br> `dileptonHadron`  | `event-selection-task`</br> | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br> `dileptonHadronSelection`  | analysis-selections | * |
+`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`ElectronMuon`</br> `All`  | Same Event Pairing | * |
+`--isMixingEvent` | `true`</br>`false`</br>  | `analysis-event-mixing-selection` | 1 |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
-`--cfgMixingVars` | [`MixingDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MixingDatabase.json)  | `analysis-event-selection`</br>  | * |
-`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json)  | `analysis-event-selection`</br>  | * |
-`--cfgTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-track-selection`</br> | * |
-`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-muon-selection` | * |
-`--processSameEventPairing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
-`--isVertexing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
+`--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br>  | * |
+`--cfgEventCuts` | `allCuts`  | `analysis-event-selection`</br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
+`--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
 
 * Details parameters for `IRunTableReader.py`
@@ -493,16 +476,14 @@ Arg | Ref Type| Desc | Default | Real Type
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEvent.json` | str
 `--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptons.json` | str
-`--analysisSkimmed` | String | Skimmed process selections for analysis | - | str
-`--analysisAllSkimmed` | Boolean | All Skimmed Selection as boolean | - | str.lower
-`--analysisDummy` | String | Dummy Selections (if autoDummy true, you don't need it) | - | str
+`--analysis` | String | Skimmed process selections for analysis | - | str
+`--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
+`--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgMixingVars` | String | Mixing configs separated by a space | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
-`--processSameEventPairing` | Boolean | This option automatically activates  same-event-pairing based on analysis track, muon, event and event mixing | - | str.lower
-`--isVertexing` | Boolean | Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection) | - | str.lower
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 # Instructions for IRunDQEfficiency.py
 
@@ -520,7 +501,9 @@ Examples(in AllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysisSkimmed muon event --aod reducedAod.root --cfgMuonCuts muonQualityCuts --cfgMuonMCSignals muFromJpsi --cfgQA true
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
+
+
   ```
 
 # Available configs in IRunDQEfficiency Interface
@@ -533,20 +516,18 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysisSkimmed` | `event`</br>`track`</br>`muon`</br>`dimuonMuon`</br>| Special Option | * |
-`--analysisDummy` |  `event`</br>`track`</br>`muon`</br>`sameEventPairing`</br> `dilepton`  | `event-selection-task`</br> | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`dimuonMuonSelection`</br>| Special Option | * |
+`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| Special Option | * |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
-`--cfgEventCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json)  | `analysis-event-selection`</br>  | * |
-`--cfgTrackCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-track-selection`</br> | * |
-`--cfgTrackMCSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-track-selection` | * |
-`--cfgMuonCuts` | [`AnalysisCutDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/AnalysisCutDatabase.json) | `analysis-muon-selection` | * |
-`--cfgMuonMCSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-muon-selection` | * |
-`--processSameEventPairing` | `true`</br> `false`</br>  | `analysis-same-event-pairing` | 1 |
-`--isVertexing` | `true`</br> `false`</br> | `analysis-same-event-pairing` | 1 |
-`--cfgBarrelMCRecSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-same-event-pairing` | * |
-`--cfgBarrelMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-same-event-pairing` | * |
-`--cfgBarrelDileptonMCRecSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
-`--cfgBarrelDileptonMCGenSignals` | [`MCSignalDatabase.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Database/MCSignalDatabase.json) | `analysis-dilepton-track` | * |
+`--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
+`--cfgTrackMCSignals` | `allMCSignals` | `analysis-track-selection` | * |
+`--cfgMuonCuts` | [`allCuts` | `analysis-muon-selection` | * |
+`--cfgMuonMCSignals` | `allMCSignals` | `analysis-muon-selection` | * |
+`--cfgBarrelMCRecSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
+`--cfgBarrelMCGenSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
+`--cfgBarrelDileptonMCRecSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
+`--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 
 * Details parameters for `IRunDQEfficiency.py`
 
@@ -556,24 +537,22 @@ Arg | Ref Type| Desc | Default | Real Type
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEventMC.json` | str
 `--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptonMC.json` | str
-`--analysisSkimmed` | String | Skimmed process selections for analysis | - | str
-`--analysisDummy` | String | Dummy Selections (if autoDummy true, you don't need it) | - | str
+`--analysis` | String | Skimmed process selections for analysis | - | str
+`--process` | String | Skimmed process selections for Same Event Pairing | - | str
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgTrackMCSignals` | String | Space separated list of MC signals | - | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgMuonMCSignals` | String | Space separated list of MC signals | - | str
-`--processSameEventPairing` | Boolean | This option automatically activates same-event-pairing based on analysis track, muon and event | - | str.lower
-`--isVertexing` | Boolean | Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection) | - | str.lower
-`----cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
+`--cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
 `--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
 
 
 ## TODO List For IRunTableMaker
-* `Closed` We need more meaningful explanations for argument explanations (helping comments).
+* `Finished` We need more meaningful explanations for argument explanations (helping comments).
 * `Open` The values that JSON values can take for transaction management should be classified and filtered with
 choices and data types.
 * `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
@@ -589,7 +568,7 @@ repository as default or null values.
 bash (Already Integrated for local).
 * `Finished` After the developments are finished, the user manual should be prepared.
 * `Open` For new feature tests, the ability to append new key-value pairs to JSONs should be implemented.
-* `Open` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
+* `Closed` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
 * `Closed` A transaction management should be written to search whether the entered aod file is in the location.
 * `Closed` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
 * `Open` char refactor for prefixes
@@ -608,6 +587,7 @@ bash (Already Integrated for local).
 * `Jul 27, 2022` Fixed a bug for filterpp tiny selection in Tablemaker, AOD File Checker added to TableMaker, readme updated (instructions added), New Critical Transaction Managements Added, For TableMaker process Function, Workflow Decision Tree Added   
 * `Jul 28, 2022` Workflows with CLI for TableReader and DQEfficiency Completed. Demo versions and Old Version Deleted. JSON path's for single workflows updated. Mixing Library added for Skimmed processes, runtime errors fixed, writer configs added to CLI, CommandToRun Fixed in TableReader in DQEfficiency, MC Rec Gen Signals fixed for dileptons in DQEfficiency, only-select automation parameter will implemnt for TableReader and DQEfficiency, installation guide for argcomplate added, Instructions and avaiable commands added readme for TableMaker DQ Efficiency
 * `Jul 29, 2022` All Tests passed for workflows and development is completed. Only some parts need refactoring for clean code and readme will updated.
+* `Aug 09, 2022` JSON Databases removed as suggested. We have compiled time solutions regarding to O2Physics (based on regex exp. and some string operations). TableMaker and DQEfficiency Workflows refactored for user friendliness. All things are discussed with Ionut.
 
 
 
