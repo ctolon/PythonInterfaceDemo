@@ -19,6 +19,7 @@ import logging
 from ast import parse
 import os
 import argparse
+import re
 
 """
 argcomplete - Bash tab completion for argparse
@@ -53,7 +54,7 @@ MCSignalDatabaseJSON: JSON
     
 MCSignalDatabase: list
     MCSignalDatabase is a List for take MC Signals from JSON database
-"""
+
 analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
 MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
 analysisCutDatabase = []
@@ -69,7 +70,8 @@ for key, value in analysisCutDatabaseJSON.items():
 # MCSignal Database
 for key, value in MCSignalDatabaseJSON.items():
     MCSignalDatabase.append(value)
-    
+
+"""    
 
 """
 ListToString provides converts lists to strings.
@@ -109,6 +111,71 @@ def binary_selector(v):
 def stringToList(string):
     li = list(string.split(" "))
     return li
+
+# control list for type control
+clist=[]
+allValuesCfg = [] # counter for provided args
+allCuts = [] # all analysis cuts
+allMCSignals =[] # all MC Signals
+allPairCuts = [] # only pair cuts
+nAddedAllCutsList = []
+nAddedPairCutsList = []
+SelsStyle1  =[ ] # track/muon cut::paircut::n
+allSels = [] # track/muon cut::n
+namespaceDef = "::"
+
+MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
+AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+with open(MCSignalsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getSignals = re.findall('"([^"]*)"', i)
+            allMCSignals = allMCSignals + getSignals
+            
+with open(AnalysisCutsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            getPairCuts = [y for y in getAnalysisCuts # get pair cuts
+                        if 'pair' in y] 
+            if getPairCuts: # if pair cut list is not empty
+                allPairCuts = allPairCuts + getPairCuts
+                namespacedPairCuts = [x + namespaceDef for x in allPairCuts]
+            allCuts = allCuts + getAnalysisCuts
+            nameSpacedAllCuts = [x + namespaceDef for x in allCuts]
+
+# in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n>. For Manage this issue:
+for k in range (1,4):
+    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCuts]
+    nAddedAllCutsList = nAddedAllCutsList + nAddedAllCuts
+    nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
+    nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
+    
+# Style 1 <track-cut>:[<pair-cut>]:<n>:
+for i in nAddedPairCutsList:
+    Style1 = [x + i for x in nameSpacedAllCuts]
+    SelsStyle1 = SelsStyle1 + Style1
+      
+#Style 2 <track-cut>:<n> --> nAddedAllCutsList
+
+# Merge All possible styles for Sels
+allSels = SelsStyle1 + nAddedAllCutsList
+
+
+#print(allCuts)
+#print(allPairCuts)
+#print(allMCSignals)
+print(allPairCuts)
+
+#print(namespacedPairCuts)
+#print(nameSpacedAllCuts)
+#print(nAddedAllCutsList)
+#print(nAddedPairCutsList)
+#print(SelsStyle1)
+#print(nAddedAllCutsList)
+#print(allSels)
     
 ###################################
 # Interface Predefined Selections #
@@ -163,7 +230,7 @@ parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to 
 parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
 parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
 
-coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_track_prop"]
+#coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_track_prop"]
 
 ########################
 # Interface Parameters #
@@ -177,12 +244,12 @@ parser.add_argument('--aod', help="Add your AOD File with path", action="store",
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # only select
-parser.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store",choices=["true","false"], default="false", type=str.lower)
+parser.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store",choices=["true","false"], default="true", type=str.lower)
 
 # table-maker cfg
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=analysisCutDatabase, nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=analysisCutDatabase,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=analysisCutDatabase, nargs='*', type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str)
 parser.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
 parser.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
 parser.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", choices=["true","false"], type=str.lower)
@@ -190,7 +257,7 @@ parser.add_argument('--cfgDetailedQA', help="If true, include more QA histograms
 #parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 parser.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
-parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=MCSignalDatabase, nargs='*', type=str)
+parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=allMCSignals, nargs='*', type=str)
 
 # table-maker process
 parser.add_argument('--process', help="Process Selection options for TableMaker Data Processing and Skimming", action="store", choices=tablemakerProcessAllSelections, nargs='*', type=str)
@@ -207,12 +274,12 @@ parser.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision m
 #parser.add_argument('--isMC', help="Is it Monte Carlo options true or false", action="store", choices=["true","false"],default="false", type=str, required=True) # no need
 
 # track-propagation
-parser.add_argument('--isCovariance', help="If false, Process without covariance, If true Process with covariance", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--isCovariance', help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processStandard', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processCovariance', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
 # tof-pid-full, tof-pid for run3 ??? #TODO: Help message need
-parser.add_argument('--isProcessEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #no need
 #parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)#no need
 
@@ -233,9 +300,9 @@ parser.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection 
 #parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # d-q-filter-p-p-task
-parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=analysisCutDatabase, nargs='*', type=str) # run3
-parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str) # run2 
-parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str) # run 2
+parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str) # run3
+parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str) # run2 
+parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str) # run 2
 parser.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need

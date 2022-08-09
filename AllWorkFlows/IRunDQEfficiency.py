@@ -19,6 +19,7 @@ import sys
 import json
 import os
 import argparse
+import re
 
 """
 argcomplete - Bash tab completion for argparse
@@ -53,23 +54,20 @@ MCSignalDatabaseJSON: JSON
     
 MCSignalDatabase: list
     MCSignalDatabase is a List for take MC Signals from JSON database
-"""
-json_cut_database = json.load(open('Database/AnalysisCutDatabase.json'))
-json_mcsignal_database = json.load(open('Database/MCSignalDatabase.json'))
-cut_database = []
-mcsignal_database =[]
 
-# control list for type control
-clist=[]
+analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
+MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
+analysisCutDatabase = []
+MCSignalDatabase =[]
 
 # Cut Database
-for key, value in json_cut_database.items():
-    cut_database.append(value)
+for key, value in analysisCutDatabaseJSON.items():
+    analysisCutDatabase.append(value)
 
 # MCSignal Database
-for key, value in json_mcsignal_database.items():
-    mcsignal_database.append(value)
-    
+for key, value in MCSignalDatabaseJSON.items():
+    MCSignalDatabase.append(value)
+"""    
     
     
 """
@@ -113,6 +111,32 @@ def stringToList(string):
 
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
 writerPath = 'Config/writerConfiguration_dileptonMC.json'
+
+# control list for type control
+clist=[]
+allValuesCfg = [] # counter for provided args
+allCuts = []
+allMCSignals =[]
+
+MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
+AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+with open(MCSignalsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getSignals = re.findall('"([^"]*)"', i)
+            allMCSignals = allMCSignals + getSignals
+            
+with open(AnalysisCutsPath) as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            allCuts = allCuts + getAnalysisCuts
+#print(allCuts)
+#print(allMCSignals)
+
+
     
 ###################
 # Main Parameters #
@@ -135,7 +159,8 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed process Dummy Selections for analysis
-parser.add_argument('--analysisSkimmed', help="Skimmed process selections for analysis", action="store", choices=['event','track','muon','dimuonMuon'], nargs='*', type=str)
+parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dimuonMuonSelection'], nargs='*', type=str)
+parser.add_argument('--process', help="Skimmed process selections for same event pairing", action="store", choices=['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing'], nargs='*', type=str)
 parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
 
@@ -143,28 +168,28 @@ parser.add_argument('--autoDummy', help="Dummy automize parameter (if process sk
 parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
 
 # analysis-event-selection
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=cut_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str)
 
 # analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str)
 
 # analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=cut_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str)
 
 # analysis-same-event-pairing
-parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon and event", action="store", choices=['true','false'], default='true', type=str.lower)
-parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
+#parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon and event", action="store", choices=['true','false'], default='true', type=str.lower)
+#parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
 
-parser.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=mcsignal_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str)
 
 
 # analysis-dilepton-track ONLY FOR MC
 
-parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=mcsignal_database,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", choices=mcsignal_database,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str)
 
 """Activate For Autocomplete. See to Libraries for Info"""
 argcomplete.autocomplete(parser)
@@ -189,12 +214,6 @@ with open(sys.argv[1]) as configFile:
 
 taskNameInCommandLine = "o2-analysis-dq-efficiency"
 
-"""
-if not taskNameInConfig in config:
-  print("ERROR: Task to be run not found in the configuration file!")
-  sys.exit()
-"""
-
 #############################
 # Start Interface Processes #
 #############################
@@ -211,36 +230,37 @@ for key, value in config.items():
                 config[key][value] = extrargs.reader
                 
             # analysis-skimmed-selections
-            if value =='processSkimmed' and extrargs.analysisSkimmed:
+            if value =='processSkimmed' and extrargs.analysis:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'analysisSkimmed': #  Only Select key for skimmed
+                        if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-selection':
-                                if 'event' in valueCfg:
+                                if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'event' not in valueCfg:
+                                if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false' 
                                    
                             if key == 'analysis-track-selection':                      
-                                if 'track' in valueCfg:
+                                if 'trackSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'track' not in valueCfg:
+                                if 'trackSelection' not in valueCfg:
                                     config[key][value] = 'false'  
                                                       
                             if key == 'analysis-muon-selection':
-                                if 'muon' in valueCfg:
+                                if 'muonSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'muon' not in valueCfg:
+                                if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     
                             if key == 'analysis-dilepton-track':
-                                if 'dimuonMuon' in valueCfg:
+                                if 'dimuonMuonSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'dimuonMuon' not in valueCfg:
+                                if 'dimuonMuonSelection' not in valueCfg:
                                     config[key][value] = 'false' 
                                             
             # analysis-dummy-selections (We have automated thins so not need most of time)
+            """
             if value =='processDummy' and extrargs.analysisDummy:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -275,6 +295,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                 if 'dilepton' not in valueCfg:
                                     config[key][value] = 'false' 
+            """
                  
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
@@ -307,6 +328,41 @@ for key, value in config.items():
                 config[key][value] = extrargs.cfgMuonMCSignals
             
             # analysis-same-event-pairing
+            for keyCfg,valueCfg in configuredCommands.items():
+                if(valueCfg != None): # Skipped None types, because can't iterate in None type
+                    if keyCfg == 'process' or keyCfg == 'analysis': # Select analysis and process keys
+                        if key == 'analysis-same-event-pairing' and extrargs.process:
+                            allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
+                    
+                            if 'JpsiToEE' in valueCfg:
+                                if 'trackSelection' in allValuesCfg:
+                                    config[key]["processJpsiToEESkimmed"] = 'true'
+                                if 'trackSelection' not in allValuesCfg:
+                                    print("[ERROR] trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
+                                    sys.exit()
+                            if 'JpsiToEE' not in valueCfg:
+                                    config[key]["processJpsiToEESkimmed"] = 'false'
+                                    
+                            if 'JpsiToMuMu' in valueCfg:
+                                if 'muonSelection' in allValuesCfg:
+                                    config[key]["processJpsiToMuMuSkimmed"] = 'true'
+                                if 'muonSelection' not in allValuesCfg:
+                                    print("[ERROR] muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                                    sys.exit()
+                            if 'JpsiToMuMu' not in valueCfg:
+                                config[key]["processJpsiToMuMuSkimmed"] = 'false'
+   
+                            if 'JpsiToMuMuVertexing' in valueCfg:
+                                if 'muonSelection' in allValuesCfg:
+                                    config[key]["processJpsiToMuMuVertexingSkimmed"] = 'true'
+                                if 'muonSelection' not in allValuesCfg:
+                                    print("[ERROR] muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
+                                    sys.exit()
+                            if 'JpsiToMuMuVertexing' not in valueCfg:
+                                config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+            
+            
+            """
             if extrargs.processSameEventPairing == 'true': # Automate activated
                 
                 # Track automate
@@ -330,6 +386,7 @@ for key, value in config.items():
                 
             if extrargs.processSameEventPairing == 'false': # Automate disabled
                 continue
+            """
 
             # MC Signals For Same Event Pairing
             if key == 'analysis-same-event-pairing':
