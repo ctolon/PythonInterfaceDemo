@@ -127,8 +127,8 @@ if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSign
     urllib.request.urlretrieve(urlMCSignalsLibrary,"tempMCSignalsLibrary.h")
 
 
-# control list for type control
-clist=[]
+
+clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = []
 allMCSignals =[]
@@ -192,7 +192,7 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed process Dummy Selections for analysis
-parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dimuonMuonSelection'], nargs='*', type=str) #dimuonmuon to dileptonTrackSelection
+parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dileptonTrackSelection'], nargs='*', type=str)
 parser.add_argument('--process', help="Skimmed process selections for same event pairing", action="store", choices=['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing'], nargs='*', type=str)
 #parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
@@ -351,10 +351,10 @@ for key, value in config.items():
                                     config[key][value] = 'false'
                                     
                             if key == 'analysis-dilepton-track':
-                                if 'dimuonMuonSelection' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'dimuonMuonSelection' not in valueCfg:
-                                    config[key][value] = 'false' 
+                                if 'dileptonTrackSelection' in valueCfg:
+                                    config[key]["processDimuonMuonSkimmed"] = 'true'
+                                if 'dileptonTrackSelection' not in valueCfg:
+                                    config[key]["processDimuonMuonSkimmed"] = 'false' 
                             if key == 'analysis-same-event-pairing':                               
                                 if 'sameEventPairing' in valueCfg:
                                     isSameEventPairing = True

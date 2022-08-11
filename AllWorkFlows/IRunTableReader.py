@@ -141,11 +141,10 @@ if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMixing
     urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
     urllib.request.urlretrieve(urlEventMixing,"tempMixingLibrary.h")
 
-# control list for type control
-clist=[]
+
+clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = []
-allMCSignals =[]
 allMixing = []
 
 #AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
@@ -238,7 +237,7 @@ parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel trac
 
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
+parser.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
 
 
 """Activate For Autocomplete. See to Libraries for Info"""
@@ -267,7 +266,7 @@ taskNameInCommandLine = "o2-analysis-dq-table-reader"
 ###################
 
 #TODO: Provide a Table format for print option       
-if extrargs.cutLister and extrargs.MCSignalsLister:
+if extrargs.cutLister and extrargs.mixingLister:
     counter = 0
     print("====================")
     print("Analysis Cut Options :")
@@ -279,10 +278,10 @@ if extrargs.cutLister and extrargs.MCSignalsLister:
             print("\n")
             counter = 0
         
-    print("\n====================\nMC Signals :")
+    print("\n====================\nEvent Mixing Selections :")
     print("====================")
     counter = 0
-    for i in allMCSignals:
+    for i in allMixing:
         print(i,end="\t")
         counter += 1
         if counter == 5:
@@ -310,11 +309,11 @@ if extrargs.cutLister:
     print("\n")
     sys.exit()
     
-if extrargs.MCSignalsLister:
+if extrargs.mixingLister:
     counter = 0
-    print("MC Signals :")
+    print("Event Mixing Selections :")
     print("====================")
-    for i in allMCSignals:   
+    for i in allMixing:   
         print(i,end="\t")
         counter += 1
         if counter == 5:

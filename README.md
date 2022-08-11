@@ -487,7 +487,7 @@ Arg | Opt | Task | nargs |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
-`--MCSignalsLister` | No Param | `allSignals` | 0 |
+`--mixingLister` | No Param | `allMixing` | 0 |
 
 * Details parameters for `IRunTableReader.py`
 
@@ -507,7 +507,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
-`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
+`--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 # Instructions for IRunDQEfficiency.py
 
 * Minimum Required Parameter List:
@@ -539,7 +539,7 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`dimuonMuonSelection`</br>| Special Option | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`dileptonTrackSelection`</br>| Special Option | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| Special Option | * |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
