@@ -20,6 +20,7 @@ from ast import parse
 import os
 import argparse
 import re
+import urllib.request
 
 """
 argcomplete - Bash tab completion for argparse
@@ -96,6 +97,7 @@ def listToString(s):
         return (str1.join(s))
 
 # defination for binary check #TODO Need to be integrated
+"""
 def binary_selector(v):
     if isinstance(v, bool):
         return v
@@ -107,13 +109,22 @@ def binary_selector(v):
         #return False
     else:
         raise argparse.ArgumentTypeError('Misstyped value!')
+"""
     
 def stringToList(string):
     li = list(string.split(" "))
     return li
 
-# control list for type control
-clist=[]
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False):
+    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+    urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
+
+    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
+    urllib.request.urlretrieve(urlMCSignalsLibrary,"tempMCSignalsLibrary.h")
+
+clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
 allMCSignals =[] # all MC Signals
@@ -122,10 +133,45 @@ nAddedAllCutsList = [] # e.g. muonQualityCuts::2
 nAddedPairCutsList = [] # e.g paircutMass::3
 SelsStyle1  =[ ] # track/muon cut::paircut::n
 allSels = [] # track/muon cut::n
-namespaceDef = "::" # Namespace reference
+namespaceDef = ":" # Namespace reference
+namespaceDef2 = "::" # Namespace reference
 
-MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
-AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+
+# Get paths in localy
+#MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
+#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+#print(os.environ['ALIBUILD_WORK_DIR'])
+
+# Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
+"""
+O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
+QUALITYCONTROL_ROOT=environ.get('QUALITYCONTROL_ROOT')
+O2_ROOT=os.environ.get('O2_ROOT')
+O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+"""
+
+with open('tempMCSignalsLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getSignals = re.findall('"([^"]*)"', i)
+            allMCSignals = allMCSignals + getSignals
+            
+with open('tempCutsLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
+            getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
+                        if 'pair' in y] 
+            if getPairCuts: # if pair cut list is not empty
+                allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
+                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
+            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
+            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
+            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
+
+"""
 with open(MCSignalsPath) as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -135,20 +181,22 @@ with open(MCSignalsPath) as f:
             
 with open(AnalysisCutsPath) as f:
     for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
+        stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
         for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)
-            getPairCuts = [y for y in getAnalysisCuts # get pair cuts
+            getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
+            getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
                         if 'pair' in y] 
             if getPairCuts: # if pair cut list is not empty
-                allPairCuts = allPairCuts + getPairCuts
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts]
-            allCuts = allCuts + getAnalysisCuts
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts]
+                allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
+                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
+            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
+            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
+            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
+"""
 
-# in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n>. For Manage this issue:
-for k in range (1,4):
-    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCuts]
+# in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
+for k in range (1,10):
+    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCutsTwoDots]
     nAddedAllCutsList = nAddedAllCutsList + nAddedAllCuts
     nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
     nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
@@ -158,7 +206,7 @@ for i in nAddedPairCutsList:
     Style1 = [x + i for x in nameSpacedAllCuts]
     SelsStyle1 = SelsStyle1 + Style1
       
-#Style 2 <track-cut>:<n> --> nAddedAllCutsList
+# Style 2 <track-cut>:<n> --> nAddedAllCutsList
 
 # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
 allSels = SelsStyle1 + nAddedAllCutsList
@@ -187,19 +235,11 @@ tablemakerProcessAllSelections = ["Full","FullTiny","FullWithCov","FullWithCent"
         "BarrelOnlyWithV0Bits","BarrelOnlyWithEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly",
         "MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter",
         "OnlyBCs"]
-tablemakerProcessFullSelections = ["Full","FullTiny","FullWithCov","FullWithCent"]
-tablemakerProcessBarrelSelections = ["BarrelOnlyWithV0Bits","BarrelOnlyWithEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly"]
-tablemakerProcessMuonSelections = ["MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter"]
-tablemakerProcessBCsSelections = ["OnlyBCs"]
 
 tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
         "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
         "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
         "processOnlyBCs"]
-tablemakerProcessFullParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent"]
-tablemakerProcessBarrelParameters = ["processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly"]
-tablemakerProcessMuonParameters = ["processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter"]
-tablemakerProcessBCsParameters = ["processOnlyBCs"]
 
 centralityTableSelections = ["V0M", "Run2SPDtks","Run2SPDcls","Run2CL0","Run2CL1"]
 centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
@@ -214,9 +254,6 @@ processDummySelections =["filter","event","barrel"]
 noDeleteNeedForCent = True
 processLeftAfterCentDelete = True
 
-
-
-#track_prop = ["Standart","Covariance"]
 
 ###################
 # Main Parameters #
@@ -248,9 +285,9 @@ parser.add_argument('--aod', help="Add your AOD File with path", action="store",
 parser.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store",choices=["true","false"], default="true", type=str.lower)
 
 # table-maker cfg
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='')
 parser.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
 parser.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
 parser.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", choices=["true","false"], type=str.lower)
@@ -258,13 +295,13 @@ parser.add_argument('--cfgDetailedQA', help="If true, include more QA histograms
 #parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 parser.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
 parser.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
-parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=allMCSignals, nargs='*', type=str)
+parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=allMCSignals, nargs='*', type=str, metavar='')
 
 # table-maker process
 parser.add_argument('--process', help="Process Selection options for TableMaker Data Processing and Skimming", action="store", choices=tablemakerProcessAllSelections, nargs='*', type=str)
 
 # Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
-parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choices=['2','3'], type=str, required=True)
+parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choices=['2','3'], type=str)
 #parser.add_argument('--processRun2', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 #parser.add_argument('--processRun3', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
@@ -301,9 +338,9 @@ parser.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection 
 #parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
 
 # d-q-filter-p-p-task
-parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str) # run3
-parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str) # run2 
-parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str) # run 2
+parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str, metavar='') # run3
+parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str, metavar='') # run2 
+parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str, metavar='') # run 2
 parser.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", choices=['true','false'], type=str.lower)
 #parser.add_argument('--processFilterPP', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
@@ -334,6 +371,10 @@ parser.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", typ
 # pid
 parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
 
+# helper lister commands
+parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
+
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
@@ -344,7 +385,7 @@ configuredCommands = vars(extrargs) # for get extrargs
 #####################################################
 
 # Selection Options for Run<Data|MC> Run<2|3> #TODO  Integrate them over extrags checks
-
+"""
 run2Selected = False
 run3Selected = False
 MCSelected = False
@@ -372,7 +413,69 @@ if extrargs.run == '3' and extrargs.runMC:
     run3MCSelected = True
 if extrargs.run == '3' and extrargs.runData:
     run3DataSelected = True
+    
+"""
 
+###################
+# HELPER MESSAGES #
+###################
+
+#TODO: Provide a Table format for print option       
+if extrargs.cutLister and extrargs.MCSignalsLister:
+    counter = 0
+    print("====================")
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+        
+    print("\n====================\nMC Signals :")
+    print("====================")
+    counter = 0
+    for i in allMCSignals:
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+if extrargs.cutLister:
+    """
+    print("  {: >20} {: >20} {: >20}".format(*allCuts))
+    #for row in allCuts:
+    #for i in range(len(allCuts)):
+        #print(" {: >20} {: >20} {: >20}".format(*allCuts[i]))
+        #print(type(format(*row)))
+    """
+    counter = 0
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+    
+if extrargs.MCSignalsLister:
+    counter = 0
+    print("MC Signals :")
+    print("====================")
+    for i in allMCSignals:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
 
 ######################
 # PREFIX ADDING PART #
@@ -469,6 +572,11 @@ with open(extrargs.cfgFileName) as configFile:
 if not (extrargs.runMC or extrargs.runData):
   print("ERROR: You have to specify either runMC or runData !")
   sys.exit()
+  
+# Check whether we run over run 2 or run 3
+if not (extrargs.run == '3' or extrargs.run == '2'):
+  print("ERROR: You have to specify either --run 3 or --run 2 !")
+  sys.exit()
 
 runOverMC = False
 if (extrargs.runMC):
@@ -505,11 +613,7 @@ if extrargs.runData:
     except:
         print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
         sys.exit()
-
-#if not taskNameInConfig in config:
-  #print("ERROR: Task to be run not found in the configuration file!")
-  #sys.exit()
-                  
+           
 #############################
 # Start Interface Processes #
 #############################
@@ -520,7 +624,7 @@ tableMakerProcessSearch= set ()
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
-            
+                       
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod

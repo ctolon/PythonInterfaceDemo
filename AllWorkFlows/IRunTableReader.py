@@ -20,6 +20,7 @@ import json
 import os
 import argparse
 import re
+import urllib.request
 
 """
 argcomplete - Bash tab completion for argparse
@@ -108,6 +109,7 @@ def listToString(s):
         return (str1.join(s))
 
 # defination for binary check TODO: Need to be integrated
+"""
 def binary_selector(v):
     if isinstance(v, bool):
         return v
@@ -119,6 +121,7 @@ def binary_selector(v):
         #return False
     else:
         raise argparse.ArgumentTypeError('Misstyped value!')
+"""
     
 def stringToList(string):
     li = list(string.split(" "))
@@ -129,6 +132,15 @@ isSameEventPairing = False
 readerPath = 'Configs/readerConfiguration_reducedEvent.json'
 writerPath = 'Configs/writerConfiguration_dileptons.json'
 
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h') == False):
+    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+    urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+
+    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
+    urllib.request.urlretrieve(urlEventMixing,"tempMixingLibrary.h")
+
 # control list for type control
 clist=[]
 allValuesCfg = [] # counter for provided args
@@ -136,8 +148,24 @@ allCuts = []
 allMCSignals =[]
 allMixing = []
 
-AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
-EventMixingPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MixingLibrary.h")
+#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+#EventMixingPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MixingLibrary.h")
+
+with open('tempMixingLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getMixing = re.findall('"([^"]*)"', i)
+            allMixing = allMixing + getMixing
+    
+with open('tempCutsLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            allCuts = allCuts + getAnalysisCuts
+
+"""
 with open(EventMixingPath) as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -151,6 +179,9 @@ with open(AnalysisCutsPath) as f:
         for i in stringIfSearch:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
+
+"""
+
 #print(allCuts)
 #print(allMixing)
     
@@ -185,14 +216,14 @@ parser.add_argument('--autoDummy', help="Dummy automize parameter (if process sk
 parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
 
 # analysis-event-selection
-parser.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", choices=allMixing, nargs='*', action="store", type=str)
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", choices=allMixing, nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
 
 # analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
 
 # analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
 
 # analysis-event-mixing
 # see in skimmed options and cuts are configured in muon and track selection
@@ -203,7 +234,11 @@ parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track
 
 
 # analysis-dilepton-hadron
-parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+
+# helper lister commands
+parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 
 """Activate For Autocomplete. See to Libraries for Info"""
@@ -226,6 +261,67 @@ with open(sys.argv[1]) as configFile:
 
 
 taskNameInCommandLine = "o2-analysis-dq-table-reader"
+
+###################
+# HELPER MESSAGES #
+###################
+
+#TODO: Provide a Table format for print option       
+if extrargs.cutLister and extrargs.MCSignalsLister:
+    counter = 0
+    print("====================")
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+        
+    print("\n====================\nMC Signals :")
+    print("====================")
+    counter = 0
+    for i in allMCSignals:
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+if extrargs.cutLister:
+    """
+    print("  {: >20} {: >20} {: >20}".format(*allCuts))
+    #for row in allCuts:
+    #for i in range(len(allCuts)):
+        #print(" {: >20} {: >20} {: >20}".format(*allCuts[i]))
+        #print(type(format(*row)))
+    """
+    counter = 0
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+    
+if extrargs.MCSignalsLister:
+    counter = 0
+    print("MC Signals :")
+    print("====================")
+    for i in allMCSignals:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
 
 #############################
 # Start Interface Processes #

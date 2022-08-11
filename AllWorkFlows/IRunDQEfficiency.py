@@ -20,6 +20,7 @@ import json
 import os
 import argparse
 import re
+import urllib.request
 
 """
 argcomplete - Bash tab completion for argparse
@@ -93,6 +94,7 @@ def listToString(s):
         return (str1.join(s))
 
 # defination for binary check TODO: Need to be integrated
+"""
 def binary_selector(v):
     if isinstance(v, bool):
         return v
@@ -104,6 +106,7 @@ def binary_selector(v):
         #return False
     else:
         raise argparse.ArgumentTypeError('Misstyped value!')
+"""
     
 def stringToList(string):
     li = list(string.split(" "))
@@ -114,14 +117,40 @@ writerPath = 'Configs/writerConfiguration_dileptonMC.json'
 
 isSameEventPairing = False
 
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False):
+    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+    urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
+
+    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
+    urllib.request.urlretrieve(urlMCSignalsLibrary,"tempMCSignalsLibrary.h")
+
+
 # control list for type control
 clist=[]
 allValuesCfg = [] # counter for provided args
 allCuts = []
 allMCSignals =[]
 
-MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
-AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+#MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
+#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
+
+with open('tempMCSignalsLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getSignals = re.findall('"([^"]*)"', i)
+            allMCSignals = allMCSignals + getSignals
+            
+with open('tempCutsLibrary.h') as f:
+    for line in f:
+        stringIfSearch = [x for x in f if 'if' in x] 
+        for i in stringIfSearch:
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            allCuts = allCuts + getAnalysisCuts
+
+"""
 with open(MCSignalsPath) as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -135,6 +164,8 @@ with open(AnalysisCutsPath) as f:
         for i in stringIfSearch:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
+"""
+
 #print(allCuts)
 #print(allMCSignals)
 
@@ -161,7 +192,7 @@ parser.add_argument('--writer', help="Add your AOD Writer JSON with path", actio
 #parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
 
 # Skimmed process Dummy Selections for analysis
-parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dimuonMuonSelection'], nargs='*', type=str)
+parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dimuonMuonSelection'], nargs='*', type=str) #dimuonmuon to dileptonTrackSelection
 parser.add_argument('--process', help="Skimmed process selections for same event pairing", action="store", choices=['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing'], nargs='*', type=str)
 #parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
@@ -170,28 +201,31 @@ parser.add_argument('--autoDummy', help="Dummy automize parameter (if process sk
 parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
 
 # analysis-event-selection
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str)
+parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
 
 # analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str)
-parser.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str)
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
 
 # analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts,nargs='*', action="store", type=str)
-parser.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str)
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
 
 # analysis-same-event-pairing
 #parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon and event", action="store", choices=['true','false'], default='true', type=str.lower)
 #parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
 
-parser.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str)
+parser.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
 
 
 # analysis-dilepton-track ONLY FOR MC
+parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str, metavar='')
 
-parser.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", choices=allMCSignals,nargs='*', action="store", type=str)
-parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", choices=allMCSignals,nargs='*', action="store", type=str)
+# helper lister commands
+parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 """Activate For Autocomplete. See to Libraries for Info"""
 argcomplete.autocomplete(parser)
@@ -215,6 +249,67 @@ with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
 
 taskNameInCommandLine = "o2-analysis-dq-efficiency"
+
+###################
+# HELPER MESSAGES #
+###################
+
+#TODO: Provide a Table format for print option       
+if extrargs.cutLister and extrargs.MCSignalsLister:
+    counter = 0
+    print("====================")
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+        
+    print("\n====================\nMC Signals :")
+    print("====================")
+    counter = 0
+    for i in allMCSignals:
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+if extrargs.cutLister:
+    """
+    print("  {: >20} {: >20} {: >20}".format(*allCuts))
+    #for row in allCuts:
+    #for i in range(len(allCuts)):
+        #print(" {: >20} {: >20} {: >20}".format(*allCuts[i]))
+        #print(type(format(*row)))
+    """
+    counter = 0
+    print("Analysis Cut Options :")
+    print("====================")
+    for i in allCuts:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
+    
+if extrargs.MCSignalsLister:
+    counter = 0
+    print("MC Signals :")
+    print("====================")
+    for i in allMCSignals:   
+        print(i,end="\t")
+        counter += 1
+        if counter == 5:
+            print("\n")
+            counter = 0
+    print("\n")
+    sys.exit()
 
 #############################
 # Start Interface Processes #
