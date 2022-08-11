@@ -17,6 +17,8 @@ Cevat Batuhan Tolon
 [`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQEfficiency..py).
 * Produces a decision table for pp collisions. The decisions require that at least a selected pair (or just two tracks) exists for a given event. Currently up to 64 simultaneous decisions can be made, to facilitate studies for optimizing cuts. 
 [`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunFilterPP.py).
+* It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way
+[`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/DownloadLibs.py).
 
 ## Config Files
 
@@ -65,6 +67,8 @@ TODO: Add schema
 
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
+
+# Prerequisites!!!
 
 ## argcomplete - Bash tab completion for argparse
 
@@ -116,6 +120,17 @@ And then, source your argcomplete script for autocomplete:
 
 IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!!
 
+## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
+
+These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the DownloadLibs.py script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
+
+`python3 DownloadLibs.py`
+
+If the libraries are downloaded successfully you will get this message:
+
+`[INFO] Libraries downloaded successfully!`
+
+Only use this option if the libraries do not download when you try to complete the scripts with TAB. Also, if you encounter a problem, please report it.
 
 ## Features for IRunTableMaker
 
@@ -375,6 +390,8 @@ Arg | Opt | Task | nargs |
 `--cfgMinTpcSignal` | all | `table-maker` | 1 |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | `allSignals` | `table-maker` | * |
+`--cutLister` | No Param | `allCuts` | 0 |
+`--MCSignalsLister` | No Param | `allSignals` | 0 |
 
 * Details parameters for `IRunTableMaker.py`
 
@@ -423,7 +440,9 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgDetailedQA` | Boolean | If true, include more QA histograms (BeforeCuts classes and more) |  | str.lower
 `--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
 `--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
-`--cfgMCsignals` | String | SSpace separated list of MC signals |  | str
+`--cfgMCsignals` | String | Space separated list of MC signals |  | str
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 
 
 
@@ -467,6 +486,8 @@ Arg | Opt | Task | nargs |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
+`--cutLister` | No Param | `allCuts` | 0 |
+`--MCSignalsLister` | No Param | `allSignals` | 0 |
 
 * Details parameters for `IRunTableReader.py`
 
@@ -485,6 +506,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 # Instructions for IRunDQEfficiency.py
 
 * Minimum Required Parameter List:
@@ -522,12 +545,14 @@ Arg | Opt | Task | nargs |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
 `--cfgTrackMCSignals` | `allMCSignals` | `analysis-track-selection` | * |
-`--cfgMuonCuts` | [`allCuts` | `analysis-muon-selection` | * |
+`--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgMuonMCSignals` | `allMCSignals` | `analysis-muon-selection` | * |
 `--cfgBarrelMCRecSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
 `--cfgBarrelMCGenSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
 `--cfgBarrelDileptonMCRecSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
+`--cutLister` | No Param | `allCuts` | 0 |
+`--MCSignalsLister` | No Param | `allSignals` |  0 |
 
 * Details parameters for `IRunDQEfficiency.py`
 
@@ -549,6 +574,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
 `--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 
 
 ## TODO List For IRunTableMaker
