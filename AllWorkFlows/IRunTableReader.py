@@ -367,6 +367,11 @@ for key, value in config.items():
                                 if 'dileptonHadronSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     
+                            if 'sameEventPairing' in valueCfg:
+                                isSameEventPairing = True
+                            if 'sameEventPairing' not in valueCfg:
+                                isSameEventPairing = False
+                                    
             # Analysis Event Mixing Selections
             if value == 'processBarrelSkimmed' or value == 'processMuonSkimmed' or value == 'processBarrelMuonSkimmed' and extrargs.isMixingEvent:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -476,7 +481,7 @@ for key, value in config.items():
                         if key == 'analysis-same-event-pairing' and extrargs.process:
                             if isSameEventPairing == False:
                                 print("[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                isSameEventPairing == True
+                                isSameEventPairing = True
                             allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
                     
                             if 'JpsiToEE' in valueCfg:

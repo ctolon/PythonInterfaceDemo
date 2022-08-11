@@ -338,7 +338,7 @@ for key, value in config.items():
                                 if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false' 
                                    
-                            if key == 'analysis-track-selection':                      
+                            if key == 'analysis-track-selection':                    
                                 if 'trackSelection' in valueCfg:
                                     config[key][value] = 'true'
                                 if 'trackSelection' not in valueCfg:
@@ -349,19 +349,24 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                 if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
+                                                            
+                            if 'sameEventPairing' in valueCfg:
+                                isSameEventPairing = True
+                            if 'sameEventPairing' not in valueCfg:
+                                isSameEventPairing = False
                                     
+            if value =='processDimuonMuonSkimmed' and extrargs.analysis:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'analysis': #  Only Select key for analysis
+                            
                             if key == 'analysis-dilepton-track':
                                 if 'dileptonTrackSelection' in valueCfg:
-                                    config[key]["processDimuonMuonSkimmed"] = 'true'
+                                    config[key][value] = 'true'
                                 if 'dileptonTrackSelection' not in valueCfg:
-                                    config[key]["processDimuonMuonSkimmed"] = 'false' 
-                            if key == 'analysis-same-event-pairing':                               
-                                if 'sameEventPairing' in valueCfg:
-                                    isSameEventPairing = True
-                                if 'sameEventPairing' not in valueCfg:
-                                    isSameEventPairing = False
+                                    config[key][value] = 'false' 
                                     
-                                            
+                                   
             # analysis-dummy-selections (We have automated thins so not need most of time)
             """
             if value =='processDummy' and extrargs.analysisDummy:
@@ -437,7 +442,7 @@ for key, value in config.items():
                         if key == 'analysis-same-event-pairing' and extrargs.process:
                             if isSameEventPairing == False:
                                 print("[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                isSameEventPairing == True
+                                isSameEventPairing = True
                             allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
                     
                             if 'JpsiToEE' in valueCfg:
