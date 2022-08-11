@@ -383,6 +383,7 @@ Arg | Opt | Task | nargs |
 `--cfgEventCuts` | `allCuts` | `table-maker` | * |
 `--cfgBarrelTrackCuts` | [`allCuts` | `table-maker` | * |
 `--cfgMuonCuts` | `allCuts` | `table-maker` | * |
+`--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
 `--cfgBarrelLowPt` | all | `table-maker` | 1 |
 `--cfgMuonLowPt` | all | `table-maker` | 1 |
 `--cfgNoQA` | `true`</br> `false`</br> | `table-maker` | 1 |
@@ -433,7 +434,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts  |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker  |  | str
+`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cfgBarrelLowPt` | Float | Specify the lowest pt cut for electrons; used in a Partition expression to improve CPU efficiency (GeV) |  | str
 `--cfgMuonLowPt` | Float | Specify the lowest pt cut for muons; used in a Partition expression to improve CPU efficiency  (GeV) |  | str
 `--cfgNoQA` | Boolean | If true, no QA histograms |  | str.lower
@@ -441,7 +443,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
 `--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
 `--cfgMCsignals` | String | Space separated list of MC signals |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 
 
@@ -462,14 +464,13 @@ Examples(in AllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IrunDQEfficiency.py Configs/configAnalysisData.json --aod Datas/AO2D_LHC21i3.root
+  python3 IRunTableReader.py Configs/configAnalysisData.json --aod Datas/AO2D_LHC21i3.root
   ```
 
 
-TODO Add Details
+TODO Add Details for multiple commands
 
 # Available configs in IRunTableReader Interface
-['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing','ElectronMuon','All']
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -496,7 +497,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--aod` | String | Add your AOD File with path | - | str
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEvent.json` | str
-`--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptons.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
 `--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
@@ -504,7 +505,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMixingVars` | String | Mixing configs separated by a space | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
@@ -561,22 +562,88 @@ Arg | Ref Type| Desc | Default | Real Type
 `--aod` | String | Add your AOD File with path | - | str
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEventMC.json` | str
-`--writer` | String | Add your AOD Writer JSON with path | `Config/writerConfiguration_dileptonMC.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process selections for Same Event Pairing | - | str
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgTrackMCSignals` | String | Space separated list of MC signals | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
 `--cfgMuonMCSignals` | String | Space separated list of MC signals | - | str
 `--cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
 `--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 
+# Instructions for IFilterPP.py
+
+* Minimum Required Parameter List:
+  * `python3`
+  * `IFilterPP.py`
+  * JSON Config File
+    * Example For usage: Configs/configFilterPPRun3.json 
+
+Examples(in AllWorkFlows):
+- Run filterPP on Data run3 With Minimum Commands
+  ```ruby
+  python3 IFilterPP.py Configs/configFilterPPRun3.json
+  ```
+
+- Run filterPP on Data run2 With Minimum Commands
+  ```ruby
+  python3 IFilterPP.py configFilterPPDataRun2.json
+  ```
+
+In case of multiple configs example
+  ```ruby
+python3 IFilterPP.py configFilterPPRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+  ```
+
+# Available configs in IFilterPP Interface
+
+* For `IFilterPP.py` Selections
+
+Arg | Opt | Task | nargs |
+--- | --- | --- | --- |
+`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
+`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>| dq task selection| * |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
+`--CustomDeltaBC` | all | `event-selection-task` | 1 |
+`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
+`--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--cfgWithQA` |`true` </br> `false`  | dq task selection</br> | 1 |
+`--cfgEventCuts` | `allCuts` | `d-q-event-selection-task`</br>  | * |
+`--cfgBarrelTrackCuts` | `allCuts` | `d-q-barrel-track-selection`</br> | * |
+`--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
+`--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
+`--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
+`--cutLister` | No Param | `allCuts` | 0 |
+
+
+* Details parameters for `IFilterPP.py`
+
+Arg | Ref Type| Desc | Default | Real Type
+--- | --- | --- | --- | --- |
+`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
+`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>| dq task selection| * |
+`--syst` | String | Collision system selection |  | str
+`--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
+`--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
+`--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
+`--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
+`--cfgEventCuts` | String | Space separated list of event cuts |  | str
+`--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
+`--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
+`--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
+`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 
 ## TODO List For IRunTableMaker
 * `Finished` We need more meaningful explanations for argument explanations (helping comments).
@@ -615,6 +682,9 @@ bash (Already Integrated for local).
 * `Jul 28, 2022` Workflows with CLI for TableReader and DQEfficiency Completed. Demo versions and Old Version Deleted. JSON path's for single workflows updated. Mixing Library added for Skimmed processes, runtime errors fixed, writer configs added to CLI, CommandToRun Fixed in TableReader in DQEfficiency, MC Rec Gen Signals fixed for dileptons in DQEfficiency, only-select automation parameter will implemnt for TableReader and DQEfficiency, installation guide for argcomplate added, Instructions and avaiable commands added readme for TableMaker DQ Efficiency
 * `Jul 29, 2022` All Tests passed for workflows and development is completed. Only some parts need refactoring for clean code and readme will updated.
 * `Aug 09, 2022` JSON Databases removed as suggested. We have compiled time solutions regarding to O2Physics (based on regex exp. and some string operations). TableMaker and DQEfficiency Workflows refactored for user friendliness. All things are discussed with Ionut.
+* `Aug 10, 2022` path fix for writer configs. Transcation management added for Same Event Pairing and readme guide updated.
+* `Aug 11, 2022` provide a native solution for libraries with urllib, cut and mcsignal lister added, helper messages has beauty format, for filter pp task, sels are fixed. readme update, added new script for internet based solution: `DownloadLibs.py`. Some parameter value names has refactored in DQ Efficiency, fix for dileptonTrack Selection DQ Efficiency task, fix for Same event pairing automation logger message (when you try give an process function in DQEfficiency or TableReader if you forget give a parameter value in e.g --analysis eventSelection --process JpsiToMuMu sameEventPairing value automaticaly added to analysis workflow like this (Logger Message: `"[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI."`) --> --analysis eventSelection sameEventPairing we provide this way with automation)
+* `Aug 12, 2022` IFilterPP.py Interface refactored and released. `--cfgMuonsCuts` parameter added tablemaker and filterpp workflow (it's different from `--cfgMuonCuts`). listToString method impl to barrel and muon sels. Readme update for instructions and available configs in FilterPP python script.
 
 
 
