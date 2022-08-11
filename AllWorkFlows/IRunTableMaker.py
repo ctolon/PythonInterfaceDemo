@@ -2,6 +2,8 @@
 # PYTHON_ARGCOMPLETE_OK
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
+##                   Author: ionut.cristian.arsene@cern.ch                 ##
+##               Interface:  cevat.batuhan.tolon@cern.ch                   ## 
 ## This program is free software: you can redistribute it and/or modify it ##
 ##  under the terms of the GNU General Public License as published by the  ##
 ## Free Software Foundation, either version 3 of the License, or (at your  ##
@@ -287,7 +289,7 @@ parser.add_argument('--onlySelect', help="An Automate parameter for keep options
 # table-maker cfg
 parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
 parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='')
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", choices=allCuts, nargs='*', type=str, metavar='')
 parser.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
 parser.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
 parser.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", choices=["true","false"], type=str.lower)
@@ -332,10 +334,9 @@ parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
 # d-q-track barrel-task
-
 parser.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", choices=['true','false'], default='false', type=str.lower) #d-q barrel and d-q muon selection
 # d-q event selection task
-#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) # no need
+parser.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='')
 
 # d-q-filter-p-p-task
 parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str, metavar='') # run3
@@ -707,8 +708,12 @@ for key, value in config.items():
                     extrargs.cfgPairCuts = listToString(extrargs.cfgPairCuts) 
                 config[key][value] = extrargs.cfgPairCuts
             if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
+                if type(extrargs.cfgBarrelSels) == type(clist):
+                    extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
                 config[key][value] = extrargs.cfgBarrelSels
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
+                if type(extrargs.cfgMuonSels) == type(clist):
+                    extrargs.cfgMuonSels = listToString(extrargs.cfgMuonSels) 
                 config[key][value] = extrargs.cfgMuonSels
                                     
             # Run 2/3 and MC/DATA Selections for automations            
@@ -807,8 +812,13 @@ for key, value in config.items():
             if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
                 if type(extrargs.cfgMCsignals) == type(clist):
                     extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)                     
-                #extrargs.cfgMCsignals = ",".join(extrargs.cfgMCsignals)
                 config[key][value] = extrargs.cfgMCsignals
+                
+            #d-q muons selection cut
+            if value =='cfgMuonsCuts' and extrargs.cfgMuonsCuts:
+                if type(extrargs.cfgMuonsCuts) == type(clist):
+                    extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)                
+                config[key][value] = extrargs.cfgMuonsCuts
 
             # event-selection
             if value == 'syst' and extrargs.syst:
