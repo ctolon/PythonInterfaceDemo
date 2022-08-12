@@ -871,11 +871,10 @@ for key, value in config.items():
                 if config["d-q-barrel-track-selection-task"]["processSelection"] == 'false' and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
                     
-                #TODO: We need automizer for muons selection
-                #if config["d-q-muons-selection"]["processSelection"] == "true":
-                    #config["d-q-muons-selection"]["processDummy"] = "false"
-                #if config["d-q-muons-selection"]["processSelection"] == "false":
-                    #config["d-q-muons-selection"]["processDummy"] = "true"
+                if config["d-q-muons-selection"]["processSelection"] == "true":
+                    config["d-q-muons-selection"]["processDummy"] = "false"
+                if config["d-q-muons-selection"]["processSelection"] == "false":
+                    config["d-q-muons-selection"]["processDummy"] = "true"
                     
                 if config["d-q-event-selection-task"]["processEventSelection"] == "true":
                     config["d-q-event-selection-task"]["processDummy"] = "false"

@@ -119,7 +119,8 @@
     "d-q-muons-selection": {
         "cfgMuonsCuts": "muonHighPt",
         "cfgWithQA": "false",
-        "processSelection": "true"
+        "processSelection": "true",
+        "processDummy": "false"
     },
     "d-q-event-selection-task": {
         "cfgEventCuts": "eventStandardNoINT7",

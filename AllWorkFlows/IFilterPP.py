@@ -216,7 +216,7 @@ allSels = SelsStyle1 + nAddedAllCutsList
 ###################################
 
 # For filterPP, Filter PP Process should always true
-dqSelections = ["eventSelection","barrelTrackSelection","muonSelection"]
+dqSelections = ["eventSelection","barrelTrackSelection","muonSelection","barrelTrackSelectionTiny","filterPPSelectionTiny"]
 
 PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
@@ -288,22 +288,16 @@ parser.add_argument('--pid', help="Produce PID information for the particle mass
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
-"""
-# TODO: We don't have options for this values. Discuss with ion
+
+# TODO: We don't have options for this values. Discuss with ionut
 # tof-pid-full, tof-pid for run3 ???
-#parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
 # timestamp-task
 #parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
 
-# TODO: We don't have options for this values. Discuss with ion
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3
 
-# tof-pid-full, tof-pid for run3
-# TODO: We don't have options for this values. Discuss with ionut
-#parser.add_argument('--processEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-#parser.add_argument('--processNoEvTime', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-"""
 
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
@@ -392,7 +386,7 @@ for key, value in config.items():
                                 if 'barrelTrackSelection' in valueCfg:
                                     config[key][value] = 'true'
                                 if 'barrelTrackSelection' not in valueCfg:
-                                    config[key][value] = 'false'  
+                                    config[key][value] = 'false'
                                                       
                             if key == 'd-q-muons-selection':
                                 if 'muonSelection' in valueCfg:
@@ -410,6 +404,30 @@ for key, value in config.items():
                                 if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
                                 if 'eventSelection' not in valueCfg:
+                                    config[key][value] = 'false'
+                                    
+            # DQ Tiny Selection for barrel track
+            if value =='processSelectionTiny' and extrargs.process:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'process': #  Only Select key for analysis
+                                      
+                            if key == 'd-q-barrel-track-selection':                    
+                                if 'barrelTrackSelectionTiny' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'barrelTrackSelectionTiny' not in valueCfg:
+                                    config[key][value] = 'false'
+            
+            # DQ Tiny Selection for filterPP
+            if value =='processFilterPPTiny' and extrargs.process:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'process': #  Only Select key for analysis
+                                      
+                            if key == 'd-q-filter-p-p-task':                    
+                                if 'filterPPSelectionTiny' in valueCfg:
+                                    config[key][value] = 'true'
+                                if 'filterPPSelectionTiny' not in valueCfg:
                                     config[key][value] = 'false'
                                                                                                           
             # Filter PP Selections        
@@ -496,6 +514,15 @@ for key, value in config.items():
             # all d-q tasks and selections
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
+                
+            # processEvTime    
+            if value == 'processEvTime':
+                if extrargs.isProcessEvTime == "true":
+                    config[key][value] = "true"
+                    config[key]["processNoEvTime"] = "false"
+                if extrargs.isProcessEvTime == "false":
+                    config[key][value] = "false"
+                    config[key]["processNoEvTime"] = "true"
                                                   
             # dummy selection
             """
