@@ -151,6 +151,11 @@ allMixing = []
 #AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
 #EventMixingPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MixingLibrary.h")
 
+O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
+QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
+O2_ROOT=os.environ.get('O2_ROOT')
+O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+
 with open('tempMixingLibrary.h') as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -261,6 +266,11 @@ with open(sys.argv[1]) as configFile:
 
 
 taskNameInCommandLine = "o2-analysis-dq-table-reader"
+
+# Check alienv
+if O2PHYSICS_ROOT == None:
+   print("[ERROR] You must load O2Physics with alienv")
+   sys.exit()
 
 ###################
 # HELPER MESSAGES #

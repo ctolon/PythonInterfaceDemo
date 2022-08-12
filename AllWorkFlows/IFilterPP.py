@@ -130,7 +130,7 @@ allCuts = [] # all analysis cuts
 allPairCuts = [] # only pair cuts
 nAddedAllCutsList = [] # e.g. muonQualityCuts::2
 nAddedPairCutsList = [] # e.g paircutMass::3
-SelsStyle1  =[ ] # track/muon cut::paircut::n
+SelsStyle1 = [] # track/muon cut::paircut::n
 allSels = [] # track/muon cut::n
 namespaceDef = ":" # Namespace reference
 namespaceDef2 = "::" # Namespace reference
@@ -142,12 +142,12 @@ namespaceDef2 = "::" # Namespace reference
 #print(os.environ['ALIBUILD_WORK_DIR'])
 
 # Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
-"""
+
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
-QUALITYCONTROL_ROOT=environ.get('QUALITYCONTROL_ROOT')
+QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
-"""
+
             
 with open('tempCutsLibrary.h') as f:
     for line in f:
@@ -360,6 +360,11 @@ taskNameInCommandLine = "o2-analysis-dq-filter-pp"
 if not taskNameInConfig in config:
   print("[ERROR] ",taskNameInConfig," Task to be run not found in the configuration file!")
   sys.exit()
+  
+# Check alienv
+if O2PHYSICS_ROOT == None:
+   print("[ERROR] You must load O2Physics with alienv")
+   sys.exit()
   
 #############################
 # Start Interface Processes #
