@@ -252,6 +252,17 @@ extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
 
+# Transcation management for forgettining assign a value to parameters
+forgetParams = []
+for key,value in configuredCommands.items():
+    if(value != None):
+        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
+            forgetParams.append(key)
+if len(forgetParams) > 0: 
+    print("[ERROR] Your forget assign a value to for this parameters: ", forgetParams)
+    sys.exit()
+
+
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
@@ -679,13 +690,9 @@ print("=========================================================================
 # Listing Added Commands
 print("Args provided configurations List")
 print("====================================================================================================================")
-forgetParams = []
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
         print("--"+key,":", value)
-if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
-            forgetParams.append(key)
-print("[WARNING] Your forget assign a value to for this parameters: ", forgetParams)
 os.system(commandToRun)

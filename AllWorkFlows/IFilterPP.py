@@ -114,7 +114,7 @@ def binary_selector(v):
 """
     
 def stringToList(string):
-    li = list(string.split(" "))
+    li = list(string.split(","))
     return li
 
 # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
@@ -134,6 +134,15 @@ SelsStyle1 = [] # track/muon cut::paircut::n
 allSels = [] # track/muon cut::n
 namespaceDef = ":" # Namespace reference
 namespaceDef2 = "::" # Namespace reference
+
+# List for Transcation management for FilterPP
+muonCutList = [] # List --> transcation management for filterPP
+barrelTrackCutList = [] # List --> transcation management for filterPP
+barrelSelsList = []
+muonSelsList = []
+barrelSelsListAfterSplit = []
+muonSelsListAfterSplit = []
+
 
 
 # Get paths in localy
@@ -266,8 +275,8 @@ parser.add_argument('--process', help="DQ Task Selections",choices=dqSelections,
 
 # d-q-filter-p-p-task
 #parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str, metavar='') # run3
-parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str, metavar='') # run2 
-parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str, metavar='') # run 2
+parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str, nargs='*', metavar='') # run2 
+parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str, nargs='*', metavar='') # run 2
 
 ## d-q-event-selection
 parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
@@ -303,6 +312,16 @@ argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
+
+# Transcation management for forgettining assign a value to parameters
+forgetParams = []
+for key,value in configuredCommands.items():
+    if(value != None):
+        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
+            forgetParams.append(key)
+if len(forgetParams) > 0: 
+    print("[ERROR] Your forget assign a value to for this parameters: ", forgetParams)
+    sys.exit()
 
 ###################
 # HELPER MESSAGES #
@@ -585,6 +604,132 @@ for key,value in configuredCommands.items():
             #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
 """
 
+#=================================================================    
+# Transcation Management for barrelsels and muonsels in filterPP 
+# ================================================================
+
+for key,value in configuredCommands.items():
+    if(value != None):
+        #if type(value) == type(clist):
+            #listToString(value)
+        if key == 'cfgMuonsCuts':
+            muonCutList.append(value)
+        if key == 'cfgBarrelTrackCuts':
+            barrelTrackCutList.append(value)
+        if key == 'cfgBarrelSels':
+            barrelSelsList.append(value)
+        if key == 'cfgMuonSels':
+            muonSelsList.append(value)
+
+##############################
+# For MuonSels From FilterPP #
+##############################
+if extrargs.cfgMuonSels:
+    
+    # transcation management
+    if extrargs.cfgMuonsCuts == None:
+        print("[ERROR] For configure to cfgMuonSels (For DQ Filter PP Task), you must also configure cfgMuonsCuts!!!")
+        sys.exit()
+        
+    # Convert List Muon Cuts                     
+    for muonCut in muonCutList:
+        muonCut = stringToList(muonCut)
+
+    # seperate string values to list with comma
+    for muonSels in muonSelsList:
+        muonSels = muonSels.split(",")    
+    #print("after split: ", muonSels)
+
+    # remove string values after :
+    for i in muonSels:
+        i = i[ 0 : i.index(":")]
+        muonSelsListAfterSplit.append(i)
+    #print("after split muonSels: ", muonSelsListAfterSplit)
+
+    # Remove duplicated values with set convertion
+    muonSelsListAfterSplit = set(muonSelsListAfterSplit)
+    muonSelsListAfterSplit = list(muonSelsListAfterSplit)
+    #print("after remove duplicated values from muonSels: ", muonSelsListAfterSplit)
+
+    for i in muonSelsListAfterSplit:
+        if i in muonCut:
+            #print("selection: ", i,"in", muonCut)
+            #count = count +1
+            continue
+        else:
+            print("====================================================================================================================")
+            print("[ERROR] --cfgMuonSels <value>: ",i,"not in","--cfgMuonsCuts ", muonCut)
+            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
+            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
+            sys.exit()
+                            
+    for i in muonCut:    
+        if i in muonSelsListAfterSplit:
+            #print("muon cut: ",i," in", muonSelsListAfterSplit)
+            #count2 = count2 +1
+            continue
+        else:
+            print("====================================================================================================================")
+            print("[ERROR]--cfgMuonsCut <value>: ",i,"not in","--cfgMuonSels ", muonSelsListAfterSplit)
+            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
+            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
+            sys.exit()
+            
+################################
+# For BarrelSels from FilterPP # 
+################################
+if extrargs.cfgBarrelSels:
+    
+    # transcation management
+    if extrargs.cfgBarrelTrackCuts == None:
+        print("[ERROR] For configure to cfgBarrelSels (For DQ Filter PP Task), you must also configure cfgBarrelTrackCuts!!!")
+        sys.exit()
+         
+    # Convert List Barrel Track Cuts                     
+    for barrelTrackCut in barrelTrackCutList:
+        barrelTrackCut = stringToList(barrelTrackCut)
+
+    # seperate string values to list with comma
+    for barrelSels in barrelSelsList:
+        barrelSels = barrelSels.split(",")   
+    #print("after split: ", barrelSels)
+
+    # remove string values after :
+
+    for i in barrelSels:
+        i = i[ 0 : i.index(":")]
+        barrelSelsListAfterSplit.append(i)
+    #print("after split barrelSels: ", barrelSelsListAfterSplit)
+
+    # Remove duplicated values with set convertion
+    barrelSelsListAfterSplit = set(barrelSelsListAfterSplit)
+    barrelSelsListAfterSplit = list(barrelSelsListAfterSplit)
+    #print("after remove duplicated values from barrelSels: ", barrelSelsListAfterSplit)
+
+    for i in barrelSelsListAfterSplit:
+        if i in barrelTrackCut:
+            #print("selection: ", i,"in", barrelTrackCut)
+            #count = count +1
+            continue
+        else:
+            print("====================================================================================================================")
+            print("[ERROR] --cfgBarrelSels <value>: ",i,"not in","--cfgBarrelTrackCuts ", barrelTrackCut)
+            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
+            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1") 
+            sys.exit()
+                            
+    for i in barrelTrackCut:    
+        if i in barrelSelsListAfterSplit:
+            #print("barrel track cut: ",i," in", barrelSelsListAfterSplit)
+            #count2 = count2 +1
+            continue
+        else:
+            print("====================================================================================================================")
+            print("[ERROR] --cfgBarrelTrackCuts <value>: ",i,"not in","--cfgBarrelSels ", barrelSelsListAfterSplit)
+            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
+            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
+            sys.exit()
+
   
 # AOD File checker 
 if extrargs.aod != None:
@@ -623,14 +768,10 @@ print("=========================================================================
 # Listing Added Commands
 print("Args provided configurations List")
 print("====================================================================================================================")
-forgetParams = []
 for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
         print("--"+key,":", value)
-        if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
-            forgetParams.append(key)
-print("[WARNING] Your forget assign a value to for this parameters: ", forgetParams)
 
 os.system(commandToRun)
