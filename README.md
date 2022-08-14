@@ -478,8 +478,8 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br> `dileptonHadronSelection`  | analysis-selections | * |
-`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`ElectronMuon`</br> `All`  | Same Event Pairing | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br> `dileptonHadronSelection`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
+`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
 `--isMixingEvent` | `true`</br>`false`</br>  | `analysis-event-mixing-selection` | 1 |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br>  | * |
@@ -540,8 +540,8 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`dileptonTrackSelection`</br>| Special Option | * |
-`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| Special Option | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackSelection`</br>| `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
+`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| `analysis-same-event-pairing` | * |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
@@ -610,7 +610,7 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
-`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| dq task selection| * |
+`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| `d-q-barrel-track-selection`</br>`d-q-event-selection-task`</br>`d-q-muons-selection`| * |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
@@ -632,7 +632,7 @@ Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
-`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>| dq task selection| * |
+`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny| dq task selection| * |
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
