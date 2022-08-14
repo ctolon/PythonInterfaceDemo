@@ -225,12 +225,12 @@ allSels = SelsStyle1 + nAddedAllCutsList
 ###################################
 
 # For filterPP, Filter PP Process should always true
-dqSelections = ["eventSelection","barrelTrackSelection","muonSelection","barrelTrackSelectionTiny","filterPPSelectionTiny"]
+#dqSelections = ["eventSelection","barrelTrackSelection","muonSelection","barrelTrackSelectionTiny","filterPPSelectionTiny"]
 
 PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
-processDummySelections =["filter","event","barrel"]
+#processDummySelections =["filter","event","barrel"]
 
 
 ###################
@@ -270,26 +270,22 @@ parser.add_argument('--tof-expreso', help="Expected resolution for the computati
 #parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy is true)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
-# DQ Task Selections
-parser.add_argument('--process', help="DQ Task Selections",choices=dqSelections, action="store", type=str,  nargs='*', metavar='') # run2 
-
-# d-q-filter-p-p-task
-#parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str, metavar='') # run3
-parser.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",choices=allSels, action="store", type=str, nargs='*', metavar='') # run2 
-parser.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",choices=allSels, action="store", type=str, nargs='*', metavar='') # run 2
-
-## d-q-event-selection
+# DQ Flow Task Selections
+#parser.add_argument('--process', help="DQ Task Selections",choices=dqSelections, action="store", type=str,  nargs='*', metavar='') # run2 
+parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='')
 parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
-#parser.add_argument('--processEventSelection', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str)
-
-## d-q-barrel-track-selection
-parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
-
-## d-q-muons-selection
-parser.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='')
-
-#all d-q tasks and selections
 parser.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", choices=['true','false'], type=str.lower)
+parser.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='')
+parser.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='')
+parser.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='')
+parser.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='')
+parser.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='')
+
+parser.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
+parser.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str, metavar='')
+#parser.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
+#parser.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
 
 # pid
 parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
@@ -297,10 +293,8 @@ parser.add_argument('--pid', help="Produce PID information for the particle mass
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
-
-# TODO: We don't have options for this values. Discuss with ionut
 # tof-pid-full, tof-pid for run3 ???
-parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+#parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
 # timestamp-task
 #parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
@@ -365,7 +359,7 @@ commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analys
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   print("ERROR: Invalid syntax! The command line should look like this:")
-  print("  ./IFilterPP.py <yourConfig.json> --param value ...")
+  print("  ./IRunDQFlow.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -374,7 +368,7 @@ with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
 
 taskNameInConfig = "d-q-filter-p-p-task"
-taskNameInCommandLine = "o2-analysis-dq-filter-pp"
+taskNameInCommandLine = "o2-analysis-dq-flow"
 
 if not taskNameInConfig in config:
   print("[ERROR] ",taskNameInConfig," Task to be run not found in the configuration file!")
@@ -399,120 +393,42 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                
-            # DQ Selections for muons and barrel tracks
-            if value =='processSelection' and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'process': #  Only Select key for analysis
-                                      
-                            if key == 'd-q-barrel-track-selection':                    
-                                if 'barrelTrackSelection' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'barrelTrackSelection' not in valueCfg:
-                                    config[key][value] = 'false'
-                                                      
-                            if key == 'd-q-muons-selection':
-                                if 'muonSelection' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'muonSelection' not in valueCfg:
-                                    config[key][value] = 'false'
-                                                                                               
-            # DQ Selections event    
-            if value =='processEventSelection' and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'process': #  Only Select key for analysis
-                            
-                            if key == 'd-q-event-selection-task':
-                                if 'eventSelection' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'eventSelection' not in valueCfg:
-                                    config[key][value] = 'false'
-                                    
-            # DQ Tiny Selection for barrel track
-            if value =='processSelectionTiny' and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'process': #  Only Select key for analysis
-                                      
-                            if key == 'd-q-barrel-track-selection':                    
-                                if 'barrelTrackSelectionTiny' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'barrelTrackSelectionTiny' not in valueCfg:
-                                    config[key][value] = 'false'
-            
-            # DQ Tiny Selection for filterPP
-            if value =='processFilterPPTiny' and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'process': #  Only Select key for analysis
-                                      
-                            if key == 'd-q-filter-p-p-task':                    
-                                if 'filterPPSelectionTiny' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'filterPPSelectionTiny' not in valueCfg:
-                                    config[key][value] = 'false'
+
                                                                                                           
-            # Filter PP Selections        
-            if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
-                if type(extrargs.cfgBarrelSels) == type(clist):
-                    extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
-                config[key][value] = extrargs.cfgBarrelSels
-            if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
-                if type(extrargs.cfgMuonSels) == type(clist):
-                    extrargs.cfgMuonSels = listToString(extrargs.cfgMuonSels) 
-                config[key][value] = extrargs.cfgMuonSels
-                
-            # DQ Cuts    
+            # DQ Flow Selections        
+            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
+                if type(extrargs.cfgTrackCuts) == type(clist):
+                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
+                config[key][value] = extrargs.cfgTrackCuts
+            if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
+                if type(extrargs.cfgMuonCuts) == type(clist):
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
+                config[key][value] = extrargs.cfgMuonCuts
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
-            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
-                if type(extrargs.cfgBarrelTrackCuts) == type(clist):
-                    extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts) 
-                config[key][value] = extrargs.cfgBarrelTrackCuts
-            if value == 'cfgMuonsCuts' and extrargs.cfgMuonsCuts:
-                if type(extrargs.cfgMuonsCuts) == type(clist):
-                    extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts) 
-                config[key][value] = extrargs.cfgMuonsCuts
-            
-            # QA Options  
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
-
-                                    
-            # Run 2/3 and MC/DATA Selections for automations
-            """         
-            if extrargs.run == "2":
-                if value == 'isRun3':
-                    config[key][value] = "false"
-                if value == 'processRun3':
-                    config[key][value] = "false"
-                if value == 'processRun2':
-                    config[key][value] = "true"
-            if extrargs.run == "3":
-                if value == 'isRun3':
-                    config[key][value] = "true"
-                if value == 'processRun3':
-                    config[key][value] = "true"
-                if value == 'processRun2':
-                    config[key][value] = "false"
-            
-            if extrargs.run == '2' and extrargs.runMC:
-                if value == 'isRun2MC':
-                    config[key][value] = "true"
-            if extrargs.run != '2' and extrargs.runData:
-                if value == 'isRun2MC':
-                    config[key][value] = "false"
-                                            
-            if value == "isMC" and extrargs.runMC:
-                    config[key][value] = "true"
-            if value == "isMC" and extrargs.runData:
-                    config[key][value] = "false"                               
-            """     
-                  
+            if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
+                config[key][value] = extrargs.cfgCutPtMin
+            if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
+                config[key][value] = extrargs.cfgCutPtMax
+            if value =='cfgCutEta' and extrargs.cfgCutEta:
+                config[key][value] = extrargs.cfgCutEta
+            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
+                config[key][value] = extrargs.cfgEtaLimit
+            if value =='cfgNPow' and extrargs.cfgNPow:
+                config[key][value] = extrargs.cfgNPow
+            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
+                config[key][value] = extrargs.cfgEtaLimit
+            if value =='cfgNPow' and extrargs.cfgNPow:
+                config[key][value] = extrargs.cfgNPow
+            if value =='cfgEfficiency' and extrargs.cfgEfficiency:
+                config[key][value] = extrargs.cfgEfficiency
+            if value =='cfgAcceptance' and extrargs.cfgAcceptance:
+                config[key][value] = extrargs.cfgAcceptance
+                                                      
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
                 if value in extrargs.pid:
@@ -534,11 +450,7 @@ for key, value in config.items():
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                                    
-            # all d-q tasks and selections
-            if value == 'cfgWithQA' and extrargs.cfgWithQA:
-                config[key][value] = extrargs.cfgWithQA
-                
+                                                    
             # processEvTime    
             if value == 'processEvTime':
                 if extrargs.isProcessEvTime == "true":
@@ -553,13 +465,10 @@ for key, value in config.items():
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
                 if extrargs.processDummy == "event":
                     config['d-q-event-selection-task']['processDummy'] = "true"
-                if extrargs.processDummy == "filter":
-                    config['d-q-filter-p-p-task']['processDummy'] = "true"
-                if extrargs.processDummy == "barrel":
-                    config['d-q-barrel-track-selection-task']['processDummy'] = "true"
             """
                     
             # dummy automizer #TODO: for transaction manag. we need logger for dummy
+            """
             if value == 'processDummy' and extrargs.autoDummy:
                 
                 if config["d-q-barrel-track-selection"]["processSelection"] == "true":
@@ -581,6 +490,7 @@ for key, value in config.items():
                     config["d-q-filter-p-p-task"]["processDummy"] = "false"
                 if config["d-q-filter-p-p-task"]["processFilterPP"] == "false":
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
+            """
                 
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
 """
@@ -603,133 +513,6 @@ for key,value in configuredCommands.items():
         #if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
             #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
 """
-
-#=================================================================    
-# Transcation Management for barrelsels and muonsels in filterPP 
-# ================================================================
-
-for key,value in configuredCommands.items():
-    if(value != None):
-        #if type(value) == type(clist):
-            #listToString(value)
-        if key == 'cfgMuonsCuts':
-            muonCutList.append(value)
-        if key == 'cfgBarrelTrackCuts':
-            barrelTrackCutList.append(value)
-        if key == 'cfgBarrelSels':
-            barrelSelsList.append(value)
-        if key == 'cfgMuonSels':
-            muonSelsList.append(value)
-
-##############################
-# For MuonSels From FilterPP #
-##############################
-if extrargs.cfgMuonSels:
-    
-    # transcation management
-    if extrargs.cfgMuonsCuts == None:
-        print("[ERROR] For configure to cfgMuonSels (For DQ Filter PP Task), you must also configure cfgMuonsCuts!!!")
-        sys.exit()
-        
-    # Convert List Muon Cuts                     
-    for muonCut in muonCutList:
-        muonCut = stringToList(muonCut)
-
-    # seperate string values to list with comma
-    for muonSels in muonSelsList:
-        muonSels = muonSels.split(",")    
-    #print("after split: ", muonSels)
-
-    # remove string values after :
-    for i in muonSels:
-        i = i[ 0 : i.index(":")]
-        muonSelsListAfterSplit.append(i)
-    #print("after split muonSels: ", muonSelsListAfterSplit)
-
-    # Remove duplicated values with set convertion
-    muonSelsListAfterSplit = set(muonSelsListAfterSplit)
-    muonSelsListAfterSplit = list(muonSelsListAfterSplit)
-    #print("after remove duplicated values from muonSels: ", muonSelsListAfterSplit)
-
-    for i in muonSelsListAfterSplit:
-        if i in muonCut:
-            #print("selection: ", i,"in", muonCut)
-            #count = count +1
-            continue
-        else:
-            print("====================================================================================================================")
-            print("[ERROR] --cfgMuonSels <value>: ",i,"not in","--cfgMuonsCuts ", muonCut)
-            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
-            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
-            sys.exit()
-                            
-    for i in muonCut:    
-        if i in muonSelsListAfterSplit:
-            #print("muon cut: ",i," in", muonSelsListAfterSplit)
-            #count2 = count2 +1
-            continue
-        else:
-            print("====================================================================================================================")
-            print("[ERROR]--cfgMuonsCut <value>: ",i,"not in","--cfgMuonSels ", muonSelsListAfterSplit)
-            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
-            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
-            sys.exit()
-            
-################################
-# For BarrelSels from FilterPP # 
-################################
-if extrargs.cfgBarrelSels:
-    
-    # transcation management
-    if extrargs.cfgBarrelTrackCuts == None:
-        print("[ERROR] For configure to cfgBarrelSels (For DQ Filter PP Task), you must also configure cfgBarrelTrackCuts!!!")
-        sys.exit()
-         
-    # Convert List Barrel Track Cuts                     
-    for barrelTrackCut in barrelTrackCutList:
-        barrelTrackCut = stringToList(barrelTrackCut)
-
-    # seperate string values to list with comma
-    for barrelSels in barrelSelsList:
-        barrelSels = barrelSels.split(",")   
-    #print("after split: ", barrelSels)
-
-    # remove string values after :
-
-    for i in barrelSels:
-        i = i[ 0 : i.index(":")]
-        barrelSelsListAfterSplit.append(i)
-    #print("after split barrelSels: ", barrelSelsListAfterSplit)
-
-    # Remove duplicated values with set convertion
-    barrelSelsListAfterSplit = set(barrelSelsListAfterSplit)
-    barrelSelsListAfterSplit = list(barrelSelsListAfterSplit)
-    #print("after remove duplicated values from barrelSels: ", barrelSelsListAfterSplit)
-
-    for i in barrelSelsListAfterSplit:
-        if i in barrelTrackCut:
-            #print("selection: ", i,"in", barrelTrackCut)
-            #count = count +1
-            continue
-        else:
-            print("====================================================================================================================")
-            print("[ERROR] --cfgBarrelSels <value>: ",i,"not in","--cfgBarrelTrackCuts ", barrelTrackCut)
-            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
-            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1") 
-            sys.exit()
-                            
-    for i in barrelTrackCut:    
-        if i in barrelSelsListAfterSplit:
-            #print("barrel track cut: ",i," in", barrelSelsListAfterSplit)
-            #count2 = count2 +1
-            continue
-        else:
-            print("====================================================================================================================")
-            print("[ERROR] --cfgBarrelTrackCuts <value>: ",i,"not in","--cfgBarrelSels ", barrelSelsListAfterSplit)
-            print("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
-            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
-            sys.exit()
-
   
 # AOD File checker 
 if extrargs.aod != None:
@@ -747,7 +530,7 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
 ###########################
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfigFilterPP.json"
+updatedConfigFileName = "tempConfigDQFlow.json"
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)
 
