@@ -370,7 +370,7 @@ config = {}
 with open(sys.argv[1]) as configFile:
   config = json.load(configFile)
 
-taskNameInConfig = "analysis-q-vector"
+taskNameInConfig = "analysis-qvector"
 taskNameInCommandLine = "o2-analysis-dq-flow"
 
 if not taskNameInConfig in config:
