@@ -241,6 +241,9 @@ parser = argparse.ArgumentParser(description='Arguments to pass')
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 #parser.add_argument('-runData', help="Run over data", action="store_true")
 #parser.add_argument('-runMC', help="Run over MC", action="store_true")
+parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
+parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
+parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
 
 ##################
 # Interface Part #
@@ -759,6 +762,15 @@ for dep in commonDeps:
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b"
 for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
+  
+if extrargs.add_mc_conv:
+    commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
+
+if extrargs.add_fdd_conv:
+    commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
+
+if extrargs.add_track_prop:
+    commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
 
 print("====================================================================================================================")
 print("Command to run:")
