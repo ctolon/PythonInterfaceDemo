@@ -161,6 +161,7 @@ cython_debug/
 #.idea/
 
 # Ignore all root files
-
 *.root
+# Ignore all c++ header files (because of temp DQ libs)
+*.h
 
