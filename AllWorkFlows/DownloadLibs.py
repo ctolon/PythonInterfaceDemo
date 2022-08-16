@@ -37,6 +37,7 @@ parser.add_argument('--debug', help="execute with debug options", action="store"
 extrargs = parser.parse_args()
 
 MYPATH = os.path.abspath(os.getcwd())
+isLibsExist = True
 #print(MYPATH)
 
 if extrargs.version != None:
@@ -68,6 +69,7 @@ if extrargs.debug:
     
 if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
     logging.info("Some Libs are Missing. All DQ libs will download")
+    isLibsExist = False
     if extrargs.debug:
         try:
             context = ssl._create_unverified_context()  # prevent ssl problems
@@ -93,11 +95,16 @@ if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSign
      
     with open('tempCutsLibrary.h', 'wb') as f:
         f.write(htmlCutsLibrary)
+        logging.info("tempCutsLibrary.h downloaded")
     with open('tempMCSignalsLibrary.h', 'wb') as f:
         f.write(htmlMCSignalsLibrary)
+        logging.info("tempMCSignalsLibrary.h downloaded")
     with open('tempMixingLibrary.h', 'wb') as f:
         f.write(htmlEventMixing)
-    
+        logging.info("MixingLibrary.h downloaded")
 
-logging.info("Libraries downloaded successfully!")
+if isLibsExist:
+    logging.info("DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.")    
+else:
+    logging.info("DQ Libraries downloaded successfully!")
 sys.exit()
