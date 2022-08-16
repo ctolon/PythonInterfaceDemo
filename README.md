@@ -773,6 +773,8 @@ Arg | Opt | Task | nargs |
 
 * Details parameters for `IRunDQFlow.py`
 
+Arg | Ref Type| Desc | Default | Real Type
+--- | --- | --- | --- | --- |
 `--aod` | String | Add your aod file with path  |  | str |
 `--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
 `--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
