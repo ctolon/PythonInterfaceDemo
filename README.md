@@ -17,7 +17,9 @@ Cevat Batuhan Tolon
 [`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQEfficiency..py).
 * Produces a decision table for pp collisions. The decisions require that at least a selected pair (or just two tracks) exists for a given event. Currently up to 64 simultaneous decisions can be made, to facilitate studies for optimizing cuts. 
 [`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunFilterPP.py).
-* It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way
+* Task to compute Q vectors and other quanitites related from the generic framework. Generic framework O2 version is a port of the AliPhysics version. To be used in the DQ analyses aiming for flow measurements 
+[`IRunDQFlow.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQFlow.py).
+* It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way. You can download libs with version as nightly
 [`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/DownloadLibs.py).
 
 ## Config Files
@@ -38,6 +40,9 @@ Main File | Related Task on O2Physics | Description
 [`configAnalysisMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configAnalysisMC.json) | [`dqEfficiency.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx) | run with dqEfficiency.cxx
 [`configFilterPPRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
 [`configFilterPPDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
+[`configFlowDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFlowDataRun2.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
+[`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
+
 
 * JSON Reader Configuations for the DQ skimmed tables
 
@@ -60,10 +65,11 @@ While developing, python CLIs are prepared by creating python scripts with enoug
 TODO: Add schema
 
 * For O2DQWorkflow, a folder has been created for the 2nd stage tests containing python scripts to run inside O2 for each task. If the tests in the TestInteface folder pass, new developments are transferred here, where analysis tests are performed in O2.
-[`TableMaker`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableMaker)
-[`TableReader`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableReader)
-[`DQEfficiency`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/DQEfficiency)
-[`FilterPP`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/FilterPP)
+  * [`TableMaker`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableMaker)
+  * [`TableReader`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableReader)
+  * [`DQEfficiency`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/DQEfficiency)
+  * [`FilterPP`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/FilterPP)
+  * [`dqFlow`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/dqFlow)
 
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
@@ -450,6 +456,15 @@ Arg | Ref Type| Desc | Default | Real Type
 
 # Instructions for IRunTableReader.py
 
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+
 * Minimum Required Parameter List:
   * `python3`
   * `IRunTableReader.py`
@@ -480,6 +495,10 @@ Arg | Opt | Task | nargs |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br> `dileptonHadronSelection`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--isMixingEvent` | `true`</br>`false`</br>  | `analysis-event-mixing-selection` | 1 |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br>  | * |
@@ -500,6 +519,9 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgMixingVars` | String | Mixing configs separated by a space | - | str
@@ -510,6 +532,15 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 # Instructions for IRunDQEfficiency.py
+
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
   * `python3`
@@ -542,6 +573,10 @@ Arg | Opt | Task | nargs |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackSelection`</br>| `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| `analysis-same-event-pairing` | * |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
@@ -565,6 +600,9 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process selections for Same Event Pairing | - | str
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
@@ -580,6 +618,15 @@ Arg | Ref Type| Desc | Default | Real Type
 
 # Instructions for IFilterPP.py
 
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+
 * Minimum Required Parameter List:
   * `python3`
   * `IFilterPP.py`
@@ -594,12 +641,12 @@ Examples(in AllWorkFlows):
 
 - Run filterPP on Data run2 With Minimum Commands
   ```ruby
-  python3 IFilterPP.py configFilterPPDataRun2.json
+  python3 IFilterPP.py Configs/configFilterPPDataRun2.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IFilterPP.py configFilterPPRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+python3 IFilterPP.py Configs/configFilterPPRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
   ```
 
 # Available configs in IFilterPP Interface
@@ -611,6 +658,9 @@ Arg | Opt | Task | nargs |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| `d-q-barrel-track-selection`</br>`d-q-event-selection-task`</br>`d-q-muons-selection`| * |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
@@ -630,9 +680,12 @@ Arg | Opt | Task | nargs |
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
-`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--aod` | String | Add your aod file with path  |  | str |
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
-`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny| dq task selection| * |
+`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| dq task selection| * |
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
@@ -647,7 +700,95 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 
-## TODO List For IRunTableMaker
+
+# Instructions for IRunDQFlow.py
+
+* Minimum Required Parameter List:
+  * `python3`
+  * `IRunDQFlow.py`
+  * JSON Config File
+    * Example For usage: Configs/configFlowDataRun3.json
+
+Examples(in AllWorkFlows):
+- Run filterPP on Data run3 With Minimum Commands
+  ```ruby
+  python3 IRunDQFlow.py Configs/configFlowDataRun3.json
+  ```
+
+- Run filterPP on Data run2 With Minimum Commands
+  ```ruby
+  python3 IRunDQFlow.py Configs/configFlowDataRun2.json
+  ```
+
+In case of multiple configs example
+  ```ruby
+python3 IRunDQFlow.py Configs/configFilterPPRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
+  ```
+
+# Available configs in IRunDQFlow Interface
+
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+
+* For `IRunDQFlow.py` Selections
+
+Arg | Opt | Task | nargs |
+--- | --- | --- | --- |
+`--aod` | all | `internal-dpl-aod-reader` | 1 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
+`--CustomDeltaBC` | all | `event-selection-task` | 1 |
+`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
+`--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--cfgWithQA` |`true` </br> `false`  | `analysis-qvector`</br> | 1 |
+`--cfgEventCuts` | `allCuts` | `analysis-qvector`</br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-qvector`</br> | * |
+`--cfgMuonsCuts` | `allCuts` | `analysis-qvector` | * |
+`--cfgCutPtMin` | all  | `analysis-qvector`</br>  | 1 |
+`--cfgCutPtMax ` | all  | `analysis-qvector`</br> | 1 |
+`--cfgCutEta ` | all  | `analysis-qvector` | 1 |
+`--cfgEtaLimit` | all  | `analysis-qvector`</br>  | 1 |
+`--cfgNPow` | all  | `analysis-qvector`</br> | 1 |
+`--cfgEfficiency` | all  | `analysis-qvector` | 1 |
+`--cfgAcceptance` | all  | `analysis-qvector`</br>  | 1 |
+`--cutLister` | No Param | all  | 0 |
+
+
+* Details parameters for `IRunDQFlow.py`
+
+`--aod` | String | Add your aod file with path  |  | str |
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
+`--syst` | String | Collision system selection |  | str
+`--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
+`--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
+`--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
+`--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
+`--cfgEventCuts` | String | Space separated list of event cuts |  | str
+`--cfgTrackCuts` | String | Space separated list of barrel track cuts |  | str
+`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
+`--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
+`--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
+`--cfgCutEta ` | Float | Eta range for tracksselection  |  | str
+`--cfgEtaLimit` | Float | Eta gap separation, only if using subEvents |  | str
+`--cfgNPow` | Integer | Power of weights for Q vector  |  | str
+`--cfgEfficiency` | String | CCDB path to efficiency object  |  | str
+`--cfgAcceptance` | String | CCDB path to acceptance object  |  | str
+`--cutLister` | No Param | all  | 0 |
+
+
+## TODO List For Python Workflows
 * `Finished` We need more meaningful explanations for argument explanations (helping comments).
 * `Open` The values that JSON values can take for transaction management should be classified and filtered with
 choices and data types.
@@ -688,11 +829,5 @@ bash (Already Integrated for local).
 * `Aug 11, 2022` provide a native solution for libraries with urllib, cut and mcsignal lister added, helper messages has beauty format, for filter pp task, sels are fixed. readme update, added new script for internet based solution: `DownloadLibs.py`. Some parameter value names has refactored in DQ Efficiency, fix for dileptonTrack Selection DQ Efficiency task, fix for Same event pairing automation logger message (when you try give an process function in DQEfficiency or TableReader if you forget give a parameter value in e.g --analysis eventSelection --process JpsiToMuMu sameEventPairing value automaticaly added to analysis workflow like this (Logger Message: `"[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI."`) --> --analysis eventSelection sameEventPairing we provide this way with automation)
 * `Aug 12, 2022` IFilterPP.py Interface refactored and released. `--cfgMuonsCuts` parameter added tablemaker and filterpp workflow (it's different from `--cfgMuonCuts`). listToString method impl to barrel and muon sels. Readme update for instructions and available configs in FilterPP python script.
 * `Aug 13, 2022` In FilterPP, processEvTime and Tiny Options added to JSON files and python scripts, we need trans. manag for them, processDummy option added for run 3 Data in tablemaker, dummy automizer activated for dq muons selection. Protection Added to all scripts for alienv load. Transaction management protection added for cfgMuonSels and cfgBarrelSels in filterPP Task (TableMaker and FilterPP python scripts) also logger message and fix instructions added, forget to assign value to parameters transcation management carried to top of code, String to List method update, nargs fix for Sels in filter pp
-
-
-
-
-
-
-
-
+* `Aug 14, 2022` `o2-analysis-mc-converter` `o2-analysis-fdd-converter` and `o2-analysis-track-propagation` task adders added to all Workflows as parameters. taskNameInConfig in dqflow is fixed. DQ Flow JSON configs fixed. `o2-analysis-track-propagation` dep removed and `o2-analysis-trackextension` added in DQ Flow as deps.
+* `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others.
