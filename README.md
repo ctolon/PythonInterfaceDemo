@@ -126,17 +126,25 @@ And then, source your argcomplete script for autocomplete:
 
 IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!!
 
+# Instructions for DownloadLibs.py
+
 ## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
 
 These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the DownloadLibs.py script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
 
+P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
+
 `python3 DownloadLibs.py`
+
+For tag version based download (depends your production) e.g for nightly-20220619, just enter as 20220619:
+
+`python3 DownloadLibs.py --version 20220619`
 
 If the libraries are downloaded successfully you will get this message:
 
 `[INFO] Libraries downloaded successfully!`
 
-Only use this option if the libraries do not download when you try to complete the scripts with TAB. Also, if you encounter a problem, please report it.
+Only use this option if the libraries do not download when you try to complete the scripts with TAB or you need specific version of DQ Libraries (Mostly for If you worked older O2Physics version in LXPLUS). Also, if you encounter a problem, please report it.
 
 ## Features for IRunTableMaker
 
@@ -830,4 +838,4 @@ bash (Already Integrated for local).
 * `Aug 12, 2022` IFilterPP.py Interface refactored and released. `--cfgMuonsCuts` parameter added tablemaker and filterpp workflow (it's different from `--cfgMuonCuts`). listToString method impl to barrel and muon sels. Readme update for instructions and available configs in FilterPP python script.
 * `Aug 13, 2022` In FilterPP, processEvTime and Tiny Options added to JSON files and python scripts, we need trans. manag for them, processDummy option added for run 3 Data in tablemaker, dummy automizer activated for dq muons selection. Protection Added to all scripts for alienv load. Transaction management protection added for cfgMuonSels and cfgBarrelSels in filterPP Task (TableMaker and FilterPP python scripts) also logger message and fix instructions added, forget to assign value to parameters transcation management carried to top of code, String to List method update, nargs fix for Sels in filter pp
 * `Aug 14, 2022` `o2-analysis-mc-converter` `o2-analysis-fdd-converter` and `o2-analysis-track-propagation` task adders added to all Workflows as parameters. taskNameInConfig in dqflow is fixed. DQ Flow JSON configs fixed. `o2-analysis-track-propagation` dep removed and `o2-analysis-trackextension` added in DQ Flow as deps.
-* `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others.
+* `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others. SSL certificates added for download DQ libs due to github validation
