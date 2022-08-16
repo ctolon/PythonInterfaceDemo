@@ -7,6 +7,8 @@ from ast import parse
 import argparse
 import re
 import ssl
+import logging
+import logging.config
 
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
@@ -29,7 +31,8 @@ headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebK
 
 parser = argparse.ArgumentParser(description='Arguments to pass')
 parser.add_argument('--version', help="Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action="store", type=str.lower)
-parser.add_argument('--debug', help="execute with debug options", action="store_true")
+#parser.add_argument('--debug', help="execute with debug options", action="store_true")
+parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper)
 
 extrargs = parser.parse_args()
 
@@ -39,6 +42,13 @@ MYPATH = os.path.abspath(os.getcwd())
 if extrargs.version != None:
     prefix_version = "nightly-"
     extrargs.version = prefix_version + extrargs.version
+    
+if extrargs.debug:
+    DEBUG_SELECTION = extrargs.debug
+    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
@@ -51,13 +61,13 @@ if extrargs.version:
     urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/' + extrargs.version + '/PWGDQ/Core/MixingLibrary.h'
     
 if extrargs.debug:
-    print("CutsLibrary.h Path: ",urlCutsLibrary)
-    print("MCSignalsLibrary.h Path: ",urlMCSignalsLibrary)
-    print("MixingLibrary.h Path: ",urlEventMixing)
+    logging.info("CutsLibrary Path: %s ",urlCutsLibrary)
+    logging.info("MCSignalsLibrary.h Path: %s ",urlMCSignalsLibrary)
+    logging.info("MixingLibrary.h Path: %s ",urlEventMixing)
  
     
 if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
-    print("[INFO] Some Libs are Missing. All DQ libs will download")
+    logging.info("Some Libs are Missing. All DQ libs will download")
     if extrargs.debug:
         try:
             context = ssl._create_unverified_context()  # prevent ssl problems
@@ -65,7 +75,7 @@ if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSign
             request = urllib.request.urlopen(urlMCSignalsLibrary, context=context)
             request = urllib.request.urlopen(urlEventMixing, context=context)
         except urllib.error.HTTPError as error:
-            print(error)
+            logging.error(error)
     else:
         # Dummy SSL Adder
         context = ssl._create_unverified_context()  # prevent ssl problems
@@ -82,12 +92,12 @@ if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSign
     htmlEventMixing = urlopen(requestEventMixing, context=context).read()
      
     with open('tempCutsLibrary.h', 'wb') as f:
-         f.write(htmlCutsLibrary)
+        f.write(htmlCutsLibrary)
     with open('tempMCSignalsLibrary.h', 'wb') as f:
-         f.write(htmlMCSignalsLibrary)
+        f.write(htmlMCSignalsLibrary)
     with open('tempMixingLibrary.h', 'wb') as f:
         f.write(htmlEventMixing)
     
 
-print("[INFO] Libraries downloaded successfully!")
+logging.info("Libraries downloaded successfully!")
 sys.exit()

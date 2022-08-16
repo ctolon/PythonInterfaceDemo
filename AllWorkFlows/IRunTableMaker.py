@@ -938,7 +938,7 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
     # Firstly try for Data then if not data it gives warning message for MC
     noDeleteNeedForCent = False
     try:
-            print("[INFO] JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
+        print("[INFO] JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
         #del(config["centrality-table"])
     except:
         if extrargs.runMC:
