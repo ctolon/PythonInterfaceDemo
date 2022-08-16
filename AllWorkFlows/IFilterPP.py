@@ -24,6 +24,7 @@ import argparse
 import re
 import urllib.request
 from urllib.request import Request, urlopen
+import ssl
 
 """
 argcomplete - Bash tab completion for argparse
@@ -122,15 +123,19 @@ urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master
 if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
     print("[INFO] Some Libs are Missing. They will download.")
     
+    # Dummy SSL Adder
+    context = ssl._create_unverified_context()  # prevent ssl problems
+    request = urllib.request.urlopen(urlCutsLibrary, context=context)
+    
     # HTTP Request
     requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
     requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
     requestEventMixing  = Request(urlEventMixing , headers=headers)
     
     # Get Files With Http Requests
-    htmlCutsLibrary = urlopen(requestCutsLibrary).read()
-    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary).read()
-    htmlEventMixing = urlopen(requestEventMixing ).read()
+    htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
+    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
+    htmlEventMixing = urlopen(requestEventMixing, context=context).read()
     
    # Save Disk to temp DQ libs  
     with open('tempCutsLibrary.h', 'wb') as f:
