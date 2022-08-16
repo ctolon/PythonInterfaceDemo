@@ -23,6 +23,7 @@ import os
 import argparse
 import re
 import urllib.request
+from urllib.request import Request, urlopen
 
 """
 argcomplete - Bash tab completion for argparse
@@ -35,46 +36,6 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
-
-#################################
-# JSON Database Read and Upload #
-#################################
-"""
-Predefined Analysis Cuts, MCSignals and Histograms From O2-DQ Framework.
-MCSignals --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h
-Analysis Cuts --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h
-
-Parameters
-------------------------------------------------
-analysisCutDatabaseJSON: JSON
-    analysisCutDatabaseJSON is a JSON file for take the analysis cut parameters
-    
-analysisCutDatabase : list
-    analysisCutDatabase is a List for take analysis cut parameters from JSON database
-
-MCSignalDatabaseJSON: JSON
-    MCSignalDatabaseJSON is a JSON file for take the MC signals parameters
-    
-MCSignalDatabase: list
-    MCSignalDatabase is a List for take MC Signals from JSON database
-
-analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
-MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
-analysisCutDatabase = []
-MCSignalDatabase =[]
-
-# control list for type control
-clist=[]
-
-# Cut Database
-for key, value in analysisCutDatabaseJSON.items():
-    analysisCutDatabase.append(value)
-
-# MCSignal Database
-for key, value in MCSignalDatabaseJSON.items():
-    MCSignalDatabase.append(value)
-
-"""    
 
 """
 ListToString provides converts lists to strings.
@@ -117,15 +78,6 @@ def stringToList(string):
     li = list(string.split(","))
     return li
 
-# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-# This condition solves performance issues
-if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False):
-    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-    urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
-
-    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
-    urllib.request.urlretrieve(urlMCSignalsLibrary,"tempMCSignalsLibrary.h")
-
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
@@ -146,20 +98,50 @@ muonSelsList = []
 barrelSelsListAfterSplit = []
 muonSelsListAfterSplit = []
 
-
-# Get paths in localy
-#MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
-#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
-#print(os.environ['ALIBUILD_WORK_DIR'])
-
 # Get system variables in alienv.#TODO:In alienv we don't have cuts and signal library!!! We need discuss this thing
-
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
 QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 
+################################
+# Download DQ Libs From Github #
+################################
 
+# It works on for only master branch
+
+# header for github download
+headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+
+urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
+urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+
+ 
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues    
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+    print("[INFO] Some Libs are Missing. They will download.")
+    
+    # HTTP Request
+    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
+    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
+    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    
+    # Get Files With Http Requests
+    htmlCutsLibrary = urlopen(requestCutsLibrary).read()
+    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary).read()
+    htmlEventMixing = urlopen(requestEventMixing ).read()
+     
+    # Save Disk to temp DQ libs  
+    with open('tempCutsLibrary.h', 'wb') as f:
+         f.write(htmlCutsLibrary)
+    with open('tempMCSignalsLibrary.h', 'wb') as f:
+         f.write(htmlMCSignalsLibrary)
+    with open('tempMixingLibrary.h', 'wb') as f:
+        f.write(htmlEventMixing)
+
+# Read Cuts, Signals, Mixing vars from downloaded files
 with open('tempMCSignalsLibrary.h') as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -181,29 +163,7 @@ with open('tempCutsLibrary.h') as f:
             nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
             nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
 
-"""
-with open(MCSignalsPath) as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
-        for i in stringIfSearch:
-            getSignals = re.findall('"([^"]*)"', i)
-            allMCSignals = allMCSignals + getSignals
-            
-with open(AnalysisCutsPath) as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
-        for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
-            getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
-                        if 'pair' in y] 
-            if getPairCuts: # if pair cut list is not empty
-                allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
-            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
-"""
-
+ 
 # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
 for k in range (1,10):
     nAddedAllCuts = [x + str(k) for x in nameSpacedAllCutsTwoDots]
@@ -1020,7 +980,7 @@ if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
                 processLeftAfterCentDelete = True
                 leftProcessAfterDeleteCent.append(deletedParamTableMaker)
 
-# Logger Message
+# Logger Message for Centrality
 if noDeleteNeedForCent == False: 
     print("[INFO]","After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: ",leftProcessAfterDeleteCent)
  
@@ -1175,30 +1135,6 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableMaker.json"
-# TODO Fix and implemente it
-"""
-Transaction Management for Json File Name
-
-if(extrargs.outputjson == None):       
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-    print("[WARNING] Forget to Give output JSON name. Output JSON will created as tempConfig.json")
-elif(extrargs.outputjson[-5:] == ".json"):
-    updatedConfigFileName = extrargs.outputjson
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-elif(extrargs.outputjson[-5:] != ".json"):
-    if '.' in extrargs.outputjson:
-        print("[ERROR] Wrong formatted input for JSON output!!! Script will Stopped.")
-        sys.exit()
-    temp = extrargs.outputjson
-    temp = temp+'.json'
-    updatedConfigFileName = temp
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-else:
-    print("Logical json input error. Report it!!!")
-"""
     
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)

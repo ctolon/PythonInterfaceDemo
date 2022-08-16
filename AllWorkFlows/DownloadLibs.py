@@ -1,6 +1,11 @@
 import urllib.request
+from urllib.request import Request, urlopen
 import os
 import sys
+import json
+from ast import parse
+import argparse
+import re
 
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
@@ -16,15 +21,52 @@ import sys
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# This script provides download to libraries from O2Physics-DQ Manually
+# This script provides download to libraries from O2Physics-DQ Manually with/without Production tag
+
+# header for github download
+headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+
+parser = argparse.ArgumentParser(description='Arguments to pass')
+parser.add_argument('--version', help="Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action="store", type=str.lower)
+extrargs = parser.parse_args()
+
+MYPATH = os.path.abspath(os.getcwd())
+#print(MYPATH)
+
+if extrargs.version != None:
+    prefix_version = "nightly-"
+    extrargs.version = prefix_version + extrargs.version
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
 urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
 
-urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
-urllib.request.urlretrieve(urlMCSignalsLibrary,"tempMCSignalsLibrary.h")
-urllib.request.urlretrieve(urlEventMixing,"tempMixingLibrary.h")
+if extrargs.version:
+    print("[INFO] Your Version For Downloading DQ Libs From Github :", extrargs.version)
+    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/' + extrargs.version + '/PWGDQ/Core/CutsLibrary.h'
+    urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/' + extrargs.version + '/PWGDQ/Core/MCSignalLibrary.h'
+    urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/' + extrargs.version + '/PWGDQ/Core/MixingLibrary.h'
+ 
+    
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+    print("[INFO] Some Libs are Missing. They will download.")
+    
+    # HTTP Request
+    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
+    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
+    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    
+    # Get Files With Http Requests
+    htmlCutsLibrary = urlopen(requestCutsLibrary).read()
+    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary).read()
+    htmlEventMixing = urlopen(requestEventMixing ).read()
+     
+    with open('tempCutsLibrary.h', 'wb') as f:
+         f.write(htmlCutsLibrary)
+    with open('tempMCSignalsLibrary.h', 'wb') as f:
+         f.write(htmlMCSignalsLibrary)
+    with open('tempMixingLibrary.h', 'wb') as f:
+        f.write(htmlEventMixing)
 
 print("[INFO] Libraries downloaded successfully!")
 sys.exit()

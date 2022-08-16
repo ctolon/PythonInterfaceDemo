@@ -22,6 +22,7 @@ import os
 import argparse
 import re
 import urllib.request
+from urllib.request import Request, urlopen
 
 """
 argcomplete - Bash tab completion for argparse
@@ -34,58 +35,6 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
-
-#################################
-# JSON Database Read and Upload #
-#################################
-"""
-Predefined Analysis Cuts, MCSignals and Histograms From O2-DQ Framework.
-MCSignals --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h
-Analysis Cuts --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h
-
-Parameters
-------------------------------------------------
-analysisCutDatabaseJSON: JSON
-    analysisCutDatabaseJSON is a JSON file for take the analysis cut parameters
-    
-analysisCutDatabase : list
-    analysisCutDatabase is a List for take analysis cut parameters from JSON database
-
-MCSignalDatabaseJSON: JSON
-    MCSignalDatabaseJSON is a JSON file for take the MC signals parameters
-    
-MCSignalDatabase: list
-    MCSignalDatabase is a List for take MC Signals from JSON database
-    
-mixingDatabaseJSON: JSON
-    mixingDatabaseJSON is a JSON file for take the event mixing selection parameters
-    
-mixingDatabase: list
-    mixingDatabase is a List for take Event Mixing Selections from JSON database    
-
-analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
-MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
-mixingDatabaseJSON = json.load(open('Database/MixingDatabase.json'))
-analysisCutDatabase = []
-MCSignalDatabase =[]
-mixingDatabase = []
-
-# control list for type control
-clist=[]
-
-# Cut Database
-for key, value in analysisCutDatabaseJSON.items():
-    analysisCutDatabase.append(value)
-
-# MCSignal Database
-for key, value in MCSignalDatabaseJSON.items():
-    MCSignalDatabase.append(value)
-    
-# Event Mixing Selection Database
-for key, value in mixingDatabaseJSON.items():
-    mixingDatabase.append(value)
-    
-"""
     
 """
 ListToString provides converts lists to strings.
@@ -133,29 +82,57 @@ isSameEventPairing = False
 readerPath = 'Configs/readerConfiguration_reducedEvent.json'
 writerPath = 'Configs/writerConfiguration_dileptons.json'
 
-# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-# This condition solves performance issues
-if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h') == False):
-    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-    urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
-
-    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
-    urllib.request.urlretrieve(urlEventMixing,"tempMixingLibrary.h")
-
-
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = []
 allMixing = []
 
-#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
-#EventMixingPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MixingLibrary.h")
+isDileptonHadronAnalysis = False
 
+# Get system variables in alienv.
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
 QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 
+################################
+# Download DQ Libs From Github #
+################################
+
+# It works on for only master branch
+
+# header for github download
+headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+
+urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
+urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+
+ 
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues    
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+    print("[INFO] Some Libs are Missing. They will download.")
+    
+    # HTTP Request
+    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
+    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
+    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    
+    # Get Files With Http Requests
+    htmlCutsLibrary = urlopen(requestCutsLibrary).read()
+    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary).read()
+    htmlEventMixing = urlopen(requestEventMixing ).read()
+     
+    # Save Disk to temp DQ libs  
+    with open('tempCutsLibrary.h', 'wb') as f:
+         f.write(htmlCutsLibrary)
+    with open('tempMCSignalsLibrary.h', 'wb') as f:
+         f.write(htmlMCSignalsLibrary)
+    with open('tempMixingLibrary.h', 'wb') as f:
+        f.write(htmlEventMixing)
+
+# Read Cuts, Signals, Mixing vars from downloaded files
 with open('tempMixingLibrary.h') as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
@@ -170,25 +147,9 @@ with open('tempCutsLibrary.h') as f:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
 
-"""
-with open(EventMixingPath) as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
-        for i in stringIfSearch:
-            getMixing = re.findall('"([^"]*)"', i)
-            allMixing = allMixing + getMixing
-    
-with open(AnalysisCutsPath) as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
-        for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)
-            allCuts = allCuts + getAnalysisCuts
-
-"""
-
+ 
 #print(allCuts)
-#print(allMixing)
+#print(allMixing)    
     
 ###################
 # Main Parameters #
@@ -247,7 +208,6 @@ parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel trac
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 parser.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
-
 
 """Activate For Autocomplete. See to Libraries for Info"""
 argcomplete.autocomplete(parser)
@@ -389,6 +349,7 @@ for key, value in config.items():
                             if key == 'analysis-dilepton-hadron':
                                 if 'dileptonHadronSelection' in valueCfg:
                                     config[key][value] = 'true'
+                                    isDileptonHadronAnalysis = True
                                 if 'dileptonHadronSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     
@@ -656,34 +617,15 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == F
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableReader.json"
 
-"""
-Transaction Management for Json File Name
-
-if(extrargs.outputjson == None):       
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-    print("[WARNING] Forget to Give output JSON name. Output JSON will created as tempConfig.json")
-elif(extrargs.outputjson[-5:] == ".json"):
-    updatedConfigFileName = extrargs.outputjson
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-elif(extrargs.outputjson[-5:] != ".json"):
-    if '.' in extrargs.outputjson:
-        print("[ERROR] Wrong formatted input for JSON output!!! Script will Stopped.")
-        sys.exit()
-    temp = extrargs.outputjson
-    temp = temp+'.json'
-    updatedConfigFileName = temp
-    config_output_json = open(updatedConfigFileName,'w')
-    config_output_json.write(json.dumps(config, indent= 2))
-else:
-    print("Logical json input error. Report it!!!")
-       
-"""
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)
       
+#commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
+
+#TODO: need check
+#if isDileptonHadronAnalysis == True:
+    #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
 if extrargs.add_mc_conv:
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"

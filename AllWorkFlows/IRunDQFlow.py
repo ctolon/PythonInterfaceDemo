@@ -23,6 +23,7 @@ import os
 import argparse
 import re
 import urllib.request
+from urllib.request import Request, urlopen
 
 """
 argcomplete - Bash tab completion for argparse
@@ -35,46 +36,6 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
-
-#################################
-# JSON Database Read and Upload #
-#################################
-"""
-Predefined Analysis Cuts, MCSignals and Histograms From O2-DQ Framework.
-MCSignals --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h
-Analysis Cuts --> https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h
-
-Parameters
-------------------------------------------------
-analysisCutDatabaseJSON: JSON
-    analysisCutDatabaseJSON is a JSON file for take the analysis cut parameters
-    
-analysisCutDatabase : list
-    analysisCutDatabase is a List for take analysis cut parameters from JSON database
-
-MCSignalDatabaseJSON: JSON
-    MCSignalDatabaseJSON is a JSON file for take the MC signals parameters
-    
-MCSignalDatabase: list
-    MCSignalDatabase is a List for take MC Signals from JSON database
-
-analysisCutDatabaseJSON = json.load(open('Database/AnalysisCutDatabase.json'))
-MCSignalDatabaseJSON = json.load(open('Database/MCSignalDatabase.json'))
-analysisCutDatabase = []
-MCSignalDatabase =[]
-
-# control list for type control
-clist=[]
-
-# Cut Database
-for key, value in analysisCutDatabaseJSON.items():
-    analysisCutDatabase.append(value)
-
-# MCSignal Database
-for key, value in MCSignalDatabaseJSON.items():
-    MCSignalDatabase.append(value)
-
-"""    
 
 """
 ListToString provides converts lists to strings.
@@ -116,109 +77,66 @@ def binary_selector(v):
 def stringToList(string):
     li = list(string.split(","))
     return li
-
-# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-# This condition solves performance issues
-if (os.path.isfile('tempCutsLibrary.h') == False):
-    urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-
-    urllib.request.urlretrieve(urlCutsLibrary,"tempCutsLibrary.h")
     
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
-allPairCuts = [] # only pair cuts
-nAddedAllCutsList = [] # e.g. muonQualityCuts::2
-nAddedPairCutsList = [] # e.g paircutMass::3
-SelsStyle1 = [] # track/muon cut::paircut::n
-allSels = [] # track/muon cut::n
-namespaceDef = ":" # Namespace reference
-namespaceDef2 = "::" # Namespace reference
-
-# List for Transcation management for FilterPP
-muonCutList = [] # List --> transcation management for filterPP
-barrelTrackCutList = [] # List --> transcation management for filterPP
-barrelSelsList = []
-muonSelsList = []
-barrelSelsListAfterSplit = []
-muonSelsListAfterSplit = []
-
-
-
-# Get paths in localy
-#MCSignalsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/MCSignalLibrary.h")
-#AnalysisCutsPath = os.path.expanduser("~/alice/O2Physics/PWGDQ/Core/CutsLibrary.h")
-#print(os.environ['ALIBUILD_WORK_DIR'])
 
 # Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
-
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
 QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 
-            
+################################
+# Download DQ Libs From Github #
+################################
+
+# It works on for only master branch
+
+# header for github download
+headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+
+urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
+urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
+urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+
+ 
+# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+# This condition solves performance issues    
+if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+    print("[INFO] Some Libs are Missing. They will download.")
+    
+    # HTTP Request
+    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
+    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
+    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    
+    # Get Files With Http Requests
+    htmlCutsLibrary = urlopen(requestCutsLibrary).read()
+    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary).read()
+    htmlEventMixing = urlopen(requestEventMixing ).read()
+     
+    # Save Disk to temp DQ libs  
+    with open('tempCutsLibrary.h', 'wb') as f:
+         f.write(htmlCutsLibrary)
+    with open('tempMCSignalsLibrary.h', 'wb') as f:
+         f.write(htmlMCSignalsLibrary)
+    with open('tempMixingLibrary.h', 'wb') as f:
+        f.write(htmlEventMixing)
+
+# Read Cuts, Signals, Mixing vars from downloaded files    
 with open('tempCutsLibrary.h') as f:
     for line in f:
-        stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
+        stringIfSearch = [x for x in f if 'if' in x] 
         for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
-            getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
-                        if 'pair' in y] 
-            if getPairCuts: # if pair cut list is not empty
-                allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
-            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
+            getAnalysisCuts = re.findall('"([^"]*)"', i)
+            allCuts = allCuts + getAnalysisCuts
 
-"""            
-with open(AnalysisCutsPath) as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
-        for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
-            getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
-                        if 'pair' in y] 
-            if getPairCuts: # if pair cut list is not empty
-                allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
-            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
-"""
-
-# in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
-for k in range (1,10):
-    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCutsTwoDots]
-    nAddedAllCutsList = nAddedAllCutsList + nAddedAllCuts
-    nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
-    nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
-    
-# Style 1 <track-cut>:[<pair-cut>]:<n>:
-for i in nAddedPairCutsList:
-    Style1 = [x + i for x in nameSpacedAllCuts]
-    SelsStyle1 = SelsStyle1 + Style1
-      
-# Style 2 <track-cut>:<n> --> nAddedAllCutsList
-
-# Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-allSels = SelsStyle1 + nAddedAllCutsList
-
-
-# Debug Print Options
-
+ 
 #print(allCuts)
-#print(allPairCuts)
-#print(allMCSignals)
-#print(allPairCuts)
-#print(namespacedPairCuts)
-#print(nameSpacedAllCuts)
-#print(nAddedAllCutsList)
-#print(nAddedPairCutsList)
-#print(SelsStyle1)
-#print(nAddedAllCutsList)
-#print(allSels)
+#print(allMixing)  
+
 
 ###################################
 # Interface Predefined Selections #
@@ -286,7 +204,7 @@ parser.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using sub
 parser.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='')
 
 parser.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-parser.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str, metavar='')
+parser.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
 #parser.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
 #parser.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
 
@@ -356,9 +274,9 @@ if extrargs.pid != None:
 ######################################################################################
 
 commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table","o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-#o2-analysis-timestamp - b| o2-analysis-event-selection -b | o2-analysis-multiplicity-table -b | o2-analysis-centrality-table -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-pid-tpc-full -b | o2-analysis-pid-tof-full -b | o2-analysis-pid-tof-base -b | o2-analysis-pid-tof-beta -b | o2-analysis-dq-flow -b
-#o2-analysis-dq-flow -b
-#o2-analysis-fdd-converter -b
+#o2-analysis-timestamp - b| o2-analysis-event-selection -b | o2-analysis-multiplicity-table -b | o2-analysis-centrality-table -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-pid-tpc-full -b | o2-analysis-pid-tof-full -b | o2-analysis-pid-tof-base -b | o2-analysis-pid-tof-beta -b
+#| o2-analysis-dq-flow -b
+#| o2-analysis-fdd-converter -b
 
 
 
