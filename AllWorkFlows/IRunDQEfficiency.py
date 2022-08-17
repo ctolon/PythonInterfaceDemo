@@ -17,6 +17,8 @@
 
 from ast import parse
 import sys
+import logging
+import logging.config
 import json
 import os
 import argparse
@@ -81,6 +83,10 @@ def stringToList(string):
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
 writerPath = 'Configs/writerConfiguration_dileptonMC.json'
 
+
+isEventSelection = False
+isTrackSelection = False
+isMuonSelection = False
 isSameEventPairing = False
 
 clist=[] # control list for type control
@@ -212,6 +218,9 @@ parser.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated lis
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
+# debug options
+parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="WARNING")
+
 """Activate For Autocomplete. See to Libraries for Info"""
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
@@ -225,18 +234,25 @@ for key,value in configuredCommands.items():
         if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
             forgetParams.append(key)
 if len(forgetParams) > 0: 
-    print("[ERROR] Your forget assign a value to for this parameters: ", forgetParams)
+    logging.error("Your forget assign a value to for this parameters: ", forgetParams)
     sys.exit()
 
 
+# Debug Settings
+if extrargs.debug:
+    DEBUG_SELECTION = extrargs.debug
+    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
 
 
 #commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-track-propagation", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
-  print("ERROR: Invalid syntax! The command line should look like this:")
-  print("  ./IRunDQEfficiency.py <yourConfig.json> --param value ...")
+  logging.error("Invalid syntax! The command line should look like this:")
+  logging.info(" ./IRunDQEfficiency.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -248,7 +264,7 @@ taskNameInCommandLine = "o2-analysis-dq-efficiency"
 
 # Check alienv
 if O2PHYSICS_ROOT == None:
-   print("[ERROR] You must load O2Physics with alienv")
+   logging.error("You must load O2Physics with alienv")
    sys.exit()
 
 ###################
@@ -323,9 +339,11 @@ for key, value in config.items():
             #aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
+                logging.info("%s:%s:%s",key,value,extrargs.aod)
             # reader    
             if value =='aod-reader-json' and extrargs.reader:
                 config[key][value] = extrargs.reader
+                logging.info("%s:%s:%s",key,value,extrargs.reader)
                 
             # analysis-skimmed-selections
             if value =='processSkimmed' and extrargs.analysis:
@@ -336,20 +354,29 @@ for key, value in config.items():
                             if key == 'analysis-event-selection':
                                 if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
+                                    logging.info("%s:%s:true",key,value)
+                                    isEventSelection = True
                                 if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false' 
+                                    logging.info("%s:%s:false",key,value)
                                    
-                            if key == 'analysis-track-selection':                    
+                            if key == 'analysis-track-selection':                  
                                 if 'trackSelection' in valueCfg:
                                     config[key][value] = 'true'
+                                    logging.info("%s:%s:true",key,value)
+                                    isTrackSelection = True
                                 if 'trackSelection' not in valueCfg:
-                                    config[key][value] = 'false'  
-                                                      
+                                    config[key][value] = 'false'
+                                    logging.info("%s:%s:false",key,value)
+                                                        
                             if key == 'analysis-muon-selection':
                                 if 'muonSelection' in valueCfg:
                                     config[key][value] = 'true'
+                                    logging.info("%s:%s:true",key,value)
+                                    isMuonSelection = True
                                 if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
+                                    logging.info("%s:%s:false",key,value)   
                                                             
                             if 'sameEventPairing' in valueCfg:
                                 isSameEventPairing = True
@@ -364,8 +391,10 @@ for key, value in config.items():
                             if key == 'analysis-dilepton-track':
                                 if 'dileptonTrackSelection' in valueCfg:
                                     config[key][value] = 'true'
+                                    logging.info("%s:%s:true",key,value)
                                 if 'dileptonTrackSelection' not in valueCfg:
                                     config[key][value] = 'false' 
+                                    logging.info("%s:%s:false",key,value)
                                     
                                    
             # analysis-dummy-selections (We have automated thins so not need most of time)
@@ -409,69 +438,81 @@ for key, value in config.items():
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
                 config[key][value] = extrargs.cfgQA
+                logging.info("%s:%s:%s",key,value,extrargs.cfgQA)
                               
             # analysis-event-selection
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgEventCuts)
 
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgTrackMCSignals' and extrargs.cfgTrackMCSignals:
                 if type(extrargs.cfgTrackMCSignals) == type(clist):
                     extrargs.cfgTrackMCSignals = listToString(extrargs.cfgTrackMCSignals) 
                 config[key][value] = extrargs.cfgTrackMCSignals
+                logging.info("%s:%s:%s",key,value,extrargs.cfgTrackMCSignals)
                 
             # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
             if value == 'cfgMuonMCSignals' and extrargs.cfgMuonMCSignals:
                 if type(extrargs.cfgMuonMCSignals) == type(clist):
                     extrargs.cfgMuonMCSignals = listToString(extrargs.cfgMuonMCSignals) 
                 config[key][value] = extrargs.cfgMuonMCSignals
-            
+                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonMCSignals)
+                
             # analysis-same-event-pairing
-            for keyCfg,valueCfg in configuredCommands.items():
-                if(valueCfg != None): # Skipped None types, because can't iterate in None type
-                    if keyCfg == 'process' or keyCfg == 'analysis': # Select analysis and process keys
-                        if key == 'analysis-same-event-pairing' and extrargs.process:
+            if key == 'analysis-same-event-pairing' and extrargs.process:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if keyCfg == 'process': # Select process keys
+                        if(valueCfg != None): # Skipped None types, because can't iterate in None type
+
                             if isSameEventPairing == False:
-                                print("[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
+                                logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
                                 isSameEventPairing = True
-                            allValuesCfg = allValuesCfg + valueCfg # Merge process and analysis arguments provided options as a list
                     
-                            if 'JpsiToEE' in valueCfg:
-                                if 'trackSelection' in allValuesCfg:
+                            if 'JpsiToEE' in valueCfg and value == "processJpsiToEESkimmed":
+                                if isTrackSelection == True:
                                     config[key]["processJpsiToEESkimmed"] = 'true'
-                                if 'trackSelection' not in allValuesCfg:
-                                    print("[ERROR] trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
+                                    logging.info("%s:processJpsiToEESkimmed:true",key)
+                                if isTrackSelection == False:
+                                    logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToEE' not in valueCfg:
+                            if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed":
                                     config[key]["processJpsiToEESkimmed"] = 'false'
+                                    logging.info("%s:processJpsiToEESkimmed:false",key)
                                     
-                            if 'JpsiToMuMu' in valueCfg:
-                                if 'muonSelection' in allValuesCfg:
+                            if 'JpsiToMuMu' in valueCfg and value == "processJpsiToMuMuSkimmed":
+                                if isMuonSelection == True:
                                     config[key]["processJpsiToMuMuSkimmed"] = 'true'
-                                if 'muonSelection' not in allValuesCfg:
-                                    print("[ERROR] muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                                    logging.info("%s:processJpsiToMuMuSkimmed:true",key)
+                                if isMuonSelection == False:
+                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMu' not in valueCfg:
+                            if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed":
                                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
+                                logging.info("%s:processJpsiToMuMuSkimmed:false",key)
    
-                            if 'JpsiToMuMuVertexing' in valueCfg:
-                                if 'muonSelection' in allValuesCfg:
+                            if 'JpsiToMuMuVertexing' in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
+                                if isMuonSelection == True:
                                     config[key]["processJpsiToMuMuVertexingSkimmed"] = 'true'
-                                if 'muonSelection' not in allValuesCfg:
-                                    print("[ERROR] muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
+                                    logging.info("%s:processJpsiToMuMuVertexingSkimmed:true",key)
+                                if isMuonSelection == False:
+                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMuVertexing' not in valueCfg:
+                            if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                                logging.info("%s:processJpsiToMuMuVertexingSkimmed:false",key)
                                 
                         if key == 'analysis-same-event-pairing' and extrargs.process == None and isSameEventPairing == False:
                             config[key]["processJpsiToEESkimmed"] = 'false'
@@ -511,11 +552,14 @@ for key, value in config.items():
                     if type(extrargs.cfgBarrelMCRecSignals) == type(clist):
                         extrargs.cfgBarrelMCRecSignals = listToString(extrargs.cfgBarrelMCRecSignals) 
                     config[key][value] = extrargs.cfgBarrelMCRecSignals
+                    logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelMCRecSignals)
+                    
                     
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
                     if type(extrargs.cfgBarrelMCGenSignals) == type(clist):
                         extrargs.cfgBarrelMCGenSignals = listToString(extrargs.cfgBarrelMCGenSignals) 
                     config[key][value] = extrargs.cfgBarrelMCGenSignals
+                    logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelMCGenSignals)
                 
             # MC Signals For Dilepton Tracks
             if key == 'analysis-dilepton-track':
@@ -523,11 +567,13 @@ for key, value in config.items():
                     if type(extrargs.cfgBarrelDileptonMCRecSignals) == type(clist):
                         extrargs.cfgBarrelDileptonMCRecSignals = listToString(extrargs.cfgBarrelDileptonMCRecSignals) 
                     config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
+                    logging.info("%s:%s:%s",key,value,extrargs.cfgDileptonMCRecSignals)
                     
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
                     if type(extrargs.cfgBarrelDileptonMCGenSignals) == type(clist):
                         extrargs.cfgBarrelDileptonMCGenSignals = listToString(extrargs.cfgBarrelDileptonMCGenSignals) 
                     config[key][value] = extrargs.cfgBarrelDileptonMCGenSignals
+                    logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelDileptonMCGenSignals)
                     
             # Dummy automizer
             if value == 'processDummy' and extrargs.autoDummy:
@@ -562,7 +608,7 @@ for key, value in config.items():
                 
 if extrargs.aod != None:
     if os.path.isfile(extrargs.aod) == False:
-        print("[ERROR]",extrargs.aod,"File not found in path!!!")
+        logging.error("%s File not found in path!!!",extrargs.aod)
         sys.exit()
 elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
         print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
@@ -570,7 +616,7 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
         
 if extrargs.reader != None:
     if os.path.isfile(extrargs.reader) == False:
-        print("[ERROR]",extrargs.reader,"File not found in path!!!")
+        logging.error("%s File not found in path!!!",extrargs.reader)
         sys.exit()
 elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == False:
         print("[ERROR]",config["internal-dpl-aod-reader"]["aod-reader-json"],"File not found in path!!!")
@@ -612,14 +658,14 @@ if extrargs.add_track_prop:
 
 
 print("====================================================================================================================")
-print("Command to run:")
+logging.info("Command to run:")
 print(commandToRun)
 print("====================================================================================================================")
 os.system(commandToRun)
 
 # Listing Added Commands
 
-print("Args provided configurations List")
+logging.info("Args provided configurations List")
 print("====================================================================================================================")
 for key,value in configuredCommands.items():
     if(value != None):

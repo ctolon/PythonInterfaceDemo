@@ -18,6 +18,8 @@
 import json
 import sys
 import logging
+import logging.config
+import logging
 from ast import parse
 import os
 import argparse
@@ -219,6 +221,9 @@ parser.add_argument('--pid', help="Produce PID information for the particle mass
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
+# debug options
+parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="WARNING")
+
 # tof-pid-full, tof-pid for run3 ???
 #parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
 
@@ -240,8 +245,16 @@ for key,value in configuredCommands.items():
         if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
             forgetParams.append(key)
 if len(forgetParams) > 0: 
-    print("[ERROR] Your forget assign a value to for this parameters: ", forgetParams)
+    logging.error("Your forget assign a value to for this parameters: ", forgetParams)
     sys.exit()
+    
+# Debug Settings
+if extrargs.debug:
+    DEBUG_SELECTION = extrargs.debug
+    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
 
 ###################
 # HELPER MESSAGES #
@@ -287,8 +300,8 @@ commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analys
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
-  print("ERROR: Invalid syntax! The command line should look like this:")
-  print("  ./IRunDQFlow.py <yourConfig.json> --param value ...")
+  logging.error("Invalid syntax! The command line should look like this:")
+  logging.info("  ./IRunDQFlow.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -300,12 +313,12 @@ taskNameInConfig = "analysis-qvector"
 taskNameInCommandLine = "o2-analysis-dq-flow"
 
 if not taskNameInConfig in config:
-  print("[ERROR] ",taskNameInConfig," Task to be run not found in the configuration file!")
+  logging.error("%s Task to be run not found in the configuration file!", taskNameInConfig)
   sys.exit()
   
 # Check alienv
 if O2PHYSICS_ROOT == None:
-   print("[ERROR] You must load O2Physics with alienv")
+   logging.error("You must load O2Physics with alienv")
    sys.exit()
   
 #############################
@@ -322,6 +335,7 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
+                logging.info("%s:%s:%s",key,value,extrargs.aod)
 
                                                                                                           
             # DQ Flow Selections        
@@ -329,56 +343,69 @@ for key, value in config.items():
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
+                logging.info("%s:%s:%s",key,value,extrargs.cfgEventCuts)
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
+                logging.info("%s:%s:%s",key,value,extrargs.cfgWithQA)
             if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
+                logging.info("%s:%s:%s",key,value,extrargs.cfgCutPtMin)
             if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
                 config[key][value] = extrargs.cfgCutPtMax
+                logging.info("%s:%s:%s",key,value,extrargs.cfgCutPtMax)
             if value =='cfgCutEta' and extrargs.cfgCutEta:
                 config[key][value] = extrargs.cfgCutEta
+                logging.info("%s:%s:%s",key,value,extrargs.cfgCutEta)
             if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
                 config[key][value] = extrargs.cfgEtaLimit
+                logging.info("%s:%s:%s",key,value,extrargs.cfgEtaLimit)
             if value =='cfgNPow' and extrargs.cfgNPow:
                 config[key][value] = extrargs.cfgNPow
-            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
-                config[key][value] = extrargs.cfgEtaLimit
-            if value =='cfgNPow' and extrargs.cfgNPow:
-                config[key][value] = extrargs.cfgNPow
+                logging.info("%s:%s:%s",key,value,extrargs.cfgNPow)
             if value =='cfgEfficiency' and extrargs.cfgEfficiency:
                 config[key][value] = extrargs.cfgEfficiency
+                logging.info("%s:%s:%s",key,value,extrargs.cfgEfficiency)
             if value =='cfgAcceptance' and extrargs.cfgAcceptance:
                 config[key][value] = extrargs.cfgAcceptance
+                logging.info("%s:%s:%s",key,value,extrargs.cfgAcceptance)
                                                       
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
+                    logging.info("%s:%s:%s",key,value,value2)  
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
+                    logging.info("%s:%s:%s",key,value,value2)  
             
 
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
+                logging.info("%s:%s:%s",key,value,extrargs.syst)  
             if value =='muonSelection' and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
+                logging.info("%s:%s:%s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
+                logging.info("%s:%s:%s",key,value,extrargs.customDeltaBC)  
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
+                logging.info("%s:%s:%s",key,value,extrargs.tof_expreso)  
                                                     
             # processEvTime 
             """  
@@ -448,7 +475,7 @@ for key,value in configuredCommands.items():
 # AOD File checker 
 if extrargs.aod != None:
     if os.path.isfile(extrargs.aod) == False:
-        print("[ERROR]",extrargs.aod,"File not found in path!!!")
+        logging.error("%s File not found in path!!!",extrargs.aod)
         sys.exit()
 elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
         print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
@@ -484,12 +511,12 @@ if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
 
 print("====================================================================================================================")
-print("Command to run:")
+logging.info("Command to run:")
 print(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
-print("Args provided configurations List")
+logging.info("Args provided configurations List")
 print("====================================================================================================================")
 for key,value in configuredCommands.items():
     if(value != None):
