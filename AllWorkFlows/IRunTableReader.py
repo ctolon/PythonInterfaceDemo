@@ -285,7 +285,7 @@ taskNameInCommandLine = "o2-analysis-dq-table-reader"
 # Check alienv
 if O2PHYSICS_ROOT == None:
    logging.error("You must load O2Physics with alienv")
-   sys.exit()
+   #sys.exit()
 
 ###################
 # HELPER MESSAGES #
@@ -359,11 +359,11 @@ for key, value in config.items():
             #aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.debug("%s:%s:%s",key,value,extrargs.aod)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
             # reader    
             if value =='aod-reader-json' and extrargs.reader:
                 config[key][value] = extrargs.reader
-                logging.debug("%s:%s:%s",key,value,extrargs.reader)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.reader)
                 
             # analysis-skimmed-selections
             if value =='processSkimmed' and extrargs.analysis:
@@ -374,37 +374,37 @@ for key, value in config.items():
                             if key == 'analysis-event-selection':
                                 if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                     isEventSelection = True
                                 if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false' 
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                    
                             if key == 'analysis-track-selection':                  
                                 if 'trackSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                     isTrackSelection = True
                                 if 'trackSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                         
                             if key == 'analysis-muon-selection':
                                 if 'muonSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                     isMuonSelection = True
                                 if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)                                                                               
+                                    logging.debug(" - [%s] %s : false",key,value)                                                                               
                             if key == 'analysis-dilepton-hadron':
                                 if 'dileptonHadronSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     isDileptonHadronAnalysis = True
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'dileptonHadronSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                                        
                             if 'sameEventPairing' in valueCfg:
                                 isSameEventPairing = True
@@ -419,11 +419,11 @@ for key, value in config.items():
                             
                             if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                             
                                 if 'trackSelection' in valueCfg:
-                                    config[key]["processBarrelSkimmed"] = 'true'
-                                    logging.debug("%s:processBarrelSkimmed:true",key)
+                                    config[key][value] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'trackSelection' not in valueCfg:
-                                    config[key]["processBarrelSkimmed"] = 'false'
-                                    logging.debug("%s:processBarrelSkimmed:false",key)
+                                    config[key][value] = 'false'
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                                         
             if value == 'processMuonSkimmed' and extrargs.isMixingEvent:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -432,11 +432,11 @@ for key, value in config.items():
                             
                             if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                                        
                                 if 'muonSelection' in valueCfg:
-                                    config[key]["processMuonSkimmed"] = 'true'
-                                    logging.debug("%s:processMuonSkimmed:true",key)
+                                    config[key][value] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'muonSelection' not in valueCfg:
-                                    config[key]["processMuonSkimmed"] = 'false'
-                                    logging.debug("%s:processMuonSkimmed:false",key)
+                                    config[key][value] = 'false'
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                                         
             if value == 'processBarrelMuonSkimmed' and extrargs.isMixingEvent:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -445,11 +445,11 @@ for key, value in config.items():
                             
                             if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                                                             
                                 if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg:
-                                    config[key]["processBarrelMuonSkimmed"] = 'true'
-                                    logging.debug("%s:processBarrelMuonSkimmed:true",key)
+                                    config[key][value] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'trackSelection' not in valueCfg or 'muonSelection' not in valueCfg:
-                                    config[key]["processBarrelMuonSkimmed"] = 'false'
-                                    logging.debug("%s:processBarrelMuonSkimmed:false",key)
+                                    config[key][value] = 'false'
+                                    logging.debug(" - [%s] %s : false",key,value)
                                            
             # analysis-dummy-selections (We have automated thins so not need most of time)
             """
@@ -498,7 +498,7 @@ for key, value in config.items():
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
                 config[key][value] = extrargs.cfgQA
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgQA)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgQA)
                 
             # Process All Skimmed Selection
             #if value =='processAllSkimmed' and extrargs.analysisAllSkimmed:
@@ -509,33 +509,33 @@ for key, value in config.items():
                 if type(extrargs.cfgMixingVars) == type(clist):
                     extrargs.cfgMixingVars = listToString(extrargs.cfgMixingVars) 
                 config[key][value] = extrargs.cfgMixingVars
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgMixingVars)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMixingVars)
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgEventCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)
 
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
                 
             # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)
                 
             # analysis-dilepton-hadron
             if value =='cfgLeptonCuts' and extrargs.cfgLeptonCuts:
                 if type(extrargs.cfgLeptonCuts) == type(clist):
                     extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts) 
                 config[key][value] = extrargs.cfgLeptonCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgLeptonCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgLeptonCuts)
             
             # analysis-same-event-pairing
             if key == 'analysis-same-event-pairing' and extrargs.process:
@@ -549,57 +549,57 @@ for key, value in config.items():
                             if 'JpsiToEE' in valueCfg and value == "processJpsiToEESkimmed":
                                 if isTrackSelection == True:
                                     config[key]["processJpsiToEESkimmed"] = 'true'
-                                    logging.debug("%s:processJpsiToEESkimmed:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if isTrackSelection == False:
                                     logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed":
                                     config[key]["processJpsiToEESkimmed"] = 'false'
-                                    logging.debug("%s:processJpsiToEESkimmed:false",key)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                     
                             if 'JpsiToMuMu' in valueCfg and value == "processJpsiToMuMuSkimmed":
                                 if isMuonSelection == True:
                                     config[key]["processJpsiToMuMuSkimmed"] = 'true'
-                                    logging.debug("%s:processJpsiToMuMuSkimmed:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if isMuonSelection == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed":
                                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
-                                logging.debug("%s:processJpsiToMuMuSkimmed:false",key)
+                                logging.debug(" - [%s] %s : false",key,value)
    
                             if 'JpsiToMuMuVertexing' in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
                                 if isMuonSelection == True:
                                     config[key]["processJpsiToMuMuVertexingSkimmed"] = 'true'
-                                    logging.debug("%s:processJpsiToMuMuVertexingSkimmed:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if isMuonSelection == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                                logging.debug("%s:processJpsiToMuMuVertexingSkimmed:false",key)
+                                logging.debug(" - [%s] %s : false",key,value)
                                 
                             if 'ElectronMuon' in valueCfg and value == "processElectronMuonSkimmed":
                                 if isTrackSelection == True and isMuonSelection == True:
                                     config[key]["processElectronMuonSkimmed"] = 'true'
-                                    logging.debug("%s:processElectronMuonSkimmed:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 else:
                                     logging.error("trackSelection and muonSelection not found in analysis for processElectronMuonSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'ElectronMuon' not in valueCfg and value == "processElectronMuonSkimmed":
                                 config[key]["processElectronMuonSkimmed"] = 'false'
-                                logging.debug("%s:processElectronMuonSkimmed:false",key)
+                                logging.debug(" - [%s] %s : false",key,value)
                                 
                             if 'All' in valueCfg and value == "processAllSkimmed":
                                 if isEventSelection == True and isMuonSelection == True and isTrackSelection == True:
                                     config[key]["processAllSkimmed"] = 'true'
-                                    logging.debug("%s:processAllSkimmed:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 else:
                                     logging.debug("eventSelection, trackSelection and muonSelection not found in analysis for processAllSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'All' not in valueCfg and value == "processAllSkimmed":
                                 config[key]["processAllSkimmed"] = 'false'
-                                logging.debug("%s:processAllSkimmed:false",key)
+                                logging.debug(" - [%s] %s : false",key,value)
                                 
                         if key == 'analysis-same-event-pairing' and extrargs.process == None and isSameEventPairing == False:
                             config[key]["processJpsiToEESkimmed"] = 'false'
@@ -714,17 +714,20 @@ commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfi
     #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
 if extrargs.add_mc_conv:
+    logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
 
 if extrargs.add_fdd_conv:
     commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-fdd-converter added your workflow")
 
 if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-track-propagation added your workflow")
 
 print("====================================================================================================================")
 logging.info("Command to run:")
-print(commandToRun)
+logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
@@ -734,5 +737,5 @@ for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
-        print("--"+key,":", value)
+        logging.info("--%s : %s ",key,value)
 os.system(commandToRun)

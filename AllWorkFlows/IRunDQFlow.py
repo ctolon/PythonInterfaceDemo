@@ -339,7 +339,7 @@ if not taskNameInConfig in config:
 # Check alienv
 if O2PHYSICS_ROOT == None:
    logging.error("You must load O2Physics with alienv")
-   sys.exit()
+   #sys.exit()
   
 #############################
 # Start Interface Processes #
@@ -355,7 +355,7 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.debug("%s:%s:%s",key,value,extrargs.aod)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
 
                                                                                                           
             # DQ Flow Selections        
@@ -363,69 +363,69 @@ for key, value in config.items():
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgEventCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgWithQA)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)
             if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutPtMin)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
             if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
                 config[key][value] = extrargs.cfgCutPtMax
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutPtMax)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMax)
             if value =='cfgCutEta' and extrargs.cfgCutEta:
                 config[key][value] = extrargs.cfgCutEta
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutEta)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutEta)
             if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
                 config[key][value] = extrargs.cfgEtaLimit
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgEtaLimit)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEtaLimit)
             if value =='cfgNPow' and extrargs.cfgNPow:
                 config[key][value] = extrargs.cfgNPow
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgNPow)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNPow)
             if value =='cfgEfficiency' and extrargs.cfgEfficiency:
                 config[key][value] = extrargs.cfgEfficiency
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgEfficiency)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEfficiency)
             if value =='cfgAcceptance' and extrargs.cfgAcceptance:
                 config[key][value] = extrargs.cfgAcceptance
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgAcceptance)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)
                                                       
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
-                    logging.debug("%s:%s:%s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.debug("%s:%s:%s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
             
 
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
-                logging.debug("%s:%s:%s",key,value,extrargs.syst)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
             if value =='muonSelection' and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
-                logging.debug("%s:%s:%s",key,value,extrargs.muonSelection)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.debug("%s:%s:%s",key,value,extrargs.customDeltaBC)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)  
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.debug("%s:%s:%s",key,value,extrargs.tof_expreso)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)  
                                                     
             # processEvTime 
             """  
@@ -520,19 +520,23 @@ for dep in commonDeps:
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b"
 for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
+  logging.debug("%s added your workflow",dep)
   
 if extrargs.add_mc_conv:
+    logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
 
 if extrargs.add_fdd_conv:
     commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-fdd-converter added your workflow")
 
 if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-track-propagation added your workflow")
 
 print("====================================================================================================================")
 logging.info("Command to run:")
-print(commandToRun)
+logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
@@ -542,6 +546,6 @@ for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
-        print("--"+key,":", value)
+        logging.info("--%s : %s ",key,value)
 
 os.system(commandToRun)

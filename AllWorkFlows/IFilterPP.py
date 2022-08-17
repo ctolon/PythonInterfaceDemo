@@ -395,7 +395,7 @@ if not taskNameInConfig in config:
 # Check alienv
 if O2PHYSICS_ROOT == None:
    logging.error("You must load O2Physics with alienv")
-   sys.exit()
+   #sys.exit()
   
 #############################
 # Start Interface Processes #
@@ -411,9 +411,9 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.debug("%s:%s:%s",key,value,extrargs.aod)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                 
-            # DQ Selections for muons and barrel tracks
+            # DQ Selections for muons and barrel tracks #todo: need transcation mang. for barrel tiny and normal process
             if value =='processSelection' and extrargs.process:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -422,18 +422,18 @@ for key, value in config.items():
                             if key == 'd-q-barrel-track-selection':                    
                                 if 'barrelTrackSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'barrelTrackSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                       
                             if key == 'd-q-muons-selection':
                                 if 'muonSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                                                                                
             # DQ Selections event    
             if value =='processEventSelection' and extrargs.process:
@@ -444,10 +444,10 @@ for key, value in config.items():
                             if key == 'd-q-event-selection-task':
                                 if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
                                     
             # DQ Tiny Selection for barrel track
             if value =='processSelectionTiny' and extrargs.process:
@@ -458,10 +458,10 @@ for key, value in config.items():
                             if key == 'd-q-barrel-track-selection':                    
                                 if 'barrelTrackSelectionTiny' in valueCfg:
                                     config[key][value] = 'true'
-                                    logging.debug("%s:%s:true",key,value)
+                                    logging.debug(" - [%s] %s : true",key,value)
                                 if 'barrelTrackSelectionTiny' not in valueCfg:
                                     config[key][value] = 'false'
-                                    logging.debug("%s:%s:false",key,value)
+                                    logging.debug(" - [%s] %s : false",key,value)
             
             # DQ Tiny Selection for filterPP
             if value =='processFilterPPTiny' and extrargs.process:
@@ -473,47 +473,47 @@ for key, value in config.items():
                                 if 'filterPPSelectionTiny' in valueCfg:
                                     config[key][value] = 'true'
                                     config[key]["processFilterPP"] = 'false'
-                                    logging.debug("%s:%s:true",key,value)
-                                    logging.debug("%s:processFilterPP:true",key)
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                    logging.debug(" - [%s] processFilterPP : false",key)
                                 if 'filterPPSelectionTiny' not in valueCfg:
                                     config[key][value] = 'false'
                                     config[key]["processFilterPP"] = 'true'
-                                    logging.debug("%s:%s:false",key,value)
-                                    logging.debug("%s:processFilterPP:true",key)
+                                    logging.debug(" - [%s] %s : false",key,value)
+                                    logging.debug(" - [%s] processFilterPP : true",key)
                                                                                                           
             # Filter PP Selections        
             if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
                 if type(extrargs.cfgBarrelSels) == type(clist):
                     extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
                 config[key][value] = extrargs.cfgBarrelSels
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgBarrelSels)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelSels)
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                 if type(extrargs.cfgMuonSels) == type(clist):
                     extrargs.cfgMuonSels = listToString(extrargs.cfgMuonSels) 
                 config[key][value] = extrargs.cfgMuonSels
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonSels)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonSels)
                 
             # DQ Cuts    
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgEventCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts) 
             if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts) 
                 config[key][value] = extrargs.cfgBarrelTrackCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgBarrelTrackCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelTrackCuts)  
             if value == 'cfgMuonsCuts' and extrargs.cfgMuonsCuts:
                 if type(extrargs.cfgMuonsCuts) == type(clist):
                     extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts) 
                 config[key][value] = extrargs.cfgMuonsCuts
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonsCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonsCuts) 
             
             # QA Options  
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgWithQA)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
 
                                     
             # Run 2/3 and MC/DATA Selections for automations
@@ -551,46 +551,41 @@ for key, value in config.items():
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
-                    logging.debug("%s:%s:%s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.debug("%s:%s:%s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
             
 
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
-                logging.debug("%s:%s:%s",key,value,extrargs.syst)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
             if value =='muonSelection' and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
-                logging.debug("%s:%s:%s",key,value,extrargs.muonSelection)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.debug("%s:%s:%s",key,value,extrargs.customDeltaBC) 
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC) 
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.debug("%s:%s:%s",key,value,extrargs.tof_expreso)  
-                                    
-            # all d-q tasks and selections
-            if value == 'cfgWithQA' and extrargs.cfgWithQA:
-                config[key][value] = extrargs.cfgWithQA
-                logging.debug("%s:%s:%s",key,value,extrargs.cfgWithQA)  
-                
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)   
+                                                    
             # processEvTime    
             if value == 'processEvTime':
                 if extrargs.isProcessEvTime == "true":
                     config[key][value] = "true"
                     config[key]["processNoEvTime"] = "false"
-                    logging.debug("%s:%s:true",key,value)
-                    logging.debug("%s:processNoEvTime:false",key)  
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] processNoEvTime : false",key)  
                 if extrargs.isProcessEvTime == "false":
                     config[key][value] = "false"
                     config[key]["processNoEvTime"] = "true"
-                    logging.debug("%s:%s:false",key,value) 
-                    logging.debug("%s:processNoEvTime:true",key)  
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] processNoEvTime : true",key)   
                                                   
             # dummy selection
             """
@@ -802,19 +797,23 @@ for dep in commonDeps:
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b"
 for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
+  logging.debug("%s added your workflow",dep)
   
 if extrargs.add_mc_conv:
+    logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
 
 if extrargs.add_fdd_conv:
     commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-fdd-converter added your workflow")
 
 if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
+    logging.debug("o2-analysis-track-propagation added your workflow")
 
 print("====================================================================================================================")
 logging.info("Command to run:")
-print(commandToRun)
+logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
@@ -824,6 +823,6 @@ for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
-        print("--"+key,":", value)
+        logging.info("--%s : %s ",key,value)
 
 os.system(commandToRun)
