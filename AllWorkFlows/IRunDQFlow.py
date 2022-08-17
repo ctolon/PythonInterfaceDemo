@@ -92,6 +92,8 @@ QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 
+threeSelectedList = []
+
 ################################
 # Download DQ Libs From Github #
 ################################
@@ -280,19 +282,23 @@ if extrargs.logFile and extrargs.debug:
 # HELPER MESSAGES #
 ###################
 
-#TODO: Provide a Table format for print option       
-
-if extrargs.cutLister:
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    for i in allCuts:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allCuts:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_)) 
     sys.exit()
 
 ######################

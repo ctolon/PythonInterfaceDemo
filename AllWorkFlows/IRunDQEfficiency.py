@@ -79,7 +79,7 @@ def binary_selector(v):
 """
     
 def stringToList(string):
-    li = list(string.split(" "))
+    li = list(string.split(","))
     return li
 
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
@@ -101,6 +101,8 @@ O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
 QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+
+threeSelectedList = []
 
 ################################
 # Download DQ Libs From Github #
@@ -292,61 +294,84 @@ if O2PHYSICS_ROOT == None:
 # HELPER MESSAGES #
 ###################
 
-#TODO: Provide a Table format for print option       
+      
 if extrargs.cutLister and extrargs.MCSignalsLister:
     counter = 0
-    print("====================")
     print("Analysis Cut Options :")
     print("====================")
-    for i in allCuts:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allCuts:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_)) 
         
-    print("\n====================\nMC Signals :")
-    print("====================")
     counter = 0
+    print("MC Signals :")
+    print("====================")
+    temp = ''
+    threeSelectedList.clear()    
     for i in allMCSignals:
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))  
     sys.exit()
+    
 if extrargs.cutLister:
-    """
-    print("  {: >20} {: >20} {: >20}".format(*allCuts))
-    #for row in allCuts:
-    #for i in range(len(allCuts)):
-        #print(" {: >20} {: >20} {: >20}".format(*allCuts[i]))
-        #print(type(format(*row)))
-    """
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    for i in allCuts:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allCuts:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))      
     sys.exit()
     
 if extrargs.MCSignalsLister:
     counter = 0
     print("MC Signals :")
     print("====================")
-    for i in allMCSignals:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allMCSignals:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))     
     sys.exit()
 
 #############################

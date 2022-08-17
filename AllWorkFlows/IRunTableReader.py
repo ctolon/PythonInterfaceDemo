@@ -79,7 +79,7 @@ def binary_selector(v):
 """
     
 def stringToList(string):
-    li = list(string.split(" "))
+    li = list(string.split(","))
     return li
 
 readerPath = 'Configs/readerConfiguration_reducedEvent.json'
@@ -94,6 +94,8 @@ isTrackSelection = False
 isMuonSelection = False
 isSameEventPairing = False
 isDileptonHadronAnalysis = False
+
+threeSelectedList = []
 
 
 
@@ -290,62 +292,84 @@ if O2PHYSICS_ROOT == None:
 ###################
 # HELPER MESSAGES #
 ###################
-
-#TODO: Provide a Table format for print option       
+    
 if extrargs.cutLister and extrargs.mixingLister:
     counter = 0
-    print("====================")
     print("Analysis Cut Options :")
     print("====================")
-    for i in allCuts:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allCuts:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))  
         
     print("\n====================\nEvent Mixing Selections :")
     print("====================")
     counter = 0
+    temp = ''
+    threeSelectedList.clear()    
     for i in allMixing:
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))  
     sys.exit()
+    
 if extrargs.cutLister:
-    """
-    print("  {: >20} {: >20} {: >20}".format(*allCuts))
-    #for row in allCuts:
-    #for i in range(len(allCuts)):
-        #print(" {: >20} {: >20} {: >20}".format(*allCuts[i]))
-        #print(type(format(*row)))
-    """
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    for i in allCuts:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    temp = ''  
+    for i in allCuts:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))      
     sys.exit()
     
 if extrargs.mixingLister:
     counter = 0
+    temp = ''
     print("Event Mixing Selections :")
-    print("====================")
-    for i in allMixing:   
-        print(i,end="\t")
-        counter += 1
-        if counter == 5:
-            print("\n")
+    print("====================")  
+    for i in allMixing:
+        if len(temp) == 0:
+            temp = temp + i
+        else:
+            temp = temp + "," + i
+        counter = counter + 1
+        if counter == 3:
+            temp = stringToList(temp)
+            threeSelectedList.append(temp)
+            temp = ''
             counter = 0
-    print("\n")
+    for list_ in threeSelectedList:
+        print('{:<40s} {:<40s} {:<40s}'.format(*list_))  
     sys.exit()
 
 #############################
