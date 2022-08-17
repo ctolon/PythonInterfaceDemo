@@ -388,8 +388,12 @@ if extrargs.logFile and extrargs.debug:
     ch = logging.StreamHandler(sys.stdout)
     ch.setFormatter(format)
     log.addHandler(ch)
-
-    fh = handlers.RotatingFileHandler("tableMaker.log", maxBytes=(1048576*5), backupCount=7)
+    
+    loggerFile = "tableMaker.log"
+    if os.path.isfile(loggerFile) == True:
+        os.remove(loggerFile)
+    
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode='w')
     fh.setFormatter(format)
     log.addHandler(fh)
 

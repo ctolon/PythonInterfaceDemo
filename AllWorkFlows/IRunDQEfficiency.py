@@ -258,11 +258,15 @@ if extrargs.logFile and extrargs.debug:
     ch = logging.StreamHandler(sys.stdout)
     ch.setFormatter(format)
     log.addHandler(ch)
-
-    fh = handlers.RotatingFileHandler("DQEfficiency.log", maxBytes=(1048576*5), backupCount=7)
+    
+    loggerFile = "DQEfficiency.log"
+    if os.path.isfile(loggerFile) == True:
+        os.remove(loggerFile)
+    
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode='w')
     fh.setFormatter(format)
     log.addHandler(fh)
-
+    
 
 #commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-track-propagation", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
 
