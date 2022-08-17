@@ -108,6 +108,16 @@ QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
 O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 
+# Predefined values for DQ Logger messages
+DQBARREL_SELECTED = False
+DQBARRELTINY_SELECTED = False
+DQMUON_SELECTED = False
+DQEVENT_SELECTED = False
+DQFULL_SELECTED = False
+DQFILTER_SELECTED = False
+DQFILTERTINY_SELECTED = False
+
+
 ################################
 # Download DQ Libs From Github #
 ################################
@@ -231,6 +241,8 @@ processDummySelections =["filter","event","barrel"]
 
 noDeleteNeedForCent = True
 processLeftAfterCentDelete = True
+
+isValidProcessFunc = True
 
 
 ###################
@@ -678,7 +690,6 @@ for key, value in config.items():
                     
                     #check extrargs is contain Cent for transcation management Centrality Filter
                     centSearch = [s for s in extrargs.process if "Cent" in s]
-                    logging.info("cent search : %s",centSearch)   
                     
                     #check extrargs is contain Filter for automatize Filter PP task
                     filterSearch = [s for s in extrargs.process if "Filter" in s]   
@@ -686,74 +697,92 @@ for key, value in config.items():
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
                     if len(fullSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
-                        logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
+                        DQFULL_SELECTED = True
+                        #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
                         
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
+                            DQBARRELTINY_SELECTED = True
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
 
                         config["d-q-muons-selection"]["processSelection"] = "true"
-                        logging.debug(" - [d-q-muons-selection] processSelection : true")
+                        DQMUON_SELECTED = True
+                        #logging.debug(" - [d-q-muons-selection] processSelection : true")
+
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                        logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
+                        DQEVENT_SELECTED = True
+                        #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
+
 
                                    
                     if len(barrelSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
+                            DQBARREL_SELECTED = True
+                            DQBARRELTINY_SELECTED = False
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
-                            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
+                            DQBARREL_SELECTED = False
+                            DQBARRELTINY_SELECTED = True
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
+                            #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
    
                     if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                         config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
-                        logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
-                        logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
+                        #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
+                        #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
                                          
                     if len(muonSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-muons-selection"]["processSelection"] = "true"
-                        logging.debug(" - [d-q-muons-selection] processSelection : true")
+                        #logging.debug(" - [d-q-muons-selection] processSelection : true")
+                        DQMUON_SELECTED = True
                     if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-muons-selection"]["processSelection"] = "false"
-                        logging.debug(" - [d-q-muons-selection] processSelection : false")
+                        #logging.debug(" - [d-q-muons-selection] processSelection : false")
                             
                     if len(bcsSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                        logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
+                        DQEVENT_SELECTED = True
+                        #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
                     if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run =='3':
                         config["d-q-event-selection-task"]["processEventSelection"] = "false"
-                        logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
-                            
+                        #logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
+                           
                     # Automatization for Activate or Disable d-q filter pp run3
                     if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
-                        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
-                        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
+                        DQFILTER_SELECTED = True
+                        DQFILTERTINY_SELECTED = False                     
+                        #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
+                        #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
                         if extrargs.isFilterPPTiny == 'true':
                             config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                             config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
-                            logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
-                            logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
+                            DQFILTER_SELECTED = False
+                            DQFILTERTINY_SELECTED = True  
+                            #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
+                            #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                                  
                     if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
-                        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
+                        DQFILTER_SELECTED = False
+                        DQFILTERTINY_SELECTED = False 
+                        #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
+                        #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
@@ -1004,6 +1033,48 @@ for key, value in config.items():
                 if config["d-q-filter-p-p-task"]["processFilterPP"] == "false" and config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false" :
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
                     #logging.debug("d-q-filter-p-p-task:processDummy:true")
+                    
+                    
+# LOGGER MESSAGES FOR DQ SELECTIONS
+
+if extrargs.run == "3" and extrargs.runData:
+
+    if DQFULL_SELECTED == True:
+        logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
+        
+        if DQBARREL_SELECTED == True:
+            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
+            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
+        if DQBARRELTINY_SELECTED == True:
+            logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
+            logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
+            
+        logging.debug(" - [d-q-muons-selection] processSelection : true")
+
+    if DQEVENT_SELECTED == True and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-event-selection-task] processEventSelection : true") 
+    if DQEVENT_SELECTED == False and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-event-selection-task] processEventSelection : false")                        
+    if DQBARREL_SELECTED == True and DQFULL_SELECTED == False:           
+        logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
+    if DQBARREL_SELECTED == False and DQFULL_SELECTED == False:           
+        logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")                 
+    if DQBARRELTINY_SELECTED == True and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
+    if DQBARRELTINY_SELECTED == False and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")                    
+    if DQMUON_SELECTED == True and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-muons-selection] processSelection : true")
+    if DQMUON_SELECTED == False and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-muons-selection] processSelection : false")         
+    if DQFILTER_SELECTED == True and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
+    if DQFILTER_SELECTED == False and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")                  
+    if DQFILTERTINY_SELECTED == True and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
+    if DQFILTERTINY_SELECTED == False and DQFULL_SELECTED == False:
+        logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
 
 
 # Transaction Management for process function in TableMaker/TableMakerMC Task
@@ -1021,11 +1092,16 @@ try:
             if j not in tableMakerProcessSearch:
                 if extrargs.runData:
                     logging.warning("%s is Not valid Configurable Option for TableMaker regarding to Orginal JSON Config File!!! It will fix by CLI",j)
+                    isValidProcessFunc  = False
                 if extrargs.runMC:
                     logging.warning("%s is Not valid Configurable Option for TableMakerMC regarding to Orginal JSON Config File!!! It will fix by CLI",j)
+                    isValidProcessFunc  = False
             if j in tableMakerProcessSearch:
                 validProcessListAfterDataMCFilter.append(j)
-    logging.info("Valid processes are after MC/Data Filter: %s",validProcessListAfterDataMCFilter)
+    
+    if isValidProcessFunc == False:
+        logging.info("Valid processes are after MC/Data Filter: %s",validProcessListAfterDataMCFilter)
+
 except:
     logging.warning("No process function provided in args, CLI Will not Check process validation for tableMaker/tableMakerMC process")
 
@@ -1246,8 +1322,7 @@ if extrargs.cfgBarrelSels:
             logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
             print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
             sys.exit()
-
- 
+            
 # AOD File checker 
 if extrargs.aod != None:
     if os.path.isfile(extrargs.aod) == False:
