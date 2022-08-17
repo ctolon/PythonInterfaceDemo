@@ -19,6 +19,8 @@ import json
 import sys
 import logging
 import logging.config
+from logging.handlers import RotatingFileHandler
+from logging import handlers
 from ast import parse
 import os
 import argparse
@@ -243,6 +245,7 @@ parser.add_argument('-runMC', help="Run over MC", action="store_true")
 parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
 parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
 parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
+parser.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 
 #coreArgs = ["cfgFileName","runData","runMC","add_mc_conv","add_fdd_conv","add_track_prop"]
 
@@ -351,7 +354,7 @@ parser.add_argument('--cutLister', help="List all of the analysis cuts from Cuts
 parser.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 # debug options
-parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="WARNING")
+parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="INFO")
 
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
@@ -369,12 +372,26 @@ if len(forgetParams) > 0:
     sys.exit()
     
 # Debug Settings
-if extrargs.debug:
+if extrargs.debug and extrargs.logFile == False:
     DEBUG_SELECTION = extrargs.debug
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
+    
+if extrargs.logFile and extrargs.debug:
+    log = logging.getLogger('')
+    level = logging.getLevelName(extrargs.debug)
+    log.setLevel(level)
+    format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(format)
+    log.addHandler(ch)
+
+    fh = handlers.RotatingFileHandler("tableMaker.log", maxBytes=(1048576*5), backupCount=7)
+    fh.setFormatter(format)
+    log.addHandler(fh)
 
 
 #####################################################
@@ -633,16 +650,16 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.info("%s:%s:%s",key,value,extrargs.aod)
+                logging.debug("%s:%s:%s",key,value,extrargs.aod)
                 
             # Process Table Maker
             if (value in tablemakerProcessAllParameters) and extrargs.process:
                 if value in extrargs.process:
                     value2 = "true"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)
+                    logging.debug("%s:%s:%s",key,value,value2)
                 #if value not in extrargs.process:
-                    #logging.info("%s:%s:%s",key,value,value2)
+                    #logging.debug("%s:%s:%s",key,value,value2)
                     
                     
                     # For find all process parameters for TableMaker/TableMakerMC in Orginal JSON
@@ -665,13 +682,13 @@ for key, value in config.items():
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.info("d-q-barrel-track-selection-task:processSelection:true")
-                            logging.info("d-q-barrel-track-selection-task:processSelectionTiny:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelection:true")
+                            logging.debug("d-q-barrel-track-selection-task:processSelectionTiny:false")
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.info("d-q-barrel-track-selection-task:processSelection:false")
-                            logging.info("d-q-barrel-track-selection-task:processSelectionTiny:true")
+                            logging.debug("d-q-barrel-track-selection-task:processSelection:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelectionTiny:true")
 
                         config["d-q-muons-selection"]["processSelection"] = "true"
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
@@ -680,56 +697,56 @@ for key, value in config.items():
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.info("d-q-barrel-track-selection-task:processSelection:true")
-                            logging.info("d-q-barrel-track-selection-task:processSelectionTiny:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelection:true")
+                            logging.debug("d-q-barrel-track-selection-task:processSelectionTiny:false")
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            logging.info("d-q-barrel-track-selection-task:processSelection:false")
-                            logging.info("d-q-barrel-track-selection-task:processSelectionTiny:true")
+                            logging.debug("d-q-barrel-track-selection-task:processSelection:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelectionTiny:true")
    
                     if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
-                            logging.info("d-q-barrel-track-selection-task:processSelection:false")
-                            logging.info("d-q-barrel-track-selection-task:processSelectionTiny:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelection:false")
+                            logging.debug("d-q-barrel-track-selection-task:processSelectionTiny:false")
                                          
                     if len(muonSearch) > 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-muons-selection"]["processSelection"] = "true"
-                            logging.info("d-q-muons-selection:processSelection:true")
+                            logging.debug("d-q-muons-selection:processSelection:true")
                     if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-muons-selection"]["processSelection"] = "false"
-                            logging.info("d-q-muons-selection:processSelection:false")
+                            logging.debug("d-q-muons-selection:processSelection:false")
                             
                     if len(bcsSearch) > 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                            logging.info("d-q-event-selection-task:processSelection:true")
+                            logging.debug("d-q-event-selection-task:processSelection:true")
                     if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run =='3':
                             config["d-q-event-selection-task"]["processEventSelection"] = "false"
-                            logging.info("d-q-event-selection-task:processSelection:false")
+                            logging.debug("d-q-event-selection-task:processSelection:false")
                             
                     # Automatization for Activate or Disable d-q filter pp run3
                     if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
                         config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
-                        logging.info("d-q-filter-p-p-task-task:processFilterPP:true")
-                        logging.info("d-q-filter-p-p-task-task:processFilterPP:false")
+                        logging.debug("d-q-filter-p-p-task-task:processFilterPP:true")
+                        logging.debug("d-q-filter-p-p-task-task:processFilterPP:false")
                         if extrargs.isFilterPPTiny == 'true':
                             config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                             config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
-                            logging.info("d-q-filter-p-p-task-task:processFilterPP:false")
-                            logging.info("d-q-filter-p-p-task-task:processFilterPP:true")
+                            logging.debug("d-q-filter-p-p-task-task:processFilterPP:false")
+                            logging.debug("d-q-filter-p-p-task-task:processFilterPP:true")
                                  
                     if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
                             config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                             config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                            logging.info("d-q-filter-p-p-task-task:processFilterPP:false")
-                            logging.info("d-q-filter-p-p-task-task:processFilterPP:false")
+                            logging.debug("d-q-filter-p-p-task-task:processFilterPP:false")
+                            logging.debug("d-q-filter-p-p-task-task:processFilterPP:false")
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)
+                    logging.debug("%s:%s:%s",key,value,value2)
                     
                                  
             # Filter PP Selections        
@@ -737,204 +754,204 @@ for key, value in config.items():
                 if type(extrargs.cfgPairCuts) == type(clist):
                     extrargs.cfgPairCuts = listToString(extrargs.cfgPairCuts) 
                 config[key][value] = extrargs.cfgPairCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgPairCuts)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgPairCuts)
             if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
                 if type(extrargs.cfgBarrelSels) == type(clist):
                     extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
                 config[key][value] = extrargs.cfgBarrelSels
-                logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelSels)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgBarrelSels)
             if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
                 if type(extrargs.cfgMuonSels) == type(clist):
                     extrargs.cfgMuonSels = listToString(extrargs.cfgMuonSels) 
                 config[key][value] = extrargs.cfgMuonSels
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonSels)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonSels)
                                     
             # Run 2/3 and MC/DATA Selections for automations            
             if extrargs.run == "2":
                 if value == 'isRun3':
                     config[key][value] = "false"
-                    logging.info("%s:%s:false",key,value)
+                    logging.debug("%s:%s:false",key,value)
                 if value == 'processRun3':
                     config[key][value] = "false"
-                    logging.info("%s:%s:false",key,value)
+                    logging.debug("%s:%s:false",key,value)
                 if value == 'processRun2':
                     config[key][value] = "true"
-                    logging.info("%s:%s:true",key,value)
+                    logging.debug("%s:%s:true",key,value)
             if extrargs.run == "3":
                 if value == 'isRun3':
                     config[key][value] = "true"
-                    logging.info("%s:%s:true",key,value)
+                    logging.debug("%s:%s:true",key,value)
                 if value == 'processRun3':
                     config[key][value] = "true"
-                    logging.info("%s:%s:true",key,value)
+                    logging.debug("%s:%s:true",key,value)
                 if value == 'processRun2':
                     config[key][value] = "false"
-                    logging.info("%s:%s:false",key,value)
+                    logging.debug("%s:%s:false",key,value)
             
             if extrargs.run == '2' and extrargs.runMC:
                 if value == 'isRun2MC':
                     config[key][value] = "true"
-                    logging.info("%s:%s:true",key,value)
+                    logging.debug("%s:%s:true",key,value)
             if extrargs.run != '2' and extrargs.runData:
                 if value == 'isRun2MC':
                     config[key][value] = "false"
-                    logging.info("%s:%s:false",key,value)
+                    logging.debug("%s:%s:false",key,value)
                                             
             if value == "isMC" and extrargs.runMC:
                     config[key][value] = "true"
-                    logging.info("%s:%s:true",key,value)        
+                    logging.debug("%s:%s:true",key,value)        
             if value == "isMC" and extrargs.runData:
                     config[key][value] = "false"
-                    logging.info("%s:%s:true",key,value)                          
+                    logging.debug("%s:%s:true",key,value)                          
                        
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)  
+                    logging.debug("%s:%s:%s",key,value,value2)  
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)  
+                    logging.debug("%s:%s:%s",key,value,value2)  
                     
             # v0-selector
             if value =='d_bz' and extrargs.d_bz:
                 config[key][value] = extrargs.d_bz
-                logging.info("%s:%s:%s",key,value,extrargs.d_bz)  
+                logging.debug("%s:%s:%s",key,value,extrargs.d_bz)  
             if value == 'v0cospa' and extrargs.v0cospa:
                 config[key][value] = extrargs.v0cospa
-                logging.info("%s:%s:%s",key,value,extrargs.v0cospa)  
+                logging.debug("%s:%s:%s",key,value,extrargs.v0cospa)  
             if value == 'dcav0dau' and extrargs.dcav0dau:
                 config[key][value] = extrargs.dcav0dau
-                logging.info("%s:%s:%s",key,value,extrargs.dcav0dau)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.dcav0dau)                  
             if value =='v0Rmin' and extrargs.v0Rmin:
                 config[key][value] = extrargs.v0Rmin
-                logging.info("%s:%s:%s",key,value,extrargs.v0Rmin)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.v0Rmin)                  
             if value == 'v0Rmax' and extrargs.v0Rmax:
                 config[key][value] = extrargs.v0Rmax
-                logging.info("%s:%s:%s",key,value,extrargs.v0Rmax)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.v0Rmax)                  
             if value == 'dcamin' and extrargs.dcamin:
                 config[key][value] = extrargs.dcamin
-                logging.info("%s:%s:%s",key,value,extrargs.dcamin)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.dcamin)                  
             if value == 'dcamax' and extrargs.dcamax:
                 config[key][value] = extrargs.dcamax
-                logging.info("%s:%s:%s",key,value,extrargs.dcamax)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.dcamax)                  
             if value =='mincrossedrows' and extrargs.mincrossedrows:
                 config[key][value] = extrargs.mincrossedrows
-                logging.info("%s:%s:%s",key,value,extrargs.mincrossedrows)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.mincrossedrows)                  
             if value == 'maxchi2tpc' and extrargs.maxchi2tpc:
                 config[key][value] = extrargs.maxchi2tpc
-                logging.info("%s:%s:%s",key,value,extrargs.maxchi2tpc)                  
+                logging.debug("%s:%s:%s",key,value,extrargs.maxchi2tpc)                  
                 
             # centrality table
             if (value in centralityTableParameters) and extrargs.est:
                 if value in extrargs.est:
                     value2 = "1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)   
+                    logging.debug("%s:%s:%s",key,value,value2)   
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)  
+                    logging.debug("%s:%s:%s",key,value,value2)  
                     
             # cfg in TableMaker
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
                 config[key][value] = extrargs.cfgEventCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgEventCuts)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgEventCuts)  
             if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
                 config[key][value] = extrargs.cfgBarrelTrackCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelTrackCuts)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgBarrelTrackCuts)  
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)                
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonCuts)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonCuts)  
             if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
                 config[key][value] = extrargs.cfgBarrelLowPt
-                logging.info("%s:%s:%s",key,value,extrargs.cfgBarrelLowPt)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgBarrelLowPt)  
             if value == 'cfgMuonLowPt' and extrargs.cfgMuonLowPt:
                 config[key][value] = extrargs.cfgMuonLowPt
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonLowPt)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonLowPt)  
             if value =='cfgNoQA' and extrargs.cfgNoQA:
                 config[key][value] = extrargs.cfgNoQA
-                logging.info("%s:%s:%s",key,value,extrargs.cfgNoQA)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgNoQA)  
             if value == 'cfgDetailedQA' and extrargs.cfgDetailedQA:
                 config[key][value] = extrargs.cfgDetailedQA
-                logging.info("%s:%s:%s",key,value,extrargs.cfgDetailedQA)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgDetailedQA)  
             if value == 'cfgIsRun2' and extrargs.run == "2":
                 config[key][value] = "true"
-                logging.info("%s:%s:true",key,value)  
+                logging.debug("%s:%s:true",key,value)  
             if value =='cfgMinTpcSignal' and extrargs.cfgMinTpcSignal:
                 config[key][value] = extrargs.cfgMinTpcSignal
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMinTpcSignal)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMinTpcSignal)  
             if value == 'cfgMaxTpcSignal' and extrargs.cfgMaxTpcSignal:
                 config[key][value] = extrargs.cfgMaxTpcSignal
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMaxTpcSignal)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMaxTpcSignal)  
             if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
                 if type(extrargs.cfgMCsignals) == type(clist):
                     extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)                     
                 config[key][value] = extrargs.cfgMCsignals
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMCsignals)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMCsignals)  
                 
             #d-q muons selection cut
             if value =='cfgMuonsCuts' and extrargs.cfgMuonsCuts:
                 if type(extrargs.cfgMuonsCuts) == type(clist):
                     extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)                
                 config[key][value] = extrargs.cfgMuonsCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonsCuts) 
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonsCuts) 
 
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
-                logging.info("%s:%s:%s",key,value,extrargs.syst)  
+                logging.debug("%s:%s:%s",key,value,extrargs.syst)  
             if value =='muonSelection' and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
-                logging.info("%s:%s:%s",key,value,extrargs.muonSelection)  
+                logging.debug("%s:%s:%s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.info("%s:%s:%s",key,value,extrargs.customDeltaBC)  
+                logging.debug("%s:%s:%s",key,value,extrargs.customDeltaBC)  
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.info("%s:%s:%s",key,value,extrargs.tof_expreso)  
+                logging.debug("%s:%s:%s",key,value,extrargs.tof_expreso)  
                 
             # tof-pid-full, tof-pid for data run 3                
             if value == 'processEvTime' and extrargs.runData and extrargs.run == '3': 
                 if extrargs.isProcessEvTime == "true":
                     config[key][value] = "true"
                     config[key]["processNoEvTime"] = "false"
-                    logging.info("%s:%s:true",key,value)
-                    logging.info("%s:processNoEvTime:false",key)  
+                    logging.debug("%s:%s:true",key,value)
+                    logging.debug("%s:processNoEvTime:false",key)  
                 if extrargs.isProcessEvTime == "false":
                     config[key][value] = "false"
                     config[key]["processNoEvTime"] = "true"
-                    logging.info("%s:%s:false",key,value) 
-                    logging.info("%s:processNoEvTime:true",key)  
+                    logging.debug("%s:%s:false",key,value) 
+                    logging.debug("%s:processNoEvTime:true",key)  
                     
                     
             # all d-q tasks and selections
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
-                logging.info("%s:%s:%s",key,value,extrargs.cfgWithQA)  
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgWithQA)  
                                   
             # track-propagation
             if extrargs.isCovariance:
                 if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'false' :
                     config[key]["processStandard"] = "true"
                     config[key]["processCovariance"] = "false"
-                    logging.info("%s:processStandart:true",key)
-                    logging.info("%s:processCovariance:false",key) 
+                    logging.debug("%s:processStandart:true",key)
+                    logging.debug("%s:processCovariance:false",key) 
                 if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'true' :
                     config[key]["processStandard"] = "false"
                     config[key]["processCovariance"] = "true"
-                    logging.info("%s:processStandart:false",key)
-                    logging.info("%s:processCovariance:true",key) 
+                    logging.debug("%s:processStandart:false",key)
+                    logging.debug("%s:processCovariance:true",key) 
                 
             # dummy selection
             if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
@@ -950,31 +967,31 @@ for key, value in config.items():
                 
                 if config["d-q-barrel-track-selection-task"]["processSelection"] == "true" or config["d-q-barrel-track-selection-task"]["processSelectionTiny"] == "true":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "false"
-                    #logging.info("d-q-barrel-track-selection-task:processDummy:false") 
+                    #logging.debug("d-q-barrel-track-selection-task:processDummy:false") 
                 if config["d-q-barrel-track-selection-task"]["processSelection"] == 'false' and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
-                    #logging.info("d-q-barrel-track-selection-task:processDummy:true") 
+                    #logging.debug("d-q-barrel-track-selection-task:processDummy:true") 
                     
                 if config["d-q-muons-selection"]["processSelection"] == "true":
                     config["d-q-muons-selection"]["processDummy"] = "false"
-                    #logging.info("d-q-muons-selection:processDummy:false") 
+                    #logging.debug("d-q-muons-selection:processDummy:false") 
                 if config["d-q-muons-selection"]["processSelection"] == "false":
                     config["d-q-muons-selection"]["processDummy"] = "true"
-                    #logging.info("d-q-muons-selection:processDummy:true") 
+                    #logging.debug("d-q-muons-selection:processDummy:true") 
                     
                 if config["d-q-event-selection-task"]["processEventSelection"] == "true":
                     config["d-q-event-selection-task"]["processDummy"] = "false"
-                    #logging.info("d-q-event-selection-task:processDummy:false") 
+                    #logging.debug("d-q-event-selection-task:processDummy:false") 
                 if config["d-q-event-selection-task"]["processEventSelection"] == "false":
                     config["d-q-event-selection-task"]["processDummy"] = "true"
-                    #logging.info("d-q-event-selection-task:processDummy:true") 
+                    #logging.debug("d-q-event-selection-task:processDummy:true") 
                     
                 if config["d-q-filter-p-p-task"]["processFilterPP"] =="true" or config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "true":
                     config["d-q-filter-p-p-task"]["processDummy"] = "false"
-                    #logging.info("d-q-filter-p-p-task:processDummy:false")
+                    #logging.debug("d-q-filter-p-p-task:processDummy:false")
                 if config["d-q-filter-p-p-task"]["processFilterPP"] == "false" and config["d-q-filter-p-p-task"]["processFilterPPTiny"] == "false" :
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
-                    #logging.info("d-q-filter-p-p-task:processDummy:true")
+                    #logging.debug("d-q-filter-p-p-task:processDummy:true")
 
 
 # Transaction Management for process function in TableMaker/TableMakerMC Task
@@ -1271,26 +1288,26 @@ for processFunc in specificDeps.keys():
     continue          
   if config[taskNameInConfig][processFunc] == "true":
     logging.info("processFunc ========")
-    print(processFunc, end=' ')
+    logging.info("%s", processFunc)
     if "processFull" in processFunc or "processBarrel" in processFunc:
       logging.info("common barrel tables==========")      
       for table in barrelCommonTables:
-        print(table,end=" ")      
+        logging.info("%s", table)      
         tablesToProduce[table] = 1
       if runOverMC == True:
         tablesToProduce["ReducedTracksBarrelLabels"] = 1
     if "processFull" in processFunc or "processMuon" in processFunc:
       logging.info("common muon tables==========")      
       for table in muonCommonTables:
-        print(table, end = '')
+        logging.info("%s", table)
         tablesToProduce[table] = 1
       if runOverMC == True:
         tablesToProduce["ReducedMuonsLabels"] = 1  
     if runOverMC == True:
       tablesToProduce["ReducedMCTracks"] = 1
-    print("specific tables==========")      
+    logging.info("specific tables==========")      
     for table in specificTables[processFunc]:
-      print(table, end=' ')      
+      logging.info("%s", table)      
       tablesToProduce[table] = 1
 
 # Generate the aod-writer output descriptor json file
@@ -1310,7 +1327,8 @@ for table in tablesToProduce.keys():
 writerConfigFileName = "aodWriterTempConfig.json"
 with open(writerConfigFileName,'w') as writerConfigFile:
   json.dump(writerConfig, writerConfigFile, indent=2)  
-  
+
+logging.info("aodWriterTempConfig==========")  
 print(writerConfig)
 #sys.exit()
       

@@ -19,7 +19,8 @@ import json
 import sys
 import logging
 import logging.config
-import logging
+from logging.handlers import RotatingFileHandler
+from logging import handlers
 from ast import parse
 import os
 import argparse
@@ -169,6 +170,7 @@ parser.add_argument('cfgFileName', metavar='text', default='config.json', help='
 parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
 parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
 parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
+parser.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 
 ##################
 # Interface Part #
@@ -222,7 +224,7 @@ parser.add_argument('--pid', help="Produce PID information for the particle mass
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="WARNING")
+parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="INFO")
 
 # tof-pid-full, tof-pid for run3 ???
 #parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
@@ -249,12 +251,26 @@ if len(forgetParams) > 0:
     sys.exit()
     
 # Debug Settings
-if extrargs.debug:
+if extrargs.debug and extrargs.logFile == False:
     DEBUG_SELECTION = extrargs.debug
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
+    
+if extrargs.logFile and extrargs.debug:
+    log = logging.getLogger('')
+    level = logging.getLevelName(extrargs.debug)
+    log.setLevel(level)
+    format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(format)
+    log.addHandler(ch)
+
+    fh = handlers.RotatingFileHandler("DQFlow.log", maxBytes=(1048576*5), backupCount=7)
+    fh.setFormatter(format)
+    log.addHandler(fh)
 
 ###################
 # HELPER MESSAGES #
@@ -335,7 +351,7 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.info("%s:%s:%s",key,value,extrargs.aod)
+                logging.debug("%s:%s:%s",key,value,extrargs.aod)
 
                                                                                                           
             # DQ Flow Selections        
@@ -343,69 +359,69 @@ for key, value in config.items():
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
                 config[key][value] = extrargs.cfgTrackCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgMuonCuts)
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
                 config[key][value] = extrargs.cfgEventCuts
-                logging.info("%s:%s:%s",key,value,extrargs.cfgEventCuts)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgEventCuts)
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
-                logging.info("%s:%s:%s",key,value,extrargs.cfgWithQA)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgWithQA)
             if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
-                logging.info("%s:%s:%s",key,value,extrargs.cfgCutPtMin)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutPtMin)
             if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
                 config[key][value] = extrargs.cfgCutPtMax
-                logging.info("%s:%s:%s",key,value,extrargs.cfgCutPtMax)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutPtMax)
             if value =='cfgCutEta' and extrargs.cfgCutEta:
                 config[key][value] = extrargs.cfgCutEta
-                logging.info("%s:%s:%s",key,value,extrargs.cfgCutEta)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgCutEta)
             if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
                 config[key][value] = extrargs.cfgEtaLimit
-                logging.info("%s:%s:%s",key,value,extrargs.cfgEtaLimit)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgEtaLimit)
             if value =='cfgNPow' and extrargs.cfgNPow:
                 config[key][value] = extrargs.cfgNPow
-                logging.info("%s:%s:%s",key,value,extrargs.cfgNPow)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgNPow)
             if value =='cfgEfficiency' and extrargs.cfgEfficiency:
                 config[key][value] = extrargs.cfgEfficiency
-                logging.info("%s:%s:%s",key,value,extrargs.cfgEfficiency)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgEfficiency)
             if value =='cfgAcceptance' and extrargs.cfgAcceptance:
                 config[key][value] = extrargs.cfgAcceptance
-                logging.info("%s:%s:%s",key,value,extrargs.cfgAcceptance)
+                logging.debug("%s:%s:%s",key,value,extrargs.cfgAcceptance)
                                                       
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)  
+                    logging.debug("%s:%s:%s",key,value,value2)  
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.info("%s:%s:%s",key,value,value2)  
+                    logging.debug("%s:%s:%s",key,value,value2)  
             
 
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
-                logging.info("%s:%s:%s",key,value,extrargs.syst)  
+                logging.debug("%s:%s:%s",key,value,extrargs.syst)  
             if value =='muonSelection' and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
-                logging.info("%s:%s:%s",key,value,extrargs.muonSelection)  
+                logging.debug("%s:%s:%s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.info("%s:%s:%s",key,value,extrargs.customDeltaBC)  
+                logging.debug("%s:%s:%s",key,value,extrargs.customDeltaBC)  
                 
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.info("%s:%s:%s",key,value,extrargs.tof_expreso)  
+                logging.debug("%s:%s:%s",key,value,extrargs.tof_expreso)  
                                                     
             # processEvTime 
             """  
