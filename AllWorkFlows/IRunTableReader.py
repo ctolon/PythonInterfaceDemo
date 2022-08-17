@@ -285,7 +285,7 @@ taskNameInCommandLine = "o2-analysis-dq-table-reader"
 # Check alienv
 if O2PHYSICS_ROOT == None:
    logging.error("You must load O2Physics with alienv")
-   #sys.exit()
+   sys.exit()
 
 ###################
 # HELPER MESSAGES #
