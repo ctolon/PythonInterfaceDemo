@@ -146,6 +146,78 @@ If the libraries are downloaded successfully you will get this message:
 
 Only use this option if the libraries do not download when you try to complete the scripts with TAB or you need specific version of DQ Libraries (Mostly for If you worked older O2Physics version in LXPLUS). Also, if you encounter a problem, please report it.
 
+## Debug and Logging Options for O2DQWorkflows
+
+We have Debug options if you want to follow the flow in the Interface. For this, you can configure your script as `--debug` `<Level>` in the terminal. You can check which levels are valid and at which level to debug from the table. Also if you want to keep your LOG log in a file then the `--logFile` parameter should be added to the workflow.
+
+The LOG file will be created the same as the workflow name. For example, the file that will be created for tableMaker will be tableMaker.log. In addition, if you work with the debug option, the old LOG file will be automatically deleted first, so that there is no confusion in the log files and it does not override. Then a new LOG file will be created.
+
+* You can See Debug Levels in the table:
+  
+Level | Numeric Value |
+| --- | --- |
+`NOTSET` | 0 |
+`DEBUG` | 10 |
+`INFO` | 20 |
+`WARNING` | 30 |
+`ERROR` | 40 |
+`CRITICAL` | 50 |
+
+You can see the debug messages of the numeric value you selected and the level above. If you want debug with `--debug` parameter, you must select the Level you want to debug.
+
+Example usage Logging for Both File and terminal:
+
+```ruby 
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+```
+
+Example usage for only logging to terminal:
+
+```ruby 
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+```
+
+For example, when the file is logged, you should see a result like this when you open the relevant file.
+
+```ruby 
+  2022-08-17 17:15:06,628 - [DEBUG]  - [internal-dpl-aod-reader] aod-file : reducedAod.root
+  2022-08-17 17:15:06,628 - [DEBUG]  - [internal-dpl-aod-reader] aod-reader-json : Configs/readerConfiguration_reducedEventMC.json
+  2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-event-selection] processSkimmed : true
+  2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-track-selection] processSkimmed : false
+  2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-muon-selection] cfgMuonCuts : muonQualityCuts,muonTightQualityCutsForTests
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-muon-selection] cfgMuonMCSignals : muFromJpsi,muFromPsi2S
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-muon-selection] processSkimmed : true
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-same-event-pairing] cfgMuonCuts : muonQualityCuts,muonTightQualityCutsForTests
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-same-event-pairing] cfgBarrelMCRecSignals : mumuFromJpsi,mumuFromPsi2S,dimuon
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-same-event-pairing] cfgBarrelMCGenSignals : Jpsi,Psi2S
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-same-event-pairing] processJpsiToEESkimmed : false
+  2022-08-17 17:15:06,629 - [DEBUG]  - [analysis-same-event-pairing] processJpsiToMuMuSkimmed : true
+  2022-08-17 17:15:06,630 - [DEBUG]  - [analysis-same-event-pairing] processJpsiToMuMuVertexingSkimmed : false
+  2022-08-17 17:15:06,630 - [DEBUG]  - [analysis-dilepton-track] processDimuonMuonSkimmed : false
+  2022-08-17 17:15:06,630 - [INFO] Command to run:
+  2022-08-17 17:15:06,630 - [INFO] o2-analysis-dq-efficiency --configuration json://tempConfigDQEfficiency.json -b --aod-writer-json Configs/writerConfiguration_dileptonMC.json
+  2022-08-17 17:15:06,630 - [INFO] Args provided configurations List
+  2022-08-17 17:15:06,631 - [INFO] --cfgFileName : Configs/configAnalysisMC.json 
+  2022-08-17 17:15:06,631 - [INFO] --add_mc_conv : False 
+  2022-08-17 17:15:06,631 - [INFO] --add_fdd_conv : False 
+  2022-08-17 17:15:06,631 - [INFO] --add_track_prop : False 
+  2022-08-17 17:15:06,631 - [INFO] --logFile : True 
+  2022-08-17 17:15:06,631 - [INFO] --aod : reducedAod.root 
+  2022-08-17 17:15:06,631 - [INFO] --reader : Configs/readerConfiguration_reducedEventMC.json 
+  2022-08-17 17:15:06,632 - [INFO] --writer : Configs/writerConfiguration_dileptonMC.json 
+  2022-08-17 17:15:06,632 - [INFO] --analysis : ['muonSelection', 'eventSelection', 'sameEventPairing'] 
+  2022-08-17 17:15:06,632 - [INFO] --process : ['JpsiToMuMu'] 
+  2022-08-17 17:15:06,632 - [INFO] --autoDummy : true 
+  2022-08-17 17:15:06,632 - [INFO] --cfgMuonCuts : muonQualityCuts,muonTightQualityCutsForTests 
+  2022-08-17 17:15:06,632 - [INFO] --cfgMuonMCSignals : muFromJpsi,muFromPsi2S 
+  2022-08-17 17:15:06,633 - [INFO] --cfgBarrelMCRecSignals : mumuFromJpsi,mumuFromPsi2S,dimuon 
+  2022-08-17 17:15:06,633 - [INFO] --cfgBarrelMCGenSignals : Jpsi,Psi2S 
+  2022-08-17 17:15:06,633 - [INFO] --cutLister : False 
+  2022-08-17 17:15:06,633 - [INFO] --MCSignalsLister : False 
+  2022-08-17 17:15:06,633 - [INFO] --debug : DEBUG 
+```
+
+
 ## Features for IRunTableMaker
 
 ### Automated Things In IRunTableMaker
@@ -186,87 +258,85 @@ Only use this option if the libraries do not download when you try to complete t
     * ```python 
         # Parameter Checking 
         if key in V0Parameters and extrargs.runMC:
-            print("[WARNING]","--"+key+" Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
         if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI", key)
         if key == 'est' and extrargs.runMC:
-            print("[WARNING]","--"+key+" Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI", key)
         if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
         if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
         if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
         if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI")
-        if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI", key)
+        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logging bug
+            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
         if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
         if key == 'cfgMCsignals' and extrargs.runData:
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI")
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI", key)
         if key == 'isProcessEvTime' and (extrargs.run == '2' or extrargs.runMC):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI") 
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
 
         # TableMaker/TableMakerMC Task Checking
         if extrargs.runMC:
-          try:
-        if config["table-maker-m-c"]:
-            pass
-        except:
-        print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
-        sys.exit()
+            try:
+                if config["table-maker-m-c"]:
+                    logging.info("tablemaker-m-c is in your JSON Config File")
+            except:
+                logging.error("JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+                sys.exit()
         if extrargs.runData:
-        try:
-          if config["table-maker"]:
-            pass
-        except:
-          print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
-          sys.exit()
+            try:
+                if config["table-maker"]:
+                    logging.info("tablemaker is in your JSON Config File")
+            except:
+                logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+                sys.exit()
         
         # AOD File Path Checking
         if extrargs.aod != None:
-          if os.path.isfile(extrargs.aod) == False:
-          print("[ERROR]",extrargs.aod,"File not found in path!!!")
-          sys.exit()
+            if os.path.isfile(extrargs.aod) == False:
+                logging.error("%s File not found in path!!!",extrargs.aod)
+                sys.exit()
         elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-          print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-          sys.exit()
+                print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+                sys.exit()
         ```
   * For Centrality Table task
     * Centrality task only available for PbPb system selection so if we select pp over PbPb, It will give LOG messages for this issue. Message : ```Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!```
       * ```python 
-          if extrargs.syst == 'pp' or  config["event-selection-task"]["syst"] == "pp":
-          # delete centrality-table configurations for data. If it's MC don't delete from JSON
-          # Firstly try for Data then if not data it gives warning message for MC
-            try:
-              del(config["centrality-table"])
-            except:
-                if extrargs.runMC:
-                    print("[INFO] JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
-            # check for is TableMaker includes task related to Centrality?
-            processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
-            if len(processCentralityMatch) > 0:
-                print("[WARNING] Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
-                for paramValueTableMaker in processCentralityMatch:
-                    # Centrality process should be false
-                    if extrargs.runMC:
-                        try:       
-                            config["table-maker-m-c"][paramValueTableMaker] = 'false'
-                            #for key in paramValueTableMaker:
-                                # TODO make print to new process
-                        except:
-                            print("[ERROR] JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
-                            sys.exit()
-                    if extrargs.runData:
-                        try:       
-                            config["table-maker"][paramValueTableMaker] = 'false'
-                            #for key in paramValueTableMaker:
-                                #print(key)
-                                # TODO make print to new process
-                        except:
-                            print("[ERROR] JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
-                            sys.exit()  
+          if len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
+              # delete centrality-table configurations for data. If it's MC don't delete from JSON
+              # Firstly try for Data then if not data it gives warning message for MC
+              noDeleteNeedForCent = False
+              try:
+                  logging.warning("JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
+                  #del(config["centrality-table"])
+              except:
+                  if extrargs.runMC:
+                      logging.warning("JSON file does not include configs for centrality-table task, It's for MC. Centrality will removed because you select pp collision system.")
+              # check for is TableMaker includes task related to Centrality?
+              try:
+                  processCentralityMatch = [s for s in extrargs.process if "Cent" in s]
+                  if len(processCentralityMatch) > 0:
+                      logging.warning("Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!")
+                      for paramValueTableMaker in processCentralityMatch:
+                          # Centrality process should be false
+                          if extrargs.runMC:
+                              try:       
+                                  config["table-maker-m-c"][paramValueTableMaker] = 'false'
+                              except:
+                                  logging.error("JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
+                                  sys.exit()
+                          if extrargs.runData:
+                              try:       
+                                  config["table-maker"][paramValueTableMaker] = 'false'
+                              except:
+                                  logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
+                                  sys.exit()
           ```
 ## Features for IRunTableReader
 
@@ -407,6 +477,8 @@ Arg | Opt | Task | nargs |
 `--cfgMCsignals` | `allSignals` | `table-maker` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--MCSignalsLister` | No Param | `allSignals` | 0 |
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `IRunTableMaker.py`
 
@@ -459,6 +531,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMCsignals` | String | Space separated list of MC signals |  | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
+`--debug` | String | execute with debug options  | - | str.upper |
+`--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 
 
@@ -516,6 +590,8 @@ Arg | Opt | Task | nargs |
 `--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--mixingLister` | No Param | `allMixing` | 0 |
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `IRunTableReader.py`
 
@@ -539,6 +615,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
+`--debug` | String | execute with debug options  | - | str.upper |
+`--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 # Instructions for IRunDQEfficiency.py
 
 Add extrac tables and converters with:
@@ -597,6 +675,8 @@ Arg | Opt | Task | nargs |
 `--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--MCSignalsLister` | No Param | `allSignals` |  0 |
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `IRunDQEfficiency.py`
 
@@ -623,6 +703,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
+`--debug` | String | execute with debug options  | - | str.upper |
+`--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 # Instructions for IFilterPP.py
 
@@ -682,6 +764,8 @@ Arg | Opt | Task | nargs |
 `--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--logFile` | No Param | special option  | 0 |
 
 
 * Details parameters for `IFilterPP.py`
@@ -707,6 +791,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
+`--debug` | String | execute with debug options  | - | str.upper |
+`--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 
 # Instructions for IRunDQFlow.py
@@ -768,7 +854,10 @@ Arg | Opt | Task | nargs |
 `--cfgNPow` | all  | `analysis-qvector`</br> | 1 |
 `--cfgEfficiency` | all  | `analysis-qvector` | 1 |
 `--cfgAcceptance` | all  | `analysis-qvector`</br>  | 1 |
-`--cutLister` | No Param | all  | 0 |
+`--cutLister` | No Param | all  |  |
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--logFile` | No Param | special option  | 0 |
+
 
 
 * Details parameters for `IRunDQFlow.py`
@@ -795,7 +884,9 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgNPow` | Integer | Power of weights for Q vector  |  | str
 `--cfgEfficiency` | String | CCDB path to efficiency object  |  | str
 `--cfgAcceptance` | String | CCDB path to acceptance object  |  | str
-`--cutLister` | No Param | all  | 0 |
+`--cutLister` | No Param | all  |  | -
+`--debug` | String | execute with debug options  | - | str.upper |
+`--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 
 ## TODO List For Python Workflows
