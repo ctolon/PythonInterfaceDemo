@@ -676,6 +676,10 @@ for key, value in config.items():
                     muonSearch = [s for s in extrargs.process if "Muon" in s]
                     bcsSearch = [s for s in extrargs.process if "BCs" in s]
                     
+                    #check extrargs is contain Cent for transcation management Centrality Filter
+                    centSearch = [s for s in extrargs.process if "Cent" in s]
+                    logging.info("cent search : %s",centSearch)   
+                    
                     #check extrargs is contain Filter for automatize Filter PP task
                     filterSearch = [s for s in extrargs.process if "Filter" in s]   
                                                          
@@ -1056,7 +1060,7 @@ for key,value in configuredCommands.items():
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
                                          
 # Centrality table delete for pp processes
-if extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp"):
+if len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
     # delete centrality-table configurations for data. If it's MC don't delete from JSON
     # Firstly try for Data then if not data it gives warning message for MC
     noDeleteNeedForCent = False
