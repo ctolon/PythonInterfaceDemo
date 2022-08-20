@@ -1060,7 +1060,6 @@ bash (Already Integrated for local).
 
 Date |  User | Type | Desc 
 --- | --- | --- | --- |
-
 `Aug 11, 2022` | `luca Micheletti` | `Suggestion` | Preparing a tutorial script for scripts. 
 `Aug 15, 2022` | `Anastasia Merzlaya` | `User Acceptance Test` | ran the scripts successfully. Passed user acceptance tests. 
 `Aug 19, 2022` | `Liuyao Zhang` | `User Acceptance Test` | He had trouble with the argcomplete package on his macOS-based system. We solved this problem together in the same day and it ran all the scripts without any problem. Passed user acceptance tests. Updated argcomplete package installation instructions for macOS.
