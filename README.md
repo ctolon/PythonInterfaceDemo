@@ -1,5 +1,5 @@
 # Interfaced O2/DQ Workflows
-Python Automated CLI and Task Manager Development and implematation Repository for Contains O2/DQ workflow json configuration files and python scripts to run them (TableMaker, TableReader, DQEfficiency, FilterPP)
+Python Automated CLI and Task Manager Development and implematation Repository for Contains O2/DQ workflow json configuration files and python scripts to run them (TableMaker, TableReader, DQEfficiency, FilterPP, dqFlow)
 
 ## Contact
 Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
@@ -76,7 +76,21 @@ TODO: Add schema
 
 # Prerequisites!!!
 
+## Cloning repository
+
+Clone Repository in your workspace:
+
+git clone `https://github.com/ctolon/PythonInterfaceDemo.git`
+
+Then go AllWorkFlows folder with `cd` commands
+
+Since the scripts are still in development, it is recommended to update daily regularly with the following command:
+
+`git pull --rebase`
+
 ## argcomplete - Bash tab completion for argparse
+
+If you are using a linux based system or working on LXPLUS (like Ubuntu, Fedora CentOS), follow the instructions for Linux. If you are using a MacOS-based system, follow the instructions for MacOS.
 
 Argcomplete provides easy, extensible command line tab completion of arguments for your Python script.
 
@@ -95,7 +109,32 @@ Orginal Documentation:
 
 https://kislyuk.github.io/argcomplete/index.html#
 
-## Instalation Guide for argcomplete
+## Instalation Guide For argcomplete
+
+### Prerequisites Before Installation argcomplete Package For Linux Based Systems and LXPLUS
+
+Global completion requires bash support for complete -D, which was introduced in bash 4.2. Older Linux systems, you will need to update bash to use this feature. Check the shell type with `echo $SHEL`. If it's bash, Check the version of the running copy of bash with `echo $BASH_VERSION`. If your bash version older than 4.2 you need the update your bash:
+
+Update Bash on CentOS/Redhat/Fedora Linux:
+
+`yum update bash`
+
+Update Bash in Ubuntu / Debian / Linux Mint:
+
+`apt-get install --only-upgrade bash`
+
+Also you need check your shell type with `echo $SHEL`. if your shell isn't bash you need change your shell with (if your shell type is bash you don't need to use these commands):
+
+`exec bash` (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
+
+or
+
+`sudo chsh -s /bin/bash <username>` or  `sudo chsh -s /bin/bash` (Converts all system shell settings to bash)
+
+IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
+
+IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
+
 
 ### Local Instalation (Not Need For O2)
 
@@ -124,11 +163,71 @@ And then, source your argcomplete script for autocomplete:
 
 `source argcomplete.sh`
 
-IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!!
+VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
+
+### Prerequisites Before Installation argcomplete Package For MacOS Based Systems
+
+Global completion requires bash support for complete -D, which was introduced in bash 4.2. On OS X, you will need to install and update bash to use this feature. On OS X, install bash via Homebrew `brew install bash`, add /usr/local/bin/bash to /etc/shells, then run `exec bash` to switch bash shell temporary (temporarily applies to the terminal you are working in, does not change your shell system settings). if you still have problems with sourcing the argcomplete.sh script, use this command instead `sudo chsh -s /bin/bash` or `sudo chsh -s /bin/bash <username>`. This will change the shell settings of the whole system and for example if your system used zsh based shell before to go back, you can use the command `sudo chsh -s /bin/zsh <username>` or `sudo chsh -s /bin/zsh`.
+
+### Local Instalation (Not Need For O2)
+
+`brew install bash`
+
+For Local İnstallation (If you have virtual env, disable it first)
+
+`pip install argcomplete` or `pip3 install argcomplete` (depends on symbolic link of python. It is recommended to install with both options)
+`activate-global-python-argcomplete`
+
+### O2 Installation
+
+Install and update your bash shell with this command:
+
+`brew install bash`
+
+Then check your shell with this command:
+
+`echo $SHEL`
+
+If your shell isn't bash (The default shell for macOS is zsh, not bash. Most likely your shell type is zsh), you need change your bash with this commands:
+
+`exec bash` (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
+
+or
+
+`sudo chsh -s /bin/bash <username>` or  `sudo chsh -s /bin/bash` (Converts all system shell settings to bash)
+
+After then, Check the version of the running copy of bash with `echo $BASH_VERSION`. It must be greater than 4.2.
+
+IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
+
+IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
+
+For in O2
+
+Firstly, activate your Alienv e.g.
+
+`alienv enter O2Physics/latest-master-o2`
+
+Then install the package:
+
+`pip install argcomplete` or `pip3 install argcomplete` (depends on symbolic link of python. It is recommended to install with both options)
+
+And go your Folder which includes your run scripts with cd commands (e.g.):
+
+`cd ~/allWorkFlows`
+
+And then, source your argcomplete script for autocomplete:
+
+`source argcomplete.sh`
+
+VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
+
 
 # Instructions for DownloadLibs.py
 
 ## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
+
+VERY IMPORTANT P.S: Downloading DQ libraries from Github is unstable and has a lot of issues. So use DownloadLibs.py script locally if you are working at local machine. It is highly recommended to skip this part directly and go to `Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine` (You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS).
 
 These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the DownloadLibs.py script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
 
@@ -144,9 +243,52 @@ If the libraries are downloaded successfully you will get this message:
 
 `[INFO] Libraries downloaded successfully!`
 
-Only use this option if the libraries do not download when you try to complete the scripts with TAB or you need specific version of DQ Libraries (Mostly for If you worked older O2Physics version in LXPLUS). Also, if you encounter a problem, please report it.
+## Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine
 
-## Debug and Logging Options for O2DQWorkflows
+These libraries must be downloaded for validation and autocomplete. Instead of downloading libraries from github, you can configure the DownloadLibs.py script to pull the DQ libraries locally from the alice software on the existing computer. This option will not work on LXPLUS. if you are working on a local machine always use this option.
+
+P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
+
+Ex. Usage for Working Locally:
+
+`python3 DownloadLibs.py --local`
+
+In this configuration, the location of alice software is defaulted to `/home/<user>/alice`. If your alice software folder has a different name or is in a different location, you can configure it with the --localPath parameter. Ex. Usage for different path
+
+`python3 DownloadLibs.py --local --localPath alice-software`
+
+So with this configuration, your alice software path is changed to `/home/<user>/alice-software`. Another ex.
+
+`python3 DownloadLibs.py --version 20220619 --local --localPath Software/alice`
+
+So with this configuration, your alice software path is changed to `/home/<user>/Sofware/alice`
+
+If the DQ libraries are pulled from local alice software successfully you will get this message:
+
+`[INFO] DQ Libraries pulled from local alice software successfully!`
+
+We have many logger message for this interface. If you have a problem with configuration, you can find the solution very easily by following the logger messages here. This solution is completely stable
+
+# Available configs in DownloadLibs.py Interface
+
+Arg | Opt | Local/Online | nargs | ex. usage
+--- | --- | --- | --- |
+`--version` | all | `Online` | 1 | | `python3 DownloadLibs.py --version  20220619`
+`--debug` |  |  `Online` | 1 | | `python3 DownloadLibs.py --debug INFO`
+`--local` | No Param |  `Local` | 1 | | `python3 DownloadLibs.py --local`
+`--localPath` | all |  `Local` | 1 | | `python3 DownloadLibs.py --local --localPath alice-software`
+
+* More Details for `DownloadLibs.py` interface parameters
+
+Arg | Ref Type| Desc | Default | Real Type
+--- | --- | --- | --- | --- |
+`--version` | Integer | Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619 | master | str |
+`--debug` | Boolean | Online and Local: execute with debug options" | `true` | str.upper
+`--local` | No Param |Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option | - | *
+`--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software | `alice` | str
+
+
+## Debug and Logging Options for O2DQWorkflows and DownloadLibs.py
 
 We have Debug options if you want to follow the flow in the Interface. For this, you can configure your script as `--debug` `<Level>` in the terminal. You can check which levels are valid and at which level to debug from the table. Also if you want to keep your LOG log in a file then the `--logFile` parameter should be added to the workflow.
 
@@ -218,6 +360,7 @@ For example, when the file is logged, you should see a result like this when you
 ```
 
 
+## Technical Informations
 ## Features for IRunTableMaker
 
 ### Automated Things In IRunTableMaker
@@ -913,6 +1056,16 @@ bash (Already Integrated for local).
 * `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a warning message should be checked by checking that the parameters are entered as value more than once with a warning.
 
 
+## Feedbacks, Suggestions and User Acceptance Test List
+
+Date |  User | Type | Desc 
+--- | --- | --- | --- |
+
+`Aug 11, 2022` | `luca Micheletti` | `Suggestion` | Preparing a tutorial script for scripts. 
+`Aug 15, 2022` | `Anastasia Merzlaya` | `User Acceptance Test` | ran the scripts successfully. Passed user acceptance tests. 
+`Aug 19, 2022` | `Liuyao Zhang` | `User Acceptance Test` | He had trouble with the argcomplete package on his macOS-based system. We solved this problem together in the same day and it ran all the scripts without any problem. Passed user acceptance tests. Updated argcomplete package installation instructions for macOS.
+
+
 ## Design Notes
 
 * `Jul 20, 2022` Developed pythonCLI version 1 for tablemaker in its simplest form, not integrated into main task.
@@ -932,3 +1085,4 @@ bash (Already Integrated for local).
 * `Aug 13, 2022` In FilterPP, processEvTime and Tiny Options added to JSON files and python scripts, we need trans. manag for them, processDummy option added for run 3 Data in tablemaker, dummy automizer activated for dq muons selection. Protection Added to all scripts for alienv load. Transaction management protection added for cfgMuonSels and cfgBarrelSels in filterPP Task (TableMaker and FilterPP python scripts) also logger message and fix instructions added, forget to assign value to parameters transcation management carried to top of code, String to List method update, nargs fix for Sels in filter pp
 * `Aug 14, 2022` `o2-analysis-mc-converter` `o2-analysis-fdd-converter` and `o2-analysis-track-propagation` task adders added to all Workflows as parameters. taskNameInConfig in dqflow is fixed. DQ Flow JSON configs fixed. `o2-analysis-track-propagation` dep removed and `o2-analysis-trackextension` added in DQ Flow as deps.
 * `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others. SSL certificates added for download DQ libs due to github validation
+* `Aug 17-18, 2022`  Logger Functionality implemented to O2DQWorkflows and DownloadLibs.py Some minimal fixes provided. Fix info message for centrality Table Transcation for pp. readme updated. Pretty print formatted implemented to O2DQWorkflows for helper messages (cut lister, MC signal lister and event mixing variables) lister. Interface updated for DownloadLibs.py script to get DQ libraries from local machine. All relevant Instructions have been added to the readme  
