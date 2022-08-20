@@ -227,9 +227,9 @@ VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2
 
 ## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
 
-VERY IMPORTANT P.S: Downloading DQ libraries from Github is unstable and has a lot of issues. So use DownloadLibs.py script locally if you are working at local machine. It is highly recommended to skip this part directly and go to `Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine` (You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS).
+VERY IMPORTANT P.S: Downloading DQ libraries from Github is unstable and has a lot of issues. So use `DownloadLibs.py` script locally if you are working at local machine. It is highly recommended to skip this part directly and go to `Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine` (You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS).
 
-These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the DownloadLibs.py script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
+These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the `DownloadLibs.py` script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
 
 P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
 
@@ -272,18 +272,18 @@ We have many logger message for this interface. If you have a problem with confi
 # Available configs in DownloadLibs.py Interface
 
 Arg | Opt | Local/Online | nargs | ex. usage
---- | --- | --- | --- |
-`--version` | all | `Online` | 1 | | `python3 DownloadLibs.py --version  20220619`
-`--debug` |  |  `Online` | 1 | | `python3 DownloadLibs.py --debug INFO`
-`--local` | No Param |  `Local` | 1 | | `python3 DownloadLibs.py --local`
-`--localPath` | all |  `Local` | 1 | | `python3 DownloadLibs.py --local --localPath alice-software`
+--- | --- | --- | --- | --- |
+`--version` | all | `Online` | 1 |  `python3 DownloadLibs.py --version  20220619`
+`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  |  `Online and Local` | 1 |  `python3 DownloadLibs.py --debug INFO`
+`--local` | No Param |  `Local` | 1 |  `python3 DownloadLibs.py --local`
+`--localPath` | all |  `Local` | 1 |  `python3 DownloadLibs.py --local --localPath alice-software`
 
 * More Details for `DownloadLibs.py` interface parameters
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `--version` | Integer | Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619 | master | str |
-`--debug` | Boolean | Online and Local: execute with debug options" | `true` | str.upper
+`--debug` | string | Online and Local: execute with debug options" | `INFO` | str.upper
 `--local` | No Param |Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option | - | *
 `--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software | `alice` | str
 
@@ -292,7 +292,7 @@ Arg | Ref Type| Desc | Default | Real Type
 
 We have Debug options if you want to follow the flow in the Interface. For this, you can configure your script as `--debug` `<Level>` in the terminal. You can check which levels are valid and at which level to debug from the table. Also if you want to keep your LOG log in a file then the `--logFile` parameter should be added to the workflow.
 
-The LOG file will be created the same as the workflow name. For example, the file that will be created for tableMaker will be tableMaker.log. In addition, if you work with the debug option, the old LOG file will be automatically deleted first, so that there is no confusion in the log files and it does not override. Then a new LOG file will be created.
+The LOG file will be created the same as the workflow name. For example, the file that will be created for tableMaker will be `tableMaker.log`. In addition, if you work with the debug option, the old LOG file will be automatically deleted first, so that there is no confusion in the log files and it does not override. Then a new LOG file will be created.
 
 * You can See Debug Levels in the table:
   
