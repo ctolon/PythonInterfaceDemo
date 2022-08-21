@@ -1206,7 +1206,7 @@ for key,value in configuredCommands.items():
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
                                          
 # Centrality table delete for pp processes
-if len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
+if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
     # delete centrality-table configurations for data. If it's MC don't delete from JSON
     # Firstly try for Data then if not data it gives warning message for MC
     noDeleteNeedForCent = False
