@@ -89,6 +89,12 @@ class ChoicesAction(argparse._StoreAction):
         self.choices.append(choice)
         self.container.add_argument(choice, help=help, action='none')
         
+class ChoicesCompleterList(object):
+    def __init__(self, choices):
+        self.choices = list(choices)        
+    def __call__(self, **kwargs):
+        return self.choices
+        
 ###################################
 # Interface Predefined Selections #
 ###################################
@@ -103,6 +109,9 @@ analysisSelections = {
     "sameEventPairing" : "Run same event pairing selection on DQ skimmed data" ,
     "dileptonHadron" :  "Run dilepton-hadron pairing, using skimmed data"
 }
+analysisSelectionsList = []
+for k,v in analysisSelections.items():
+    analysisSelectionsList.append(k)
 
 SameEventPairingProcessSelections = {
     "JpsiToEE" : "Run electron-electron pairing, with skimmed tracks",
@@ -111,20 +120,36 @@ SameEventPairingProcessSelections = {
     "ElectronMuon" : "Run electron-muon pairing, with skimmed tracks/muons" ,
     "All" :  "Run all types of pairing, with skimmed tracks/muons"
 }
+SameEventPairingProcessSelectionsList = []
+for k,v in SameEventPairingProcessSelections.items():
+    SameEventPairingProcessSelectionsList.append(k)
+
+booleanSelections = ["true","false"]
+
+debugLevelSelections = {
+    "NOTSET" : "Set Debug Level to NOTSET",
+    "DEBUG" : "Set Debug Level to DEBUG",
+    "INFO" : "Set Debug Level to INFO",
+    "WARNING" : "Set Debug Level to WARNING",
+    "ERROR" : "Set Debug Level to ERROR", 
+    "CRITICAL" : "Set Debug Level to CRITICAL"
+}
+debugLevelSelectionsList = []
+for k,v in debugLevelSelections.items():
+    debugLevelSelectionsList.append(k)
 
 
 clist=[] # control list for type control
 allCuts = []
 allMixing = []
 
-isEventSelection = False
-isTrackSelection = False
-isMuonSelection = False
-isSameEventPairing = False
-isDileptonHadronAnalysis = False
+ANALYSIS_EVENT_SELECTED = False
+ANALYSIS_TRACK_SELECTED = False
+ANALYSIS_MUON_SELECTED = False
+ANALYSIS_SEE_SELECTED = False
+ANALYSIS_DILEPTON_HADRON_SELECTED = False
 
 threeSelectedList = []
-
 
 # Get system variables in alienv.
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
@@ -202,74 +227,79 @@ parser = argparse.ArgumentParser(
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
-parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
-parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
-parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
-parser.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
+groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
+groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders .add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ########################
 # Interface Parameters #
 ########################
 
 # aod
-parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
-parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
-parser.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
+groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
+groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+groupDPLReader.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
+groupDPLReader.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
-# Skimmed processes and Dummy Selections for analysis
-groupAnalysis = parser.add_argument_group(title='Choice List for Data Analysis options')
-ingredientsAnalysis = groupAnalysis.add_argument('--analysis',help="Core Analysis Selection options on Data (when a value added to parameter, processSkimmed value is converted from false to true)", nargs='*',
-                 action='store_choice',metavar='ANALYSIS')
+# Skimmed processes for SEE and Analysis Selections
+groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
+groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS').completer = ChoicesCompleterList(analysisSelectionsList)
+groupAnalysis = parser.add_argument_group(title='Choice List for Data Analysis options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in analysisSelections.items():
-    ingredientsAnalysis.add_choice(key, help=value)
-    
+    groupAnalysis.add_argument(key, help=value, action='none')
 
-groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options')
-ingredientsProcess = groupProcess.add_argument('--process',help="Process Selection options for analysis-same-event-pairing task (when a value added to parameter, processSkimmed value is converted from false to true)", nargs='*',
-                 action='store_choice',metavar='PROCESS')
+groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
+groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
+groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in SameEventPairingProcessSelections.items():
-    ingredientsProcess.add_choice(key, help=value)
-
-
-parser.add_argument('--isMixingEvent', help="analysis-event-mixing: process function activate for event mixing", action="store", choices=['true','false'], type=str.lower)
-#parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['eventSelection','muonSelection','trackSelection','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
-parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower)
-
-# cfg for QA
-parser.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", choices=["true","false"], type=str.lower)
-
-# analysis-event-selection
-parser.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", choices=allMixing, nargs='*', action="store", type=str, metavar='')
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
-
-# analysis-muon-selection
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
-
-# analysis-track-selection
-parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+    groupProcess.add_argument(key, help=value, action='none')
 
 # analysis-event-mixing
-# see in skimmed options and cuts are configured in muon and track selection
+groupAnalysisEventMixing = parser.add_argument_group(title='Data processor options: analysis-event-mixing')
+groupAnalysisEventMixing.add_argument('--isMixingEvent', help="analysis-event-mixing: process function activate for event mixing", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
 
-# analysis-same-event-pairing
-#parser.add_argument('--processSameEventPairing', help="This option automatically activates same-event-pairing based on analysis track, muon, event and event mixing", action="store", choices=['true','false'], default='true', type=str.lower)
-#parser.add_argument('--isVertexing', help="Run muon-muon pairing and vertexing, with skimmed muons instead of Run muon-muon pairing, with skimmed muons (processJpsiToMuMuSkimmed must true for this selection)", action="store", choices=['true','false'], type=str.lower)
+# dummy selections
+#parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['eventSelection','muonSelection','trackSelection','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
+parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa)", action="store", default='true', type=str.lower).completer = ChoicesCompleter(booleanSelections)
 
+# cfg for QA
+groupQASelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
+groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+
+# analysis-event-selection
+groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')
+groupAnalysisEventSelection.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", nargs='*', action="store", type=str, metavar='CFGMIXINGVARS').completer = ChoicesCompleterList(allMixing)
+groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+
+# analysis-muon-selection
+groupAnalysisMuonSelection = parser.add_argument_group(title='Data processor options: analysis-muon-selection')
+groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+
+# analysis-track-selection
+groupAnalysisTrackSelection = parser.add_argument_group(title='Data processor options: analysis-track-selection')
+groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
 
 # analysis-dilepton-hadron
-parser.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
+groupAnalysisDileptonHadron = parser.add_argument_group(title='Data processor options: analysis-dilepton-hadron')
+groupAnalysisDileptonHadron.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGLEPTONCUTS').completer = ChoicesCompleterList(allCuts)
 
 # helper lister commands
-parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-parser.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
+groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
+groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+groupAdditionalHelperCommands.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
 
 # debug options
-parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="INFO")
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
+groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
-"""Activate For Autocomplete. See to Libraries for Info"""
-argcomplete.autocomplete(parser)
+for key,value in debugLevelSelections.items():
+    groupDebug.add_argument(key, help=value, action='none')
+
+argcomplete.autocomplete(parser, always_complete_options=False)
 extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
@@ -440,7 +470,7 @@ for key, value in config.items():
                                 if 'eventSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                    isEventSelection = True
+                                    ANALYSIS_EVENT_SELECTED = True
                                 if 'eventSelection' not in valueCfg:
                                     config[key][value] = 'false' 
                                     logging.debug(" - [%s] %s : false",key,value)
@@ -449,7 +479,7 @@ for key, value in config.items():
                                 if 'trackSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                    isTrackSelection = True
+                                    ANALYSIS_TRACK_SELECTED = True
                                 if 'trackSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
@@ -458,23 +488,23 @@ for key, value in config.items():
                                 if 'muonSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                    isMuonSelection = True
+                                    ANALYSIS_MUON_SELECTED = True
                                 if 'muonSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)                                                                               
                             if key == 'analysis-dilepton-hadron':
                                 if 'dileptonHadronSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                    isDileptonHadronAnalysis = True
+                                    ANALYSIS_DILEPTON_HADRON_SELECTED = True
                                     logging.debug(" - [%s] %s : true",key,value)
                                 if 'dileptonHadronSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                        
                             if 'sameEventPairing' in valueCfg:
-                                isSameEventPairing = True
+                                ANALYSIS_SEE_SELECTED = True
                             if 'sameEventPairing' not in valueCfg:
-                                isSameEventPairing = False
+                                ANALYSIS_SEE_SELECTED = False
                                     
             # Analysis Event Mixing Selections
             if value == 'processBarrelSkimmed' and extrargs.isMixingEvent:                        
@@ -564,11 +594,7 @@ for key, value in config.items():
             if value =='cfgQA' and extrargs.cfgQA:
                 config[key][value] = extrargs.cfgQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgQA)
-                
-            # Process All Skimmed Selection
-            #if value =='processAllSkimmed' and extrargs.analysisAllSkimmed:
-                #config[key][value] = extrargs.analysisAllSkimmed
-                              
+                                              
             # analysis-event-selection
             if value == 'cfgMixingVars' and extrargs.cfgMixingVars:
                 if type(extrargs.cfgMixingVars) == type(clist):
@@ -608,14 +634,14 @@ for key, value in config.items():
                     if keyCfg == 'process': # Select process keys
                         if(valueCfg != None): # Skipped None types, because can't iterate in None type
 
-                            if isSameEventPairing == False:
+                            if ANALYSIS_SEE_SELECTED == False:
                                 logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                isSameEventPairing = True
+                                ANALYSIS_SEE_SELECTED = True
                             if 'JpsiToEE' in valueCfg and value == "processJpsiToEESkimmed":
-                                if isTrackSelection == True:
+                                if ANALYSIS_TRACK_SELECTED == True:
                                     config[key]["processJpsiToEESkimmed"] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if isTrackSelection == False:
+                                if ANALYSIS_TRACK_SELECTED == False:
                                     logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed":
@@ -623,10 +649,10 @@ for key, value in config.items():
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
                             if 'JpsiToMuMu' in valueCfg and value == "processJpsiToMuMuSkimmed":
-                                if isMuonSelection == True:
+                                if ANALYSIS_MUON_SELECTED == True:
                                     config[key]["processJpsiToMuMuSkimmed"] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if isMuonSelection == False:
+                                if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed":
@@ -634,10 +660,10 @@ for key, value in config.items():
                                 logging.debug(" - [%s] %s : false",key,value)
    
                             if 'JpsiToMuMuVertexing' in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
-                                if isMuonSelection == True:
+                                if ANALYSIS_MUON_SELECTED == True:
                                     config[key]["processJpsiToMuMuVertexingSkimmed"] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if isMuonSelection == False:
+                                if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
                             if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
@@ -645,7 +671,7 @@ for key, value in config.items():
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
                             if 'ElectronMuon' in valueCfg and value == "processElectronMuonSkimmed":
-                                if isTrackSelection == True and isMuonSelection == True:
+                                if ANALYSIS_TRACK_SELECTED == True and ANALYSIS_MUON_SELECTED == True:
                                     config[key]["processElectronMuonSkimmed"] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                 else:
@@ -656,7 +682,7 @@ for key, value in config.items():
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
                             if 'All' in valueCfg and value == "processAllSkimmed":
-                                if isEventSelection == True and isMuonSelection == True and isTrackSelection == True:
+                                if ANALYSIS_EVENT_SELECTED == True and ANALYSIS_MUON_SELECTED == True and ANALYSIS_TRACK_SELECTED == True:
                                     config[key]["processAllSkimmed"] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                 else:
@@ -666,47 +692,12 @@ for key, value in config.items():
                                 config[key]["processAllSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-                        if key == 'analysis-same-event-pairing' and extrargs.process == None and isSameEventPairing == False:
+                        if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
                             config[key]["processJpsiToEESkimmed"] = 'false'
                             config[key]["processJpsiToMuMuSkimmed"] = 'false'
                             config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
                             config[key]["processElectronMuonSkimmed"] = 'false'
                             config[key]["processAllSkimmed"] = 'false'
-                            
-  
-            
-            """
-            if extrargs.processSameEventPairing == 'true': # Automate activated
-                
-                # Track automate
-                if config["analysis-track-selection"]["processSkimmed"] == 'true':
-                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'true'  
-                                
-                if config["analysis-track-selection"]["processSkimmed"] == 'false':
-                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'false'    
-                    
-                # Muon automate     
-                if config["analysis-muon-selection"]["processSkimmed"] == 'true':
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'true'
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                    if extrargs.isVertexing == 'true':
-                        config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
-                        config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'true'
-                                
-                if config["analysis-muon-selection"]["processSkimmed"] == 'false':
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                    
-                # Event Mixing automate
-                if config["analysis-event-mixing"]["processBarrelMuonSkimmed"] == 'true':
-                    config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] = 'true'  
-                  
-                if config["analysis-event-mixing"]["processBarrelMuonSkimmed"] == 'false':
-                     config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] = 'false'  
-                                
-            if extrargs.processSameEventPairing == 'false': # Automate disabled
-                continue
-            """
             
             # Dummy automizer
             if value == 'processDummy' and extrargs.autoDummy:
@@ -775,7 +766,7 @@ with open(updatedConfigFileName,'w') as outputFile:
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
 #TODO: need check
-#if isDileptonHadronAnalysis == True:
+#if ANALYSIS_DILEPTON_HADRON_SELECTED == True:
     #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
 if extrargs.add_mc_conv:

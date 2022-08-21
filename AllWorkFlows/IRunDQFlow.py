@@ -89,29 +89,63 @@ class ChoicesAction(argparse._StoreAction):
         self.choices.append(choice)
         self.container.add_argument(choice, help=help, action='none')
         
+class ChoicesCompleterList(object):
+    def __init__(self, choices):
+        self.choices = list(choices)        
+    def __call__(self, **kwargs):
+        return self.choices
+        
 ###################################
 # Interface Predefined Selections #
 ###################################
 
-PIDSelections = {"el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
-                 "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
-                 "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-                 "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
-                 }
+centralityTableSelections = {
+    "V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+}
+
+centralityTableSelectionsList = []
+for k,v in centralityTableSelections.items():
+    centralityTableSelectionsList.append(k)
+    
+centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+PIDSelections = {
+    "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
+    "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
+    "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+}
+PIDSelectionsList = []
+for k,v in PIDSelections.items():
+    PIDSelectionsList.append(k)
+    
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
-centralityTableSelections = {"V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-                             "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-                             "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-                             "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-                             "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
-                             }
-centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
+
+booleanSelections = ["true","false"]
+
+debugLevelSelections = {
+    "NOTSET" : "Set Debug Level to NOTSET",
+    "DEBUG" : "Set Debug Level to DEBUG",
+    "INFO" : "Set Debug Level to INFO",
+    "WARNING" : "Set Debug Level to WARNING",
+    "ERROR" : "Set Debug Level to ERROR", 
+    "CRITICAL" : "Set Debug Level to CRITICAL"
+}
+debugLevelSelectionsList = []
+for k,v in debugLevelSelections.items():
+    debugLevelSelectionsList.append(k)
+
+eventMuonSelections = ["0","1","2"]
     
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
@@ -189,90 +223,78 @@ parser = argparse.ArgumentParser(
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
-#parser.add_argument('-runData', help="Run over data", action="store_true")
-#parser.add_argument('-runMC', help="Run over MC", action="store_true")
-parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
-parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
-parser.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS)", action="store_true")
-parser.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
+groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
+groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders .add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ##################
 # Interface Part #
 ##################
 
 # aod
-parser.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
-
-#json output
-#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
-
-# only select
-#parser.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store",choices=["true","false"], default="true", type=str.lower)
-
-# Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
-#parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choices=['2','3'], type=str)
+groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
+groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
 # event-selection-task
-parser.add_argument('--syst', help="Collision System Selection ex. pp", action="store", choices=["PbPb", "pp", "pPb", "Pbp", "XeXe"], type=str)
-parser.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts",choices=["0","1","2"], action="store", type=str)
-parser.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
+groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
+groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str).completer = ChoicesCompleter(collisionSystemSelections)
+groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str).completer = ChoicesCompleter(eventMuonSelections)
+groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
 #tof-pid-beta
-parser.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
+groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
 
 # dummies
 #parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy is true)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
 # DQ Flow Task Selections
-#parser.add_argument('--process', help="DQ Task Selections",choices=dqSelections, action="store", type=str,  nargs='*', metavar='') # run2 
-parser.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='')
-parser.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='')
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='')
-parser.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", choices=['true','false'], type=str.lower)
-parser.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='')
-parser.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='')
-parser.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='')
-parser.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='')
-parser.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='')
+GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
+GroupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+GroupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
+GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+GroupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
+GroupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
+GroupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
+GroupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
+GroupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
 
-parser.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-parser.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
-#parser.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
-#parser.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
+GroupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
+GroupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
+GroupAnalysisQvector.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
+GroupAnalysisQvector.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
 
 # centrality-table
-groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters')
-ingredientsEst = groupEst.add_argument('--est',help="centrality-table configurable options (when a value added to parameter, value is converted from -1 to 1)", nargs='*',
-                 action='store_choice',metavar='EST')
+groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST').completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)')
 
 for key,value in centralityTableSelections.items():
-    ingredientsEst.add_choice(key, help=value)
+    groupEst.add_argument(key, help=value, action='none')
 
 # pid
-groupPID = parser.add_argument_group(title='Choice List PID options')
-ingredientsPID = groupPID.add_argument('--pid',help="Pid Selection options for TPC and TOF (when a value added to parameter, pid-<type> is converted from -1 to 1)", nargs='*',
-                 action='store_choice',metavar='PID')
+groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
+groupPID.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
-    ingredientsPID.add_choice(key, help=value)
+    groupPID.add_argument(key, help=value, action = 'none')
 
 # helper lister commands
-parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
+groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-parser.add_argument('--debug', help="execute with debug options", action="store", choices=["NOTSET","DEBUG","INFO","WARNING","ERROR","CRITICAL"], type=str.upper, default="INFO")
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
+groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
-# tof-pid-full, tof-pid for run3 ???
-#parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", choices=['true','false'], type=str.lower)
+for key,value in debugLevelSelections.items():
+    groupDebug.add_argument(key, help=value, action='none')
 
-# timestamp-task
-#parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
-
-#parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3
-
-
-argcomplete.autocomplete(parser)
+argcomplete.autocomplete(parser, always_complete_options=False)
 extrargs = parser.parse_args()
 
 configuredCommands = vars(extrargs) # for get extrargs
@@ -316,7 +338,7 @@ if extrargs.logFile and extrargs.debug:
 ###################
 # HELPER MESSAGES #
 ###################
-
+if extrargs.cutLister:
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
@@ -340,11 +362,6 @@ if extrargs.logFile and extrargs.debug:
 # PREFIX ADDING PART #
 ###################### 
 
-# add prefix for extrargs.process for TableMaker and Filter PP
-#if extrargs.process != None:
-    #prefix_process = "process"
-    #extrargs.process = [prefix_process + sub for sub in extrargs.process]
-
 # add prefix for extrargs.pid for pid selection
 if extrargs.pid != None:
     prefix_pid = "pid-"
@@ -361,8 +378,6 @@ commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analys
 #o2-analysis-timestamp - b| o2-analysis-event-selection -b | o2-analysis-multiplicity-table -b | o2-analysis-centrality-table -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-pid-tpc-full -b | o2-analysis-pid-tof-full -b | o2-analysis-pid-tof-base -b | o2-analysis-pid-tof-beta -b
 #| o2-analysis-dq-flow -b
 #| o2-analysis-fdd-converter -b
-
-
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
@@ -402,9 +417,8 @@ for key, value in config.items():
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
-
-                                                                                                          
-            # DQ Flow Selections        
+                                                                                                     
+            # analysis-qvector selections      
             if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
@@ -456,7 +470,6 @@ for key, value in config.items():
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
             
-
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
@@ -473,49 +486,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.tof_expreso
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)  
                                                     
-            # processEvTime 
-            """  
-            if value == 'processEvTime':
-                if extrargs.isProcessEvTime == "true":
-                    config[key][value] = "true"
-                    config[key]["processNoEvTime"] = "false"
-                if extrargs.isProcessEvTime == "false":
-                    config[key][value] = "false"
-                    config[key]["processNoEvTime"] = "true"
-            """
-                                                  
-            # dummy selection
-            """
-            if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
-                if extrargs.processDummy == "event":
-                    config['d-q-event-selection-task']['processDummy'] = "true"
-            """
-                    
-            # dummy automizer #TODO: for transaction manag. we need logger for dummy
-            """
-            if value == 'processDummy' and extrargs.autoDummy:
-                
-                if config["d-q-barrel-track-selection"]["processSelection"] == "true":
-                    config["d-q-barrel-track-selection"]["processDummy"] = "false"
-                if config["d-q-barrel-track-selection"]["processSelection"] == 'false':
-                    config["d-q-barrel-track-selection"]["processDummy"] = "true"
-                    
-                if config["d-q-muons-selection"]["processSelection"] == "true":
-                    config["d-q-muons-selection"]["processDummy"] = "false"
-                if config["d-q-muons-selection"]["processSelection"] == "false":
-                    config["d-q-muons-selection"]["processDummy"] = "true"
-                    
-                if config["d-q-event-selection-task"]["processEventSelection"] == "true":
-                    config["d-q-event-selection-task"]["processDummy"] = "false"
-                if config["d-q-event-selection-task"]["processEventSelection"] == "false":
-                    config["d-q-event-selection-task"]["processDummy"] = "true"
-                    
-                if config["d-q-filter-p-p-task"]["processFilterPP"] =="true":
-                    config["d-q-filter-p-p-task"]["processDummy"] = "false"
-                if config["d-q-filter-p-p-task"]["processFilterPP"] == "false":
-                    config["d-q-filter-p-p-task"]["processDummy"] = "true"
-            """
-                
+                                                                  
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
 """
 for key,value in configuredCommands.items():
@@ -546,8 +517,6 @@ if extrargs.aod != None:
 elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
         print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
         sys.exit()
-
-
 
 ###########################
 # End Interface Processes #
