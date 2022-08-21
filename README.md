@@ -62,8 +62,6 @@ Main File | Data Model | Description
 
 While developing, python CLIs are prepared by creating python scripts with enough functions to override configuration values in JSON only (independent of O2). Then, O2DQWorkflow files are prepared that do not contain python CLI and can run the analysis with O2, then they are integrated into the previously prepared Python CLI O2DQWorkflows.
 
-TODO: Add schema
-
 * For O2DQWorkflow, a folder has been created for the 2nd stage tests containing python scripts to run inside O2 for each task. If the tests in the TestInteface folder pass, new developments are transferred here, where analysis tests are performed in O2.
   * [`TableMaker`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableMaker)
   * [`TableReader`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableReader)
@@ -223,6 +221,153 @@ And then, source your argcomplete script for autocomplete:
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
 
+# Instructions for TAB Autocomplete
+
+Before proceeding to this stage, you should make sure that you activate the O2 environment with alienv, then install the argcomplete package with `pip install argcomplete` and `pip3 install argcomplete` in O2, and then source the autocomplete bash script with `source argcomplete.sh`
+
+You can Complete this with a TAB key after each word and character you type in command line. Keep this thing in your mind.
+
+If you have successfully installed this package and successfully sourced the script, follow these steps.
+
+step 1: type python3 (If your symbolic link is python for python3, type python)
+
+```ruby
+python3
+```
+
+step 2: type the name of your script (eg IRunTableMaker.py)
+```ruby
+python3 IRunTableMaker.py
+```
+
+step 3: At this stage, since the JSON configuration files are in the Configs folder, enter the name of your JSON config file by completing it with TAB or listing the available options
+
+for ex. if you type:
+
+```ruby
+python3 IRunTableMaker.py Configs
+```
+
+you will get this displayed options in your terminal:
+```ruby
+Configs/configAnalysisData.json                  Configs/configFlowDataRun3.json                  Configs/configtestFilterPPDataRun3.json          Configs/readerConfiguration_reducedEventMC.json
+Configs/configAnalysisMC.json                    Configs/configTableMakerDataRun2.json            Configs/configtestFlowDataRun3.json              Configs/writerConfiguration_dileptonMC.json
+Configs/configFilterPPDataRun2.json              Configs/configTableMakerDataRun3.json            Configs/configtestTableMakerDataRun3.json        Configs/writerConfiguration_dileptons.json
+Configs/configFilterPPRun3.json                  Configs/configTableMakerMCRun2.json              Configs/readerConfiguration_dilepton.json        
+Configs/configFlowDataRun2.json                  Configs/configTableMakerMCRun3.json              Configs/readerConfiguration_reducedEvent.json 
+```
+
+then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3)
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json
+```
+
+P.S You can Complete this with a TAB key after each word and character you type in command line.
+
+step 4: now when you type -- and press TAB key all parameter options in interface will be listed
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json --
+```
+
+if you type like this and press TAB you will see all the parameters in the interface in your terminal like this:
+```ruby
+--add_fdd_conv           --cfgBarrelSels          --cfgMinTpcSignal        --cfgPairCuts            --dcamin                 --isCovariance           --mincrossedrows         --syst
+--add_mc_conv            --cfgBarrelTrackCuts     --cfgMuonCuts            --cfgWithQA              --dcav0dau               --isFilterPPTiny         --muonSelection          --tof-expreso
+--add_track_prop         --cfgDetailedQA          --cfgMuonLowPt           --customDeltaBC          --debug                  --isProcessEvTime        --onlySelect             --v0cospa
+--aod                    --cfgEventCuts           --cfgMuonsCuts           --cutLister              --est                    --logFile                --pid                    --v0Rmax
+--autoDummy              --cfgMaxTpcSignal        --cfgMuonSels            --d_bz                   --help                   --maxchi2tpc             --process                --v0Rmin
+--cfgBarrelLowPt         --cfgMCsignals           --cfgNoQA                --dcamax                 --isBarrelSelectionTiny  --MCSignalsLister        --run 
+```
+
+VERY IMPORTANT STEP AND P.S: When configuring the IRunTableMaker.py script, the -runData and -runMC parameters are used when configuring the tablemaker for MC or Data. Since these parameters start with a single minus, do not forget to configure the TableMaker script only at the first time, by pressing the tab and configuring it (other interfaces do not have a parameter that starts with a single minus)
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -
+```
+
+Then you will see -runData and -runMC in your parameters:
+
+```ruby
+--add_fdd_conv           --cfgBarrelTrackCuts     --cfgMuonLowPt           --cutLister              -h                       --maxchi2tpc             --run                    --v0Rmin
+--add_mc_conv            --cfgDetailedQA          --cfgMuonsCuts           --d_bz                   --help                   --MCSignalsLister        -runData                 
+--add_track_prop         --cfgEventCuts           --cfgMuonSels            --dcamax                 --isBarrelSelectionTiny  --mincrossedrows         -runMC                   
+--aod                    --cfgMaxTpcSignal        --cfgNoQA                --dcamin                 --isCovariance           --muonSelection          --syst                   
+--autoDummy              --cfgMCsignals           --cfgPairCuts            --dcav0dau               --isFilterPPTiny         --onlySelect             --tof-expreso            
+--cfgBarrelLowPt         --cfgMinTpcSignal        --cfgWithQA              --debug                  --isProcessEvTime        --pid                    --v0cospa                
+--cfgBarrelSels          --cfgMuonCuts            --customDeltaBC          --est                    --logFile                --process                --v0Rmax  
+```
+
+step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for IRunTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
+```
+
+```ruby
+If you leave a space after cfgBarrelTrackCuts and press TAB:
+
+electronPID1                         eventStandard                        jpsiPIDshift                         matchedGlobal                        PIDCalib
+electronPID1randomized               eventStandardNoINT7                  jpsiPIDworseRes                      mchTrack                             pidcalib_ele
+electronPID1shiftDown                highPtHadron                         jpsiStandardKine                     muonHighPt                           PIDStandardKine
+electronPID1shiftUp                  int7vtxZ5                            kaonPID                              muonLowPt                            singleDCA
+electronPID2                         jpsiBenchmarkCuts                    kaonPIDnsigma                        muonQualityCuts                      standardPrimaryTrack
+electronPID2randomized               jpsiKineAndQuality                   lmee_GlobalTrack                     muonTightQualityCutsForTests         TightGlobalTrack
+electronPIDnsigma                    jpsiO2MCdebugCuts                    lmee_GlobalTrackRun3                 NoPID                                TightGlobalTrackRun3
+electronPIDnsigmaLoose               jpsiO2MCdebugCuts2                   lmee_GlobalTrackRun3_lowPt           pairDCA                              TightTPCTrackRun3
+electronPIDnsigmaOpen                jpsiO2MCdebugCuts3                   lmee_GlobalTrackRun3_TPC_ePID_lowPt  pairJpsi                             tof_electron
+electronPIDnsigmaRandomized          jpsiPID1                             lmeeLowBKine                         pairJpsiLowPt1                       tof_electron_loose
+electronPIDshift                     jpsiPID1Randomized                   lmeePID_TOFrec                       pairJpsiLowPt2                       tpc_electron
+electronPIDworseRes                  jpsiPID1shiftDown                    lmeePID_TPChadrej                    pairMassLow                          tpc_kaon_rejection
+electronStandardQuality              jpsiPID1shiftUp                      lmeePID_TPChadrejTOFrec              pairNoCut                            tpc_pion_band_rejection
+electronStandardQualityBenchmark     jpsiPID2                             lmeePID_TPChadrejTOFrecRun3          pairPsi2S                            tpc_pion_rejection
+electronStandardQualityForO2MCdebug  jpsiPID2Randomized                   lmeeStandardKine                     pairPtLow1                           tpc_pion_rejection_highp
+eventDimuonStandard                  jpsiPIDnsigma                        lmee_TPCTrackRun3_lowPt              pairPtLow2                           tpc_proton_rejection
+eventMuonStandard                    jpsiPIDnsigmaRandomized              matchedFwd                           pairUpsilon
+```
+
+step 6: after configuring the config, type space and -- again to see other parameters again and see other parameters and use autocomplete with TAB as you type
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
+```
+
+```ruby
+--add_fdd_conv           --cfgBarrelSels          --cfgMinTpcSignal        --cfgPairCuts            --dcamin                 --isCovariance           --mincrossedrows         --syst
+--add_mc_conv            --cfgBarrelTrackCuts     --cfgMuonCuts            --cfgWithQA              --dcav0dau               --isFilterPPTiny         --muonSelection          --tof-expreso
+--add_track_prop         --cfgDetailedQA          --cfgMuonLowPt           --customDeltaBC          --debug                  --isProcessEvTime        --onlySelect             --v0cospa
+--aod                    --cfgEventCuts           --cfgMuonsCuts           --cutLister              --est                    --logFile                --pid                    --v0Rmax
+--autoDummy              --cfgMaxTpcSignal        --cfgMuonSels            --d_bz                   --help                   --maxchi2tpc             --process                --v0Rmin
+--cfgBarrelLowPt         --cfgMCsignals           --cfgNoQA                --dcamax                 --isBarrelSelectionTiny  --MCSignalsLister        --run 
+```
+
+After that you can similarly continue configuring your parameters with autocompletion.
+
+VERY IMPORTANT P.S: Not every parameter in the interface has a value to configure. Some are configured as metavariable, meaning they are itself a value parameter. To explain this situation in detail, for example, `--cfgWithQA` parameter in tablemaker has to take one of two values as true or false, while `--add_track_prop` or `-runMC` is a parameter value directly and remains false when it is not added to the command line, they do not take a value. They are configured as true only when you type them on the command line.
+
+Example:
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --add_track_prop
+```
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
+```
+
+list of metavar parameters:
+
+* `--add_track_prop`
+* `--add_fdd_conv`
+* `--add_mc_conv`
+* `-runMC` (This parameter is only for tableMakerMC)
+* `-runData` (This parameter is only for tableMaker)
+* `--logFile`
+* `--MCSignalsLister` (this parameter only for tableMakerMC and dqEfficiency interface)
+* `--cutLister`
+* `--mixingLister` (this parameter only for tableReader interface)
+
 # Instructions for DownloadLibs.py
 
 ## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
@@ -294,43 +439,17 @@ Arg | Ref Type| Desc | Default | Real Type
 
 ## Helper Command Functionality
 
-With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. It is recommended to use this command at least once before using the interface. If you do not remember the parameters related to the interface, you can list all valid parameters and the values that these parameters can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important parameter. For example, if you want to get a help message with the `python3 IRunTableMaker.py -h` command:
+With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. CLI has same formatted messages in O2-DPL. It is recommended to use this command at least once before using the interface. If you do not remember the parameters related to the interface, you can list all valid parameters and the values that these parameters can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important parameter. For example, if you want to get a help message with the `python3 IRunTableMaker.py -h` command:
 
 ```ruby
-usage: IRunTableMaker.py [-h] [-runData] [-runMC] [--add_mc_conv]
-                         [--add_fdd_conv] [--add_track_prop] [--logFile]
-                         [--aod AOD] [--onlySelect {true,false}]
-                         [--cfgEventCuts [[...]]]
-                         [--cfgBarrelTrackCuts [[...]]]
-                         [--cfgMuonCuts [[...]]]
-                         [--cfgBarrelLowPt CFGBARRELLOWPT]
-                         [--cfgMuonLowPt CFGMUONLOWPT]
-                         [--cfgNoQA {true,false}]
-                         [--cfgDetailedQA {true,false}]
-                         [--cfgMinTpcSignal CFGMINTPCSIGNAL]
-                         [--cfgMaxTpcSignal CFGMAXTPCSIGNAL]
-                         [--cfgMCsignals [[...]]]
-                         [--process [PROCESS [PROCESS ...]]] [--run {2,3}]
-                         [--syst {PbPb,pp,pPb,Pbp,XeXe}]
-                         [--muonSelection {0,1,2}]
-                         [--customDeltaBC CUSTOMDELTABC]
-                         [--isCovariance {true,false}]
-                         [--isProcessEvTime {true,false}]
-                         [--tof-expreso TOF_EXPRESO]
-                         [--processDummy [{filter,event,barrel} [{filter,event,barrel} ...]]]
-                         [--autoDummy {true,false}]
-                         [--isBarrelSelectionTiny {true,false}]
-                         [--cfgMuonsCuts [[...]]] [--cfgPairCuts [[...]]]
-                         [--cfgBarrelSels [[...]]] [--cfgMuonSels [[...]]]
-                         [--isFilterPPTiny {true,false}]
-                         [--est [EST [EST ...]]] [--cfgWithQA {true,false}]
-                         [--d_bz D_BZ] [--v0cospa V0COSPA]
-                         [--dcav0dau DCAV0DAU] [--v0Rmin V0RMIN]
-                         [--v0Rmax V0RMAX] [--dcamin DCAMIN] [--dcamax DCAMAX]
-                         [--mincrossedrows MINCROSSEDROWS]
-                         [--maxchi2tpc MAXCHI2TPC] [--pid [PID [PID ...]]]
-                         [--cutLister] [--MCSignalsLister]
-                         [--debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}]
+usage: IRunTableMaker.py [-h] [-runData] [-runMC] [--add_mc_conv] [--add_fdd_conv] [--add_track_prop] [--aod AOD] [--onlySelect ONLYSELECT] [--cfgEventCuts [CFGEVENTCUTS ...]]
+                         [--cfgBarrelTrackCuts [CFGBARRELTRACKCUTS ...]] [--cfgMuonCuts [CFGMUONCUTS ...]] [--cfgBarrelLowPt CFGBARRELLOWPT] [--cfgMuonLowPt CFGMUONLOWPT] [--cfgNoQA CFGNOQA]
+                         [--cfgDetailedQA CFGDETAILEDQA] [--cfgMinTpcSignal CFGMINTPCSIGNAL] [--cfgMaxTpcSignal CFGMAXTPCSIGNAL] [--cfgMCsignals [CFGMCSIGNALS ...]] [--process [PROCESS ...]]
+                         [--run RUN] [--syst SYST] [--muonSelection MUONSELECTION] [--customDeltaBC CUSTOMDELTABC] [--isCovariance ISCOVARIANCE] [--isProcessEvTime ISPROCESSEVTIME]
+                         [--tof-expreso TOF_EXPRESO] [--autoDummy AUTODUMMY] [--isBarrelSelectionTiny ISBARRELSELECTIONTINY] [--cfgMuonsCuts [CFGMUONSCUT ...]] [--cfgPairCuts [CFGPAIRCUTS ...]]
+                         [--cfgBarrelSels [CFGBARRELSELS ...]] [--cfgMuonSels [CFGMUONSELS ...]] [--isFilterPPTiny ISFILTERPPTINY] [--est [EST ...]] [--cfgWithQA CFGWITHQA] [--d_bz D_BZ]
+                         [--v0cospa V0COSPA] [--dcav0dau DCAV0DAU] [--v0Rmin V0RMIN] [--v0Rmax V0RMAX] [--dcamin DCAMIN] [--dcamax DCAMAX] [--mincrossedrows MINCROSSEDROWS] [--maxchi2tpc MAXCHI2TPC]
+                         [--pid [PID ...]] [--cutLister] [--MCSignalsLister] [--debug DEBUG] [--logFile]
                          text
 
 Arguments to pass
@@ -342,87 +461,112 @@ optional arguments:
   -h, --help            show this help message and exit
   -runData              Run over data (default: False)
   -runMC                Run over MC (default: False)
-  --add_mc_conv         Add the converter from mcparticle to mcparticle+001
-                        (default: False)
-  --add_fdd_conv        Add the fdd converter (default: False)
-  --add_track_prop      Add track propagation to the innermost layer (TPC or
-                        ITS) (default: False)
-  --logFile             Enable logger for both file and CLI (default: False)
+  --onlySelect ONLYSELECT
+                        An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation) (default: true)
+  --run RUN             Run Selection (2 or 3) (default: None)
+  --isProcessEvTime ISPROCESSEVTIME
+                        tof-pid -> processEvTime : Process Selection options true or false (string) (default: None)
+  --autoDummy AUTODUMMY
+                        Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa) (default: true)
+
+Additional Task Adding Options:
+  --add_mc_conv         Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task) (default: False)
+  --add_fdd_conv        Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task) (default: False)
+  --add_track_prop      Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task) (default: False)
+
+Data processor options: internal-dpl-aod-reader:
   --aod AOD             Add your AOD File with path (default: None)
-  --onlySelect {true,false}
-                        An Automate parameter for keep options for only
-                        selection in process, pid and centrality table (true
-                        is highly recomended for automation) (default: true)
-  --cfgEventCuts [ [ ...]]
+
+Data processor options: table-maker:
+  --cfgEventCuts [CFGEVENTCUTS ...]
                         Space separated list of event cuts (default: None)
-  --cfgBarrelTrackCuts [ [ ...]]
-                        Space separated list of barrel track cuts (default:
-                        None)
-  --cfgMuonCuts [ [ ...]]
-                        Space separated list of muon cuts in table-maker
-                        (default: None)
+  --cfgBarrelTrackCuts [CFGBARRELTRACKCUTS ...]
+                        Space separated list of barrel track cuts (default: None)
+  --cfgMuonCuts [CFGMUONCUTS ...]
+                        Space separated list of muon cuts in table-maker (default: None)
   --cfgBarrelLowPt CFGBARRELLOWPT
                         Low pt cut for tracks in the barrel (default: None)
   --cfgMuonLowPt CFGMUONLOWPT
                         Low pt cut for muons (default: None)
-  --cfgNoQA {true,false}
-                        If true, no QA histograms (default: None)
-  --cfgDetailedQA {true,false}
-                        If true, include more QA histograms (BeforeCuts
-                        classes and more) (default: None)
+  --cfgNoQA CFGNOQA     If true, no QA histograms (default: None)
+  --cfgDetailedQA CFGDETAILEDQA
+                        If true, include more QA histograms (BeforeCuts classes and more) (default: None)
   --cfgMinTpcSignal CFGMINTPCSIGNAL
                         Minimum TPC signal (default: None)
   --cfgMaxTpcSignal CFGMAXTPCSIGNAL
                         Maximum TPC signal (default: None)
-  --cfgMCsignals [ [ ...]]
+  --cfgMCsignals [CFGMCSIGNALS ...]
                         Space separated list of MC signals (default: None)
-  --run {2,3}           Run Selection (2 or 3) (default: None)
-  --syst {PbPb,pp,pPb,Pbp,XeXe}
-                        Collision System Selection ex. pp (default: None)
-  --muonSelection {0,1,2}
-                        0 - barrel, 1 - muon selection with pileup cuts, 2 -
-                        muon selection without pileup cuts (default: None)
+
+Data processor options: table-maker/table-maker-m-c:
+  --process [PROCESS ...]
+                        Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming (default: None)
+
+Choice List For tableMaker/tableMakerMC Process (when a value added to parameter, process value is converted from false to true):
+  Full                  Build full DQ skimmed data model, w/o centrality
+  FullTiny              Build full DQ skimmed data model tiny
+  FullWithCov           Build full DQ skimmed data model, w/ track and fwdtrack covariance tables
+  FullWithCent          Build full DQ skimmed data model, w/ centrality
+  BarrelOnly            Build barrel-only DQ skimmed data model, w/o centrality
+  BarrelOnlyWithCov     Build barrel-only DQ skimmed data model, w/ track cov matrix
+  BarrelOnlyWithV0Bits  Build full DQ skimmed data model, w/o centrality, w/ V0Bits
+  BarrelOnlyWithEventFilter
+                        Build full DQ skimmed data model, w/o centrality, w/ event filter
+  BarrelOnlyWithCent    Build barrel-only DQ skimmed data model, w/ centrality
+  MuonOnly              Build muon-only DQ skimmed data model
+  MuonOnlyWithCov       Build muon-only DQ skimmed data model, w/ muon cov matrix
+  MuonOnlyWithCent      Build muon-only DQ skimmed data model, w/ centrality
+  MuonOnlyWithFilter    Build muon-only DQ skimmed data model, w/ event filter
+  OnlyBCs               Analyze the BCs to store sampled lumi
+
+Data processor options: event-selection-task:
+  --syst SYST           Collision System Selection ex. pp (default: None)
+  --muonSelection MUONSELECTION
+                        0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts (default: None)
   --customDeltaBC CUSTOMDELTABC
-                        custom BC delta for FIT-collision matching (default:
-                        None)
-  --isCovariance {true,false}
-                        track-propagation : If false, Process without
-                        covariance, If true Process with covariance (default:
-                        None)
-  --isProcessEvTime {true,false}
-                        tof-pid -> processEvTime : Process Selection options
-                        true or false (string) (default: None)
+                        custom BC delta for FIT-collision matching (default: None)
+
+Data processor options: track-propagation:
+  --isCovariance ISCOVARIANCE
+                        track-propagation : If false, Process without covariance, If true Process with covariance (default: None)
+
+Data processor options: tof-pid-beta:
   --tof-expreso TOF_EXPRESO
-                        Expected resolution for the computation of the
-                        expected beta (default: None)
-  --processDummy [{filter,event,barrel} [{filter,event,barrel} ...]]
-                        Dummy function (No need If autoDummy is true)
-                        (default: None)
-  --autoDummy {true,false}
-                        Dummy automize parameter (if your selection true, it
-                        automatically activate dummy process and viceversa)
-                        (default: true)
-  --isBarrelSelectionTiny {true,false}
-                        Run barrel track selection instead of normal(process
-                        func. for barrel selection must be true) (default:
-                        false)
-  --cfgMuonsCuts [ [ ...]]
-                        Space separated list of muon cuts in d-q muons
-                        selection (default: None)
-  --cfgPairCuts [ [ ...]]
+                        Expected resolution for the computation of the expected beta (default: None)
+
+Data processor options: d-q-track barrel-task:
+  --isBarrelSelectionTiny ISBARRELSELECTIONTINY
+                        Run barrel track selection instead of normal(process func. for barrel selection must be true) (default: false)
+
+Data processor options: d-q muons selection:
+  --cfgMuonsCuts [CFGMUONSCUT ...]
+                        Space separated list of muon cuts in d-q muons selection (default: None)
+
+Data processor options: d-q-filter-p-p-task:
+  --cfgPairCuts [CFGPAIRCUTS ...]
                         Space separated list of pair cuts (default: None)
-  --cfgBarrelSels [ [ ...]]
-                        Configure Barrel Selection <track-cut>:[<pair-
-                        cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example
-                        jpsiO2MCdebugCuts2::1 (default: None)
-  --cfgMuonSels [ [ ...]]
-                        Configure Muon Selection <muon-cut>:[<pair-cut>]:<n>
-                        example muonQualityCuts:pairNoCut:1 (default: None)
-  --isFilterPPTiny {true,false}
-                        Run filter tiny task instead of normal
-                        (processFilterPP must be true) (default: None)
-  --cfgWithQA {true,false}
+  --cfgBarrelSels [CFGBARRELSELS ...]
+                        Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 (default: None)
+  --cfgMuonSels [CFGMUONSELS ...]
+                        Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1 (default: None)
+  --isFilterPPTiny ISFILTERPPTINY
+                        Run filter tiny task instead of normal (processFilterPP must be true) (default: None)
+
+Data processor options: centrality-table:
+  --est [EST ...]       Produces centrality percentiles parameters (default: None)
+
+Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1):
+  V0M                   Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)
+  Run2SPDtks            Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)
+  Run2SPDcls            Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)
+  Run2CL0               Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)
+  Run2CL1               Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)
+
+Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task:
+  --cfgWithQA CFGWITHQA
                         If true, fill QA histograms (default: None)
+
+Data processor options: v0-selector:
   --d_bz D_BZ           bz field (default: None)
   --v0cospa V0COSPA     v0cospa (default: None)
   --dcav0dau DCAV0DAU   DCA V0 Daughters (default: None)
@@ -434,93 +578,32 @@ optional arguments:
                         Min crossed rows (default: None)
   --maxchi2tpc MAXCHI2TPC
                         max chi2/NclsTPC (default: None)
-  --cutLister           List all of the analysis cuts from CutsLibrary.h
-                        (default: False)
-  --MCSignalsLister     List all of the MCSignals from MCSignalLibrary.h
-                        (default: False)
-  --debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}
-                        execute with debug options (default: INFO)
 
-Choice List For tableMaker/tableMakerMC Process:
-  --process [PROCESS [PROCESS ...]]
-                        Process Selection options for tableMaker/tableMakerMC
-                        Data Processing and Skimming (when a value added to
-                        parameter, process value is converted from false to
-                        true) (default: None)
-  Full                  Build full DQ skimmed data model, w/o centrality
-  FullTiny              Build full DQ skimmed data model tiny
-  FullWithCov           Build full DQ skimmed data model, w/ track and
-                        fwdtrack covariance tables
-  FullWithCent          Build full DQ skimmed data model, w/ centrality
-  BarrelOnly            Build barrel-only DQ skimmed data model, w/o
-                        centrality
-  BarrelOnlyWithCov     Build barrel-only DQ skimmed data model, w/ track cov
-                        matrix
-  BarrelOnlyWithV0Bits  Build full DQ skimmed data model, w/o centrality, w/
-                        V0Bits
-  BarrelOnlyWithEventFilter
-                        Build full DQ skimmed data model, w/o centrality, w/
-                        event filter
-  BarrelOnlyWithCent    Build barrel-only DQ skimmed data model, w/ centrality
-  MuonOnly              Build muon-only DQ skimmed data model
-  MuonOnlyWithCov       Build muon-only DQ skimmed data model, w/ muon cov
-                        matrix
-  MuonOnlyWithCent      Build muon-only DQ skimmed data model, w/ centrality
-  MuonOnlyWithFilter    Build muon-only DQ skimmed data model, w/ event filter
-  OnlyBCs               Analyze the BCs to store sampled lumi
+Data processor options: tof-pid, tpc-pid, tpc-pid-full:
+  --pid [PID ...]       Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) (default: None)
+  el                    Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  mu                    Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  pi                    Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  ka                    Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  pr                    Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  de                    Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  tr                    Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  he                    Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
+  al                    Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)
 
-Choice List centrality-table Parameters:
-  --est [EST [EST ...]]
-                        centrality-table configurable options (when a value
-                        added to parameter, value is converted from -1 to 1)
-                        (default: None)
-  V0M                   Produces centrality percentiles using V0 multiplicity.
-                        -1: auto, 0: don't, 1: yes. Default: auto (-1)
-  Run2SPDtks            Produces Run2 centrality percentiles using SPD
-                        tracklets multiplicity. -1: auto, 0: don't, 1: yes.
-                        Default: auto (-1)
-  Run2SPDcls            Produces Run2 centrality percentiles using SPD
-                        clusters multiplicity. -1: auto, 0: don't, 1: yes.
-                        Default: auto (-1)
-  Run2CL0               Produces Run2 centrality percentiles using CL0
-                        multiplicity. -1: auto, 0: don't, 1: yes. Default:
-                        auto (-1)
-  Run2CL1               Produces Run2 centrality percentiles using CL1
-                        multiplicity. -1: auto, 0: don't, 1: yes. Default:
-                        auto (-1)
+Additional Helper Command Options:
+  --cutLister           List all of the analysis cuts from CutsLibrary.h (default: False)
+  --MCSignalsLister     List all of the MCSignals from MCSignalLibrary.h (default: False)
+  --debug DEBUG         execute with debug options (default: INFO)
+  --logFile             Enable logger for both file and CLI (default: False)
 
-Choice List PID options:
-  --pid [PID [PID ...]]
-                        Pid Selection options for TPC and TOF (when a value
-                        added to parameter, pid-<type> is converted from -1 to
-                        1) (default: None)
-  el                    Produce PID information for the Electron mass
-                        hypothesis, overrides the automatic setup: the
-                        corresponding table can be set off (0) or on (1)
-  mu                    Produce PID information for the Muon mass hypothesis,
-                        overrides the automatic setup: the corresponding table
-                        can be set off (0) or on (1)
-  pi                    Produce PID information for the Pion mass hypothesis,
-                        overrides the automatic setup: the corresponding table
-                        can be set off (0) or on (1)
-  ka                    Produce PID information for the Kaon mass hypothesis,
-                        overrides the automatic setup: the corresponding table
-                        can be set off (0) or on (1)
-  pr                    Produce PID information for the Proton mass
-                        hypothesis, overrides the automatic setup: the
-                        corresponding table can be set off (0) or on (1)
-  de                    Produce PID information for the Deuterons mass
-                        hypothesis, overrides the automatic setup: the
-                        corresponding table can be set off (0) or on (1)
-  tr                    Produce PID information for the Triton mass
-                        hypothesis, overrides the automatic setup: the
-                        corresponding table can be set off (0) or on (1)
-  he                    Produce PID information for the Helium3 mass
-                        hypothesis, overrides the automatic setup: the
-                        corresponding table can be set off (0) or on (1)
-  al                    Produce PID information for the Alpha mass hypothesis,
-                        overrides the automatic setup: the corresponding table
-                        can be set off (0) or on (1)
+Choice List for debug Parameters:
+  NOTSET                Set Debug Level to NOTSET
+  DEBUG                 Set Debug Level to DEBUG
+  INFO                  Set Debug Level to INFO
+  WARNING               Set Debug Level to WARNING
+  ERROR                 Set Debug Level to ERROR
+  CRITICAL              Set Debug Level to CRITICAL
 ```
 
 You will receive a message that. also the command can likewise be added after configuring other parameters. For example:
@@ -1334,4 +1417,5 @@ Date |  User | Type | Desc
 * `Aug 14, 2022` `o2-analysis-mc-converter` `o2-analysis-fdd-converter` and `o2-analysis-track-propagation` task adders added to all Workflows as parameters. taskNameInConfig in dqflow is fixed. DQ Flow JSON configs fixed. `o2-analysis-track-propagation` dep removed and `o2-analysis-trackextension` added in DQ Flow as deps.
 * `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others. SSL certificates added for download DQ libs due to github validation
 * `Aug 17-18, 2022`  Logger Functionality implemented to O2DQWorkflows and DownloadLibs.py Some minimal fixes provided. Fix info message for centrality Table Transcation for pp. readme updated. Pretty print formatted implemented to O2DQWorkflows for helper messages (cut lister, MC signal lister and event mixing variables) lister. Interface updated for DownloadLibs.py script to get DQ libraries from local machine. All relevant Instructions have been added to the readme  
-* `Aug 19-20, 2022` Temp DQ libs added to O2DQWorkflows for working LXPLUS and test. Because If you configure the DownloadLibs.py script locally, there is no problem when pulling libraries on the local machine and while it is completely stable, it has been added temporarily for some user acceptance tests because the libraries cannot be pulled locally in LXPLUS and it is not stable to download DQ libraries from github. rgcomplete integrated to DownloadLibs.py, comment lines updated for functions, for important values, sub help messages added, default value viewer added to help messages, Interface predefined selections carried to top for readability, readme updated and helper message usage added to readme
+* `Aug 19-20, 2022` Temp DQ libs added to O2DQWorkflows for working LXPLUS and test. Because If you configure the DownloadLibs.py script locally, there is no problem when pulling libraries on the local machine and while it is completely stable, it has been added temporarily for some user acceptance tests because the libraries cannot be pulled locally in LXPLUS and it is not stable to download DQ libraries from github. argcomplete integrated to DownloadLibs.py, comment lines updated for functions, for important values, sub help messages added, default value viewer added to help messages, Interface predefined selections carried to top for readability, readme updated and helper message usage added to readme.
+* `Aug 21, 2022` Choicer Completer Method integrated for pretty print display for auto completions, always_complete_options setted false for pretty print display with TAB, New ChoicesCompleterList Class Integrated to All Workflows for Getting choices nargs *, helper message updates in very detailed, all argparser groups has subgroups now, task adder help messages updated, some naming conventions setted for variables and code quality improved, not needed comments lines deleted for code quality, minimal fix for dqflow. Readme updated and Instructions for autocomplete added to readme, metavar explanations added to readme.
