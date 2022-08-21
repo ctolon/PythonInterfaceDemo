@@ -305,9 +305,10 @@ step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for IRun
 python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
 ```
 
-```ruby
+
 If you leave a space after cfgBarrelTrackCuts and press TAB:
 
+```ruby
 electronPID1                         eventStandard                        jpsiPIDshift                         matchedGlobal                        PIDCalib
 electronPID1randomized               eventStandardNoINT7                  jpsiPIDworseRes                      mchTrack                             pidcalib_ele
 electronPID1shiftDown                highPtHadron                         jpsiStandardKine                     muonHighPt                           PIDStandardKine
