@@ -1,16 +1,5 @@
-import urllib.request
-from urllib.request import Request, urlopen
-import os
-import sys
-import json
-from ast import parse
-import argparse
-import re
-import ssl
-import logging
-import logging.config
-import shutil
-
+#!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
 ##                   author:cevat.batuhan.tolon@.cern.ch                   ##
@@ -25,6 +14,33 @@ import shutil
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
+import urllib.request
+from urllib.request import Request, urlopen
+import os
+import sys
+import json
+from ast import parse
+import argparse
+import re
+import ssl
+import logging
+import logging.config
+import shutil
+
+"""
+argcomplete - Bash tab completion for argparse
+Documentation https://kislyuk.github.io/argcomplete/
+Instalation Steps
+pip install argcomplete
+sudo activate-global-python-argcomplete
+Only Works On Local not in O2
+Activate libraries in below and activate #argcomplete.autocomplete(parser) line
+"""
+import argcomplete  
+from argcomplete.completers import ChoicesCompleter
+
+
+
 # This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine
 
 # header for github download
@@ -36,6 +52,7 @@ parser.add_argument('--debug', help="Online and Local: execute with debug option
 parser.add_argument('--local', help="Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option", action="store_true")
 parser.add_argument('--localPath', help="Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software", action="store", type=str)
 
+argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
 
 MY_PATH = os.path.abspath(os.getcwd())

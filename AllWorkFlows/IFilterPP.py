@@ -42,10 +42,9 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
 
-"""
-ListToString provides converts lists to strings.
+"""    
+ListToString provides converts lists to strings with commas.
 This function is written to save as string type instead of list 
-when configuring JSON values for multiple selection in CLI.
 
 Parameters
 ------------------------------------------------
@@ -63,25 +62,33 @@ def listToString(s):
         str1 = " "
         
         return (str1.join(s))
+"""
+stringToList provides converts strings to list with commas.
+This function is written to save as list type instead of string 
 
-# defination for binary check #TODO Need to be integrated
-"""
-def binary_selector(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
-        return "true"
-        #return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
-        return "false"
-        #return False
-    else:
-        raise argparse.ArgumentTypeError('Misstyped value!')
-"""
-    
+Parameters
+------------------------------------------------
+s: list
+A simple Python String
+"""    
 def stringToList(string):
     li = list(string.split(","))
     return li
+
+class NoAction(argparse.Action):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('default', argparse.SUPPRESS)
+        kwargs.setdefault('nargs', 0)
+        super(NoAction, self).__init__(**kwargs)
+    def __call__(self, parser, namespace, values, option_string=None):
+        pass
+
+class ChoicesAction(argparse._StoreAction):
+    def add_choice(self, choice, help=''):
+        if self.choices is None:
+            self.choices = []
+        self.choices.append(choice)
+        self.container.add_argument(choice, help=help, action='none')
     
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
@@ -202,10 +209,24 @@ allSels = SelsStyle1 + nAddedAllCutsList
 # Interface Predefined Selections #
 ###################################
 
-# For filterPP, Filter PP Process should always true
-dqSelections = ["eventSelection","barrelTrackSelection","muonSelection","barrelTrackSelectionTiny","filterPPSelectionTiny"]
+# For filterPP, Filter PP Process should always true. So you don't need configure it
+dqSelections =  {"eventSelection" : "Run DQ event selection",
+                 "barrelTrackSelection" : "Run DQ barrel track selection" ,
+                 "muonSelection" : "Run DQ muon selection",
+                 "barrelTrackSelectionTiny" : "Run DQ barrel track selection tiny",
+                 "filterPPSelectionTiny" : "Run filter task tiny"
+                 }
 
-PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
+PIDSelections = {"el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
+                 "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
+                 "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+                 }
 PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 processDummySelections =["filter","event","barrel"]
@@ -215,8 +236,12 @@ processDummySelections =["filter","event","barrel"]
 # Main Parameters #
 ###################
     
-parser = argparse.ArgumentParser(description='Arguments to pass')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='Arguments to pass')
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+parser.register('action', 'none', NoAction)
+parser.register('action', 'store_choice', ChoicesAction)
 #parser.add_argument('-runData', help="Run over data", action="store_true")
 #parser.add_argument('-runMC', help="Run over MC", action="store_true")
 parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
@@ -253,7 +278,12 @@ parser.add_argument('--tof-expreso', help="Expected resolution for the computati
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
 
 # DQ Task Selections
-parser.add_argument('--process', help="DQ Task Selections",choices=dqSelections, action="store", type=str,  nargs='*') # run2 
+groupProcess = parser.add_argument_group(title='Choice List For filterPP Process')
+ingredientsProcess = groupProcess.add_argument('--process',help="Process Selection options for FilterPP --> DQ Tasks (when a value added to parameter, processSelection is converted from false to true)", nargs='*',
+                 action='store_choice',metavar='PROCESS')
+
+for key,value in dqSelections.items():
+    ingredientsProcess.add_choice(key, help=value)
 
 # d-q-filter-p-p-task
 #parser.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", choices=allPairCuts, nargs='*', type=str, metavar='') # run3
@@ -274,7 +304,12 @@ parser.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in
 parser.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", choices=['true','false'], type=str.lower)
 
 # pid
-parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
+groupPID = parser.add_argument_group(title='Choice List PID options')
+ingredientsPID = groupPID.add_argument('--pid',help="Pid Selection options for TPC and TOF (when a value added to parameter, pid-<type> is converted from -1 to 1)", nargs='*',
+                 action='store_choice',metavar='PID')
+
+for key,value in PIDSelections.items():
+    ingredientsPID.add_choice(key, help=value)
 
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")

@@ -41,10 +41,9 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
 
-"""
-ListToString provides converts lists to strings.
+"""    
+ListToString provides converts lists to strings with commas.
 This function is written to save as string type instead of list 
-when configuring JSON values for multiple selection in CLI.
 
 Parameters
 ------------------------------------------------
@@ -62,25 +61,90 @@ def listToString(s):
         str1 = " "
         
         return (str1.join(s))
+"""
+stringToList provides converts strings to list with commas.
+This function is written to save as list type instead of string 
 
-# defination for binary check #TODO Need to be integrated
-"""
-def binary_selector(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
-        return "true"
-        #return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
-        return "false"
-        #return False
-    else:
-        raise argparse.ArgumentTypeError('Misstyped value!')
-"""
-    
+Parameters
+------------------------------------------------
+s: list
+A simple Python String
+"""    
 def stringToList(string):
     li = list(string.split(","))
     return li
+
+class NoAction(argparse.Action):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('default', argparse.SUPPRESS)
+        kwargs.setdefault('nargs', 0)
+        super(NoAction, self).__init__(**kwargs)
+    def __call__(self, parser, namespace, values, option_string=None):
+        pass
+
+class ChoicesAction(argparse._StoreAction):
+    def add_choice(self, choice, help=''):
+        if self.choices is None:
+            self.choices = []
+        self.choices.append(choice)
+        self.container.add_argument(choice, help=help, action='none')
+        
+###################################
+# Interface Predefined Selections #
+###################################
+   
+tablemakerProcessAllSelections = {
+  "Full" : "Build full DQ skimmed data model, w/o centrality",
+  "FullTiny" : "Build full DQ skimmed data model tiny",
+  "FullWithCov" : "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
+  "FullWithCent" : "Build full DQ skimmed data model, w/ centrality",
+  "BarrelOnly" : "Build barrel-only DQ skimmed data model, w/o centrality",
+  "BarrelOnlyWithCov" : "Build barrel-only DQ skimmed data model, w/ track cov matrix",
+  "BarrelOnlyWithV0Bits" :"Build full DQ skimmed data model, w/o centrality, w/ V0Bits",
+  "BarrelOnlyWithEventFilter" : "Build full DQ skimmed data model, w/o centrality, w/ event filter",
+  "BarrelOnlyWithCent" : "Build barrel-only DQ skimmed data model, w/ centrality", 
+  "MuonOnly" : "Build muon-only DQ skimmed data model",
+  "MuonOnlyWithCov" : "Build muon-only DQ skimmed data model, w/ muon cov matrix",
+  "MuonOnlyWithCent" : "Build muon-only DQ skimmed data model, w/ centrality",
+  "MuonOnlyWithFilter" : "Build muon-only DQ skimmed data model, w/ event filter",
+  "OnlyBCs" : "Analyze the BCs to store sampled lumi"
+}
+
+tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
+        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
+        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
+        "processOnlyBCs"]
+
+centralityTableSelections = {"V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+                             }
+centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+
+V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+
+PIDSelections = {"el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
+                 "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
+                 "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+                 }
+PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+
+processDummySelections =["filter","event","barrel"]
+
+noDeleteNeedForCent = True
+processLeftAfterCentDelete = True
+
+isValidProcessFunc = True
+
+threeSelectedList = []
 
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
@@ -214,43 +278,15 @@ allSels = SelsStyle1 + nAddedAllCutsList
 #print(nAddedAllCutsList)
 #print(allSels)
     
-###################################
-# Interface Predefined Selections #
-###################################
-   
-
-tablemakerProcessAllSelections = ["Full","FullTiny","FullWithCov","FullWithCent",
-        "BarrelOnlyWithV0Bits","BarrelOnlyWithEventFilter","BarrelOnlyWithCent","BarrelOnlyWithCov","BarrelOnly",
-        "MuonOnlyWithCent","MuonOnlyWithCov","MuonOnly","MuonOnlyWithFilter",
-        "OnlyBCs"]
-
-tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
-        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
-        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
-        "processOnlyBCs"]
-
-centralityTableSelections = ["V0M", "Run2SPDtks","Run2SPDcls","Run2CL0","Run2CL1"]
-centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
-
-V0Parameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
-
-PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
-PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
-
-processDummySelections =["filter","event","barrel"]
-
-noDeleteNeedForCent = True
-processLeftAfterCentDelete = True
-
-isValidProcessFunc = True
-
-threeSelectedList = []
-
 ###################
 # Main Parameters #
 ###################
 
-parser = argparse.ArgumentParser(description='Arguments to pass')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='Arguments to pass')
+parser.register('action', 'none', NoAction)
+parser.register('action', 'store_choice', ChoicesAction)
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 parser.add_argument('-runData', help="Run over data", action="store_true")
 parser.add_argument('-runMC', help="Run over MC", action="store_true")
@@ -290,7 +326,12 @@ parser.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="stor
 parser.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store",choices=allMCSignals, nargs='*', type=str, metavar='')
 
 # table-maker process
-parser.add_argument('--process', help="Process Selection options for TableMaker Data Processing and Skimming", action="store", choices=tablemakerProcessAllSelections, nargs='*', type=str)
+groupProcess = parser.add_argument_group(title='Choice List For tableMaker/tableMakerMC Process')
+ingredientsProcess = groupProcess.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming (when a value added to parameter, process value is converted from false to true)", nargs='*',
+                 action='store_choice',metavar='PROCESS')
+
+for key,value in tablemakerProcessAllSelections.items():
+    ingredientsProcess.add_choice(key, help=value)
 
 # Run Selection : event-selection-task ,bc-selection-task, multiplicity-table, track-extension no refactor
 parser.add_argument('--run', help="Run Selection (2 or 3)", action="store", choices=['2','3'], type=str)
@@ -337,7 +378,12 @@ parser.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of no
 #parser.add_argument('--processFilterPPTiny', help="Process Selection options true or false (string)", action="store", choices=['true','false'], type=str) #run 3 no need
 
 # centrality-table
-parser.add_argument('--est', help="Produces centrality percentiles parameters", action="store", choices=centralityTableSelections,nargs="*", type=str)
+groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters')
+ingredientsEst = groupEst.add_argument('--est',help="centrality-table configurable options (when a value added to parameter, value is converted from -1 to 1)", nargs='*',
+                 action='store_choice',metavar='EST')
+
+for key,value in centralityTableSelections.items():
+    ingredientsEst.add_choice(key, help=value)
 
 # timestamp-task
 #parser.add_argument('--isRun2MC', help="Selection the Process is MC or Not", action="store", choices=['true','false'], type=str)
@@ -360,7 +406,12 @@ parser.add_argument('--mincrossedrows', help="Min crossed rows", action="store",
 parser.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", type=str)
 
 # pid
-parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
+groupPID = parser.add_argument_group(title='Choice List PID options')
+ingredientsPID = groupPID.add_argument('--pid',help="Pid Selection options for TPC and TOF (when a value added to parameter, pid-<type> is converted from -1 to 1)", nargs='*',
+                 action='store_choice',metavar='PID')
+
+for key,value in PIDSelections.items():
+    ingredientsPID.add_choice(key, help=value)
 
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")

@@ -41,10 +41,9 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
     
-"""
-ListToString provides converts lists to strings.
+"""    
+ListToString provides converts lists to strings with commas.
 This function is written to save as string type instead of list 
-when configuring JSON values for multiple selection in CLI.
 
 Parameters
 ------------------------------------------------
@@ -62,28 +61,55 @@ def listToString(s):
         str1 = " "
         
         return (str1.join(s))
+"""
+stringToList provides converts strings to list with commas.
+This function is written to save as list type instead of string 
 
-# defination for binary check TODO: Need to be integrated
-"""
-def binary_selector(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
-        return "true"
-        #return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
-        return "false"
-        #return False
-    else:
-        raise argparse.ArgumentTypeError('Misstyped value!')
-"""
-    
+Parameters
+------------------------------------------------
+s: list
+A simple Python String
+"""    
 def stringToList(string):
     li = list(string.split(","))
     return li
 
+class NoAction(argparse.Action):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('default', argparse.SUPPRESS)
+        kwargs.setdefault('nargs', 0)
+        super(NoAction, self).__init__(**kwargs)
+    def __call__(self, parser, namespace, values, option_string=None):
+        pass
+
+class ChoicesAction(argparse._StoreAction):
+    def add_choice(self, choice, help=''):
+        if self.choices is None:
+            self.choices = []
+        self.choices.append(choice)
+        self.container.add_argument(choice, help=help, action='none')
+        
+###################################
+# Interface Predefined Selections #
+###################################
+
 readerPath = 'Configs/readerConfiguration_reducedEventMC.json'
 writerPath = 'Configs/writerConfiguration_dileptonMC.json'
+
+analysisSelections = {
+    "eventSelection" : "Run event selection on DQ skimmed events",
+    "muonSelection" : "Run muon selection on DQ skimmed muons",
+    "trackSelection" : "Run barrel track selection on DQ skimmed tracks",
+    "sameEventPairing" : "Run same event pairing selection on DQ skimmed data" ,
+    "dileptonTrackSelection" :  "Run dimuon-muon pairing, using skimmed data"
+}
+
+SameEventPairingProcessSelections = {
+    "JpsiToEE" : "Run electron-electron pairing, with skimmed tracks",
+    "JpsiToMuMu" : "Run muon-muon pairing, with skimmed muons",
+    "JpsiToMuMuVertexing" : "Run muon-muon pairing and vertexing, with skimmed muons"
+}
+
 
 
 isEventSelection = False
@@ -167,7 +193,11 @@ with open('tempCutsLibrary.h') as f:
 # Main Parameters #
 ###################
     
-parser = argparse.ArgumentParser(description='Arguments to pass')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='Arguments to pass')
+parser.register('action', 'none', NoAction)
+parser.register('action', 'store_choice', ChoicesAction)
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
 parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
 parser.add_argument('--add_fdd_conv', help="Add the fdd converter", action="store_true")
@@ -183,13 +213,22 @@ parser.add_argument('--aod', help="Add your AOD File with path", action="store",
 parser.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
 parser.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
-
-# json output
-#parser.add_argument('--outputjson', help="Your Output JSON Config Fİle", action="store", type=str)
-
 # Skimmed process Dummy Selections for analysis
-parser.add_argument('--analysis', help="Skimmed process selections for analysis", action="store", choices=['eventSelection','trackSelection','muonSelection','sameEventPairing','dileptonTrackSelection'], nargs='*', type=str)
-parser.add_argument('--process', help="Skimmed process selections for same event pairing", action="store", choices=['JpsiToEE','JpsiToMuMu','JpsiToMuMuVertexing'], nargs='*', type=str)
+groupAnalysis = parser.add_argument_group(title='Choice List for MC Analysis options')
+ingredientsAnalysis = groupAnalysis.add_argument('--analysis',help="Core Analysis Skimmed Selection options on MC (when a value added to parameter, processSkimmed value is converted from false to true)", nargs='*',
+                 action='store_choice',metavar='ANALYSIS')
+
+for key,value in analysisSelections.items():
+    ingredientsAnalysis.add_choice(key, help=value)
+    
+
+groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options')
+ingredientsProcess = groupProcess.add_argument('--process',help="Process Selection options for analysis-same-event-pairing task (when a value added to parameter, processSkimmed value is converted from false to true)", nargs='*',
+                 action='store_choice',metavar='PROCESS')
+
+for key,value in SameEventPairingProcessSelections.items():
+    ingredientsProcess.add_choice(key, help=value)
+
 #parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
 parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and vice versa)", action="store", choices=["true","false"], default='true', type=str.lower)
 

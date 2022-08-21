@@ -41,10 +41,9 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
 
-"""
-ListToString provides converts lists to strings.
+"""    
+ListToString provides converts lists to strings with commas.
 This function is written to save as string type instead of list 
-when configuring JSON values for multiple selection in CLI.
 
 Parameters
 ------------------------------------------------
@@ -62,25 +61,57 @@ def listToString(s):
         str1 = " "
         
         return (str1.join(s))
+"""
+stringToList provides converts strings to list with commas.
+This function is written to save as list type instead of string 
 
-# defination for binary check #TODO Need to be integrated
-"""
-def binary_selector(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1') or v.upper() in (('YES', 'TRUE', 'T', 'Y', '1')):
-        return "true"
-        #return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0','-1') or v.upper() in ('NO', 'FALSE', 'F', 'N', '0','-1'):
-        return "false"
-        #return False
-    else:
-        raise argparse.ArgumentTypeError('Misstyped value!')
-"""
-    
+Parameters
+------------------------------------------------
+s: list
+A simple Python String
+"""    
 def stringToList(string):
     li = list(string.split(","))
     return li
+
+class NoAction(argparse.Action):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('default', argparse.SUPPRESS)
+        kwargs.setdefault('nargs', 0)
+        super(NoAction, self).__init__(**kwargs)
+    def __call__(self, parser, namespace, values, option_string=None):
+        pass
+
+class ChoicesAction(argparse._StoreAction):
+    def add_choice(self, choice, help=''):
+        if self.choices is None:
+            self.choices = []
+        self.choices.append(choice)
+        self.container.add_argument(choice, help=help, action='none')
+        
+###################################
+# Interface Predefined Selections #
+###################################
+
+PIDSelections = {"el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
+                 "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
+                 "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+                 "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+                 }
+PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+
+centralityTableSelections = {"V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+                             "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+                             }
+centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
     
 clist=[] # control list for type control
 allValuesCfg = [] # counter for provided args
@@ -148,25 +179,16 @@ with open('tempCutsLibrary.h') as f:
 #print(allMixing)  
 
 
-###################################
-# Interface Predefined Selections #
-###################################
-
-# For filterPP, Filter PP Process should always true
-#dqSelections = ["eventSelection","barrelTrackSelection","muonSelection","barrelTrackSelectionTiny","filterPPSelectionTiny"]
-
-PIDSelections = ["el","mu","pi","ka","pr","de","tr","he","al"]
-PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
-
-#processDummySelections =["filter","event","barrel"]
-
-
 ###################
 # Main Parameters #
 ###################
     
-parser = argparse.ArgumentParser(description='Arguments to pass')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='Arguments to pass')
 parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+parser.register('action', 'none', NoAction)
+parser.register('action', 'store_choice', ChoicesAction)
 #parser.add_argument('-runData', help="Run over data", action="store_true")
 #parser.add_argument('-runMC', help="Run over MC", action="store_true")
 parser.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001", action="store_true")
@@ -219,8 +241,21 @@ parser.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", ac
 #parser.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
 #parser.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
 
+# centrality-table
+groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters')
+ingredientsEst = groupEst.add_argument('--est',help="centrality-table configurable options (when a value added to parameter, value is converted from -1 to 1)", nargs='*',
+                 action='store_choice',metavar='EST')
+
+for key,value in centralityTableSelections.items():
+    ingredientsEst.add_choice(key, help=value)
+
 # pid
-parser.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", choices=PIDSelections, nargs='*', type=str.lower)
+groupPID = parser.add_argument_group(title='Choice List PID options')
+ingredientsPID = groupPID.add_argument('--pid',help="Pid Selection options for TPC and TOF (when a value added to parameter, pid-<type> is converted from -1 to 1)", nargs='*',
+                 action='store_choice',metavar='PID')
+
+for key,value in PIDSelections.items():
+    ingredientsPID.add_choice(key, help=value)
 
 # helper lister commands
 parser.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
@@ -314,6 +349,11 @@ if extrargs.logFile and extrargs.debug:
 if extrargs.pid != None:
     prefix_pid = "pid-"
     extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
+    
+# add prefix for extrargs.est for centrality table
+if extrargs.est != None:
+    prefix_est = "est"
+    extrargs.est = [prefix_est + sub for sub in extrargs.est]
     
 ######################################################################################
 
