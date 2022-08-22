@@ -19,7 +19,10 @@
     },
     "internal-dpl-aod-index-builder": "",
     "tof-signal": "",
-    "track-extension": "",
+    "track-extension": {
+        "processRun2": "true",
+        "processRun3": "false"
+    },
     "bc-selection-task": {
         "processRun2": "true",
         "processRun3": "false"

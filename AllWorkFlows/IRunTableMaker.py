@@ -391,7 +391,7 @@ GroupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel 
 
 # d-q muons selection
 GroupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons selection')
-GroupDQMuonsSelection .add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+GroupDQMuonsSelection .add_argument('--cfgMuonsCuts', help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
 
 # d-q-filter-p-p-task
 GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
