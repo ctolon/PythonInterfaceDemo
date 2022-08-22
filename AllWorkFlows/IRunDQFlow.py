@@ -220,7 +220,8 @@ with open('tempCutsLibrary.h') as f:
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Arguments to pass')
-parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
@@ -236,26 +237,25 @@ groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to
 groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
 groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
+groupAutomations = parser.add_argument_group(title='Automation Parameters')
+groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 # event-selection-task
 groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
-groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str).completer = ChoicesCompleter(collisionSystemSelections)
-groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str).completer = ChoicesCompleter(eventMuonSelections)
+groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str, choices=collisionSystemSelections).completer = ChoicesCompleter(collisionSystemSelections)
+groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
 groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
 #tof-pid-beta
 groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
 groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
 
-# dummies
-#parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy is true)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
-parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", choices=["true","false"], default='true', type=str.lower) #event selection, barel track task, filter task
-
 # DQ Flow Task Selections
 GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
 GroupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
 GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
 GroupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
-GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 GroupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
 GroupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
 GroupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
@@ -277,7 +277,7 @@ for key,value in centralityTableSelections.items():
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')

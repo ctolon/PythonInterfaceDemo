@@ -224,7 +224,8 @@ with open('tempCutsLibrary.h') as f:
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Arguments to pass')
-parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
@@ -242,13 +243,16 @@ groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action=
 groupDPLReader.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
 groupDPLReader.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
+# automation params
+groupAutomations = parser.add_argument_group(title='Automation Parameters')
+groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 # Skimmed processes for SEE and Analysis Selections
 groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
 groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS').completer = ChoicesCompleterList(analysisSelectionsList)
-groupAnalysis = parser.add_argument_group(title='Choice List for Data Analysis options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in analysisSelections.items():
-    groupAnalysis.add_argument(key, help=value, action='none')
+    groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
 groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
@@ -259,15 +263,11 @@ for key,value in SameEventPairingProcessSelections.items():
 
 # analysis-event-mixing
 groupAnalysisEventMixing = parser.add_argument_group(title='Data processor options: analysis-event-mixing')
-groupAnalysisEventMixing.add_argument('--isMixingEvent', help="analysis-event-mixing: process function activate for event mixing", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
-
-# dummy selections
-#parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['eventSelection','muonSelection','trackSelection','eventMixing','sameEventPairing','dileptonHadron'], nargs='*', type=str)
-parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa)", action="store", default='true', type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupAnalysisEventMixing.add_argument('--isMixingEvent', help="analysis-event-mixing: process function activate for event mixing", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # cfg for QA
 groupQASelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
-groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # analysis-event-selection
 groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')

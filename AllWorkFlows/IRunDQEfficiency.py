@@ -221,7 +221,8 @@ parser = argparse.ArgumentParser(
     description='Arguments to pass')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
-parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
 groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
 groupTaskAdders .add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
@@ -237,29 +238,29 @@ groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action=
 groupDPLReader.add_argument('--reader', help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
 groupDPLReader.add_argument('--writer', help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
+# automation params
+groupAutomations = parser.add_argument_group(title='Automation Parameters')
+groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 # Skimmed processes for SEE and Analysis Selections
 groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-dilepton-track')
 groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for MC Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS').completer = ChoicesCompleterList(analysisSelectionsList)
-groupAnalysis = parser.add_argument_group(title='Choice List for MC Analysis options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in analysisSelections.items():
-    groupAnalysis.add_argument(key, help=value, action='none')
+    groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
 groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
 groupProcessSEESelections.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELMCRECSIGNALS').completer = ChoicesCompleterList(allMCSignals)
 groupProcessSEESelections.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELMCGENSIGNALS').completer = ChoicesCompleterList(allMCSignals)
-groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options (when a value added to parameter, processSkimmed value is converted from false to true)')
+groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options')
 
 for key,value in SameEventPairingProcessSelections.items():
     groupProcess.add_argument(key, help=value, action='none')
 
-#parser.add_argument('--analysisDummy', help="Dummy Selections (if autoDummy true, you don't need it)", action="store", choices=['event','track','muon','sameEventPairing','dilepton'], nargs='*', type=str)
-parser.add_argument('--autoDummy', help="Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa)", action="store", default='true', type=str.lower).completer = ChoicesCompleter(booleanSelections)
-
 # cfg for QA
 groupQASelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
-groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # analysis-event-selection
 groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')

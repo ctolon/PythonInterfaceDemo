@@ -289,7 +289,8 @@ allSels = SelsStyle1 + nAddedAllCutsList
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Arguments to pass')
-parser.add_argument('cfgFileName', metavar='text', default='config.json', help='config file name')
+groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
@@ -305,54 +306,54 @@ groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to
 groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
 groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
+groupAutomations = parser.add_argument_group(title='Automation Parameters')
+groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 # event-selection-task
 groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
-groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str).completer = ChoicesCompleter(collisionSystemSelections)
-groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str).completer = ChoicesCompleter(eventMuonSelections)
+groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str, choices=collisionSystemSelections).completer = ChoicesCompleter(collisionSystemSelections)
+groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
 groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
-#tof-pid-beta
-groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
-groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
-
-# dummies
-#parser.add_argument('--processDummy', help="Dummy function (No need If autoDummy is true)", action="store", choices=processDummySelections, nargs='*', type=str.lower) #event selection, barel track task, filter task
-parser.add_argument('--autoDummy', help="Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa)", action="store", default='true', type=str.lower).completer = ChoicesCompleter(booleanSelections)
-
 # DQ Task Selections
-parser.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(dqSelectionsList)
-groupProcess = parser.add_argument_group(title='Choice List For filterPP Process (when a value added to parameter, process value is converted from false to true)')
+groupProcessFilterPP= parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task, d-q-event-selection-task, d-q-barrel-track-selection, d-q-muons-selection ')
+groupProcessFilterPP.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(dqSelectionsList)
 
 for key,value in dqSelections.items():
-    groupProcess.add_argument(key, help=value, action='none')
+    groupProcessFilterPP.add_argument(key, help=value, action='none')
 
 # d-q-filter-p-p-task
 GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
 GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS').completer = ChoicesCompleterList(allSels)
 GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS').completer = ChoicesCompleterList(allSels)
 
-## d-q-event-selection
-parser.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+## d-q-event-selection-task
+groupDQEventSelection = parser.add_argument_group(title='Data processor options: d-q-event-selection-task')
+groupDQEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
 
 ## d-q-barrel-track-selection
-parser.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupDQBarrelTrackSelection = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection')
+groupDQBarrelTrackSelection.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
 
 ## d-q-muons-selection
-parser.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q-muons-selection')
+groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
 
 #all d-q tasks and selections
 groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task')
-groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
     
 # tof-pid-full, tof-pid
-parser.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-beta')
+groupTofPid.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+groupTofPid.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
