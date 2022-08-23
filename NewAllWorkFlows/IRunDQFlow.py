@@ -577,14 +577,38 @@ for key,value in configuredCommands.items():
             #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
 """
   
-# AOD File checker 
+# AOD File checker from only interface TODO: We need also checker from JSON 
 if extrargs.aod != None:
-    if os.path.isfile(extrargs.aod) == False:
-        logging.error("%s File not found in path!!!",extrargs.aod)
-        sys.exit()
-elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        sys.exit()
+    myAod =  extrargs.aod
+    textAodList = myAod.startswith("@")
+    aodRootFile = myAod.endswith(".root")
+    textControl = myAod.endswith("txt") or myAod.endswith("text") 
+    if textAodList == True and textControl == True:
+        myAod = myAod.replace("@","")
+        logging.info("You provided AO2D list as text file : %s",myAod)
+        if os.path.isfile(myAod) == False:
+            logging.error("%s File not found in path!!!", myAod)
+            sys.exit()
+        else:
+            logging.info("%s has valid File Format and Path, File Found", myAod)
+         
+    elif aodRootFile == True:
+        logging.info("You provided single AO2D as root file  : %s",myAod)
+        if os.path.isfile(myAod) == False:
+            logging.error("%s File not found in path!!!", myAod)
+            sys.exit()
+        else:
+            logging.info("%s has valid File Format and Path, File Found", myAod)
+                    
+    else:
+        logging.error("%s Wrong formatted File, check your file!!!", myAod)
+        sys.exit()     
+
+        
+        
+#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+        #sys.exit()
 
 ###########################
 # End Interface Processes #

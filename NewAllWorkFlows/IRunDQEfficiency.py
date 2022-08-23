@@ -476,8 +476,9 @@ for key, value in config.items():
                                     logging.debug(" - [%s] %s : true",key,value)
                                     ANALYSIS_EVENT_SELECTED = True
                                 if 'eventSelection' not in valueCfg:
-                                    config[key][value] = 'false' 
-                                    logging.debug(" - [%s] %s : false",key,value)
+                                    logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI")
+                                    config[key][value] = 'true' 
+                                    logging.debug(" - [%s] %s : true",key,value)
                                    
                             if key == 'analysis-track-selection':                  
                                 if 'trackSelection' in valueCfg:
@@ -748,16 +749,44 @@ for key, value in config.items():
                 if config["analysis-dilepton-track"]["processDimuonMuonSkimmed"] == 'false':
                     config["analysis-dilepton-track"]["processDummy"] = "true"
                     
+                if config["analysis-dilepton-track"]["processDielectronKaonSkimmed"] == "true":
+                    config["analysis-dilepton-track"]["processDummy"] = "false"
+                if config["analysis-dilepton-track"]["processDielectronKaonSkimmed"] == 'false':
+                    config["analysis-dilepton-track"]["processDummy"] = "true"
+                    
         
-# AOD and JSON Reader File Checker
-                
+# AOD File checker from only interface TODO: We need also checker from JSON 
 if extrargs.aod != None:
-    if os.path.isfile(extrargs.aod) == False:
-        logging.error("%s File not found in path!!!",extrargs.aod)
-        sys.exit()
-elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        sys.exit()
+    myAod =  extrargs.aod
+    textAodList = myAod.startswith("@")
+    aodRootFile = myAod.endswith(".root")
+    textControl = myAod.endswith("txt") or myAod.endswith("text") 
+    if textAodList == True and textControl == True:
+        myAod = myAod.replace("@","")
+        logging.info("You provided AO2D list as text file : %s",myAod)
+        if os.path.isfile(myAod) == False:
+            logging.error("%s File not found in path!!!", myAod)
+            sys.exit()
+        else:
+            logging.info("%s has valid File Format and Path, File Found", myAod)
+         
+    elif aodRootFile == True:
+        logging.info("You provided single AO2D as root file  : %s",myAod)
+        if os.path.isfile(myAod) == False:
+            logging.error("%s File not found in path!!!", myAod)
+            sys.exit()
+        else:
+            logging.info("%s has valid File Format and Path, File Found", myAod)
+                    
+    else:
+        logging.error("%s Wrong formatted File, check your file!!!", myAod)
+        sys.exit()     
+
+        
+        
+#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
+        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
+        #sys.exit()
         
 if extrargs.reader != None:
     if os.path.isfile(extrargs.reader) == False:
