@@ -100,18 +100,27 @@ class ChoicesCompleterList(object):
 ###################################
 
 centralityTableSelections = {
-    "V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+    "Run2V0M": "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDtks": "Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDcls": "Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL0": "Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL1": "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFV0A": "Produces centrality percentiles using FV0A multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFT0M": "Produces centrality percentiles using FT0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFDDM": "Produces centrality percentiles using FDD multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estNTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)" 
 }
-
 centralityTableSelectionsList = []
 for k,v in centralityTableSelections.items():
     centralityTableSelectionsList.append(k)
     
-centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+centralityTableParameters = ["estRun2V0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1","estFV0A","estFT0M","estFDDM","estNTPV"]
+#TODO: Add genname parameter
+
+ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
+
+ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
+
 PIDSelections = {
     "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
@@ -246,9 +255,22 @@ groupEventSelection.add_argument('--syst', help="Collision System Selection ex. 
 groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
 groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
+# multiplicity-table
+groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
+groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+# tof-pid, tof-pid-full
+groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
+groupTofPid.add_argument('--isWSlice', help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid.add_argument('--enableTimeDependentResponse', help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 #tof-pid-beta
 groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
 groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+
+# tof-event-time
+groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
+groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
 # DQ Flow Task Selections
 GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
@@ -269,15 +291,15 @@ GroupAnalysisQvector.add_argument('--ccdbPath', help="base path to the ccdb obje
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST').completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
 groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)')
 
 for key,value in centralityTableSelections.items():
     groupEst.add_argument(key, help=value, action='none')
 
 # pid
-groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
@@ -287,7 +309,7 @@ groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Help
 groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
@@ -371,6 +393,11 @@ if extrargs.pid != None:
 if extrargs.est != None:
     prefix_est = "est"
     extrargs.est = [prefix_est + sub for sub in extrargs.est]
+    
+# add prefix for extrargs.FT0 for tof-event-time
+if extrargs.FT0 != None:
+    prefix_process = "process"
+    extrargs.FT0 = prefix_process + extrargs.FT0
     
 ######################################################################################
 
@@ -470,7 +497,7 @@ for key, value in config.items():
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
             
-            # event-selection
+            # event-selection-task
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
@@ -479,12 +506,53 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)
                 
+            # multiplicity-table
+            if value == "doVertexZeq":
+                if extrargs.isVertexZeq == "true":
+                    config[key][value] = "true"
+                    config[key]["doDummyZeq"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] doDummyZeq : false",key)  
+                if extrargs.isVertexZeq == "false":
+                    config[key][value] = "false"
+                    config[key]["doDummyZeq"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] doDummyZeq : true",key)
+                    
+            # tof-pid, tof-pid-full
+            if value == "processWSlice":
+                if extrargs.isWSlice == "true":
+                    config[key][value] = "true"
+                    config[key]["processWoSlice"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] processWoSlice : false",key)  
+                if extrargs.isWSlice == "false":
+                    config[key][value] = "false"
+                    config[key]["processWoSlice"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] processWoSlice : true",key)
+                    
+            if value == "enableTimeDependentResponse" and extrargs.enableTimeDependentResponse:
+                    config[key][value] = extrargs.enableTimeDependentResponse
+                    logging.debug(" - [%s] %s : %s",key,value,extrargs.enableTimeDependentResponse)
+                     
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
+                
+            # tof-event-time
+            if  (value in ft0Parameters) and extrargs.FT0:
+                if value  == extrargs.FT0:
+                    value2 = "true"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                elif value != extrargs.FT0:
+                    value2 = "false"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)   
                                                     
                                                                   
 # Transaction Management for Most of Parameters for debugging, monitoring and logging

@@ -126,19 +126,28 @@ tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWi
         "processOnlyBCs"]
 
 centralityTableSelections = {
-    "V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+    "Run2V0M": "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDtks": "Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDcls": "Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL0": "Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL1": "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFV0A": "Produces centrality percentiles using FV0A multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFT0M": "Produces centrality percentiles using FT0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFDDM": "Produces centrality percentiles using FDD multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estNTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)" 
 }
 centralityTableSelectionsList = []
 for k,v in centralityTableSelections.items():
     centralityTableSelectionsList.append(k)
     
-centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+centralityTableParameters = ["estRun2V0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1","estFV0A","estFT0M","estFDDM","estNTPV"]
+#TODO: Add genname parameter
 
 V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+
+ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
+
+ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
 
 PIDSelections = {
     "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
@@ -204,7 +213,6 @@ muonSelsList = []
 barrelSelsListAfterSplit = []
 muonSelsListAfterSplit = []
 
-# Get system variables in alienv.#TODO:In alienv we don't have cuts and signal library!!! We need discuss this thing
 O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
 QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
 O2_ROOT=os.environ.get('O2_ROOT')
@@ -329,7 +337,7 @@ groupCoreSelections = parser.add_argument_group(title='Core configurations that 
 groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 groupCoreSelections.add_argument('-runData', help="Run over data", action="store_true")
 groupCoreSelections.add_argument('-runMC', help="Run over MC", action="store_true")
-groupCoreSelections.add_argument('--run', help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
+parser.add_argument('--run', help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
 #parser.add_argument('analysisString', metavar='text', help='my analysis string', required=False) # optional interface
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
 groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
@@ -340,33 +348,32 @@ groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to
 # Interface Parameters #
 ########################
 
-
 # aod
 groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
-groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
-groupAutomations.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store", default="true", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # table-maker
-groupTableMakerConfigs = parser.add_argument_group(title='Data processor options: table-maker')
-groupTableMakerConfigs.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgBarrelTrackCuts', help=" Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs = parser.add_argument_group(title='Data processor options: table-maker/table-maker-m-c')
+groupTableMakerConfigs.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs.add_argument('--cfgBarrelTrackCuts', help=" Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", nargs='*', type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 groupTableMakerConfigs.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
 groupTableMakerConfigs.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupTableMakerConfigs.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupTableMakerConfigs.add_argument('--cfgDetailedQA', help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-#parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
+#groupTableMakerConfigs.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 groupTableMakerConfigs.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
 groupTableMakerConfigs.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store", nargs='*', type=str, metavar='CFGMCSIGNALS').completer = ChoicesCompleterList(allMCSignals)
+groupTableMakerConfigs.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store", nargs='*', type=str, metavar='CFGMCSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 # table-maker process
 groupProcessTableMaker = parser.add_argument_group(title='Data processor options: table-maker/table-maker-m-c')
-groupProcessTableMaker.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(tablemakerProcessAllSelectionsList)
+groupProcessTableMaker.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs='*', metavar='PROCESS', choices=tablemakerProcessAllSelectionsList).completer = ChoicesCompleterList(tablemakerProcessAllSelectionsList)
 for key,value in tablemakerProcessAllSelections.items():
     groupProcessTableMaker.add_argument(key, help=value, action='none')
 
@@ -376,33 +383,44 @@ groupEventSelection.add_argument('--syst', help="Collision System Selection ex. 
 groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=(eventMuonSelections)).completer = ChoicesCompleter(eventMuonSelections)
 groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
+# multiplicity-table
+groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
+groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+# tof-pid, tof-pid-full
+groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
+groupTofPid.add_argument('--isWSlice', help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid.add_argument('--enableTimeDependentResponse', help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
 # track-propagation
 groupTrackPropagation = parser.add_argument_group(title='Data processor options: track-propagation')
 groupTrackPropagation.add_argument('--isCovariance', help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store",type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
-#tof-pid-beta
+# tof-pid-beta
 groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
 groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
-groupTofPidBeta.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+# tof-event-time
+groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
+groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
 # d-q-track barrel-task
-GroupDQTrackBarrelTask = parser.add_argument_group(title='Data processor options: d-q-track barrel-task')
-GroupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default='false', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQTrackBarrelTask = parser.add_argument_group(title='Data processor options: d-q-track barrel-task')
+groupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default='false', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
-# d-q muons selection
-GroupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons selection')
-GroupDQMuonsSelection .add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+# d-q muons-selection
+groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons-selection')
+groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs='*', type=str, metavar='CFGMUONSCUT', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # d-q-filter-p-p-task
-GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-GroupDQFilterPP.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", nargs='*', type=str, metavar='CFGPAIRCUTS').completer = ChoicesCompleterList(allCuts)
-GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
+groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST').completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
 
 for key,value in centralityTableSelections.items():
     groupCentralityTable.add_argument(key, help=value, action='none')
@@ -424,8 +442,8 @@ groupV0Selector.add_argument('--mincrossedrows', help="Min crossed rows", action
 groupV0Selector.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", type=str)
 
 # pid
-groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
@@ -436,7 +454,7 @@ groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the 
 groupAdditionalHelperCommands.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
@@ -572,7 +590,7 @@ if extrargs.MCSignalsLister:
 # PREFIX ADDING PART #
 ###################### 
 
-# add prefix for extrargs.process for TableMaker and Filter PP
+# add prefix for extrargs.process for table-maker/table-maker-m-c and d-q-filter-p-p
 if extrargs.process != None:
     prefix_process = "process"
     extrargs.process = [prefix_process + sub for sub in extrargs.process]
@@ -582,10 +600,15 @@ if extrargs.pid != None:
     prefix_pid = "pid-"
     extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
     
-# add prefix for extrargs.est for centrality table
+# add prefix for extrargs.est for centrality-table
 if extrargs.est != None:
     prefix_est = "est"
     extrargs.est = [prefix_est + sub for sub in extrargs.est]
+
+# add prefix for extrargs.FT0 for tof-event-time
+if extrargs.FT0 != None:
+    prefix_process = "process"
+    extrargs.FT0 = prefix_process + extrargs.FT0
     
 ######################################################################################
 
@@ -673,13 +696,14 @@ if extrargs.runMC and extrargs.runData:
     logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
     sys.exit()
     
-  
+"""  
 # Check whether we run over run 2 or run 3
 if not (extrargs.run == '3' or extrargs.run == '2'):
     logging.error("You have to specify either --run 3 or --run 2 !")
     logging.info("Example For run 2 : python3 IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --run 2 --param value ...")
     logging.info("Example For run 3 : python3 IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --run 3 --param value ...")
     sys.exit()
+"""
 
 runOverMC = False
 if (extrargs.runMC):
@@ -738,7 +762,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.aod
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                 
-            # Process Table Maker
+            # table-maker/table-maker-m-c process selections
             if (value in tablemakerProcessAllParameters) and extrargs.process:
                 if value in extrargs.process:
                     value2 = "true"
@@ -762,7 +786,7 @@ for key, value in config.items():
                     filterSearch = [s for s in extrargs.process if "Filter" in s]   
                                                          
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
-                    if len(fullSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                    if len(fullSearch) > 0 and extrargs.runData:
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                         DQ_FULL_SELECTED = True
                         #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
@@ -787,7 +811,7 @@ for key, value in config.items():
                         DQ_EVENT_SELECTED = True
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
                                    
-                    if len(barrelSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                    if len(barrelSearch) > 0 and extrargs.runData:
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
@@ -803,30 +827,30 @@ for key, value in config.items():
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
    
-                    if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
+                    if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                         config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
                         #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
                         #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
                                          
-                    if len(muonSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                    if len(muonSearch) > 0 and extrargs.runData:
                         config["d-q-muons-selection"]["processSelection"] = "true"
                         #logging.debug(" - [d-q-muons-selection] processSelection : true")
                         DQ_MUON_SELECTED  = True
-                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run == '3':
+                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
                         config["d-q-muons-selection"]["processSelection"] = "false"
                         #logging.debug(" - [d-q-muons-selection] processSelection : false")
                             
-                    if len(bcsSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                    if len(bcsSearch) > 0 and extrargs.runData:
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
                         DQ_EVENT_SELECTED = True
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
-                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.run =='3':
+                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
                         config["d-q-event-selection-task"]["processEventSelection"] = "false"
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
                            
                     # Automatization for Activate or Disable d-q filter pp run3
-                    if len(filterSearch) > 0 and extrargs.runData and extrargs.run == '3':
+                    if len(filterSearch) > 0 and extrargs.runData:
                         config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
                         DQ_FILTERPP_SELECTED = True
@@ -841,7 +865,7 @@ for key, value in config.items():
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                                  
-                    if len(filterSearch) == 0 and extrargs.runData and extrargs.run == '3':
+                    if len(filterSearch) == 0 and extrargs.runData:
                         config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
                         DQ_FILTERPP_SELECTED = False
@@ -853,14 +877,8 @@ for key, value in config.items():
                     value2 = "false"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)
-                    
-                                 
-            # Filter PP Selections        
-            if value =='cfgPairCuts' and extrargs.cfgPairCuts:
-                if type(extrargs.cfgPairCuts) == type(clist):
-                    extrargs.cfgPairCuts = listToString(extrargs.cfgPairCuts) 
-                config[key][value] = extrargs.cfgPairCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgPairCuts)
+                                                     
+            # filterPP Selections        
             if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
                 if type(extrargs.cfgBarrelSels) == type(clist):
                     extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
@@ -883,6 +901,7 @@ for key, value in config.items():
                 if value == 'processRun2':
                     config[key][value] = "true"
                     logging.debug(" - [%s] %s : true",key,value)
+                    
             if extrargs.run == "3":
                 if value == 'isRun3':
                     config[key][value] = "true"
@@ -950,7 +969,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.maxchi2tpc
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.maxchi2tpc)                  
                 
-            # centrality table
+            # centrality-table
             if (value in centralityTableParameters) and extrargs.est:
                 if value in extrargs.est:
                     value2 = "1"
@@ -961,7 +980,7 @@ for key, value in config.items():
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
                     
-            # cfg in TableMaker
+            # table-maker/table-maker-m-c cfg selections
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
@@ -1004,14 +1023,14 @@ for key, value in config.items():
                 config[key][value] = extrargs.cfgMCsignals
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMCsignals)  
                 
-            #d-q muons selection cut
+            #d-q-muons-selection
             if value =='cfgMuonsCuts' and extrargs.cfgMuonsCuts:
                 if type(extrargs.cfgMuonsCuts) == type(clist):
                     extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)                
                 config[key][value] = extrargs.cfgMuonsCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonsCuts) 
 
-            # event-selection
+            # event-selection-task
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
@@ -1021,26 +1040,53 @@ for key, value in config.items():
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)  
-                
+             
+            # multiplicity-table
+            if value == "doVertexZeq":
+                if extrargs.isVertexZeq == "true":
+                    config[key][value] = "true"
+                    config[key]["doDummyZeq"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] doDummyZeq : false",key)  
+                if extrargs.isVertexZeq == "false":
+                    config[key][value] = "false"
+                    config[key]["doDummyZeq"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] doDummyZeq : true",key)
+                    
+            # tof-pid, tof-pid-full
+            if value == "processWSlice":
+                if extrargs.isWSlice == "true":
+                    config[key][value] = "true"
+                    config[key]["processWoSlice"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] processWoSlice : false",key)  
+                if extrargs.isWSlice == "false":
+                    config[key][value] = "false"
+                    config[key]["processWoSlice"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] processWoSlice : true",key)
+                    
+            if value == "enableTimeDependentResponse" and extrargs.enableTimeDependentResponse:
+                    config[key][value] = extrargs.enableTimeDependentResponse
+                    logging.debug(" - [%s] %s : %s",key,value,extrargs.enableTimeDependentResponse)
+                     
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)  
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
                 
-            # tof-pid-full, tof-pid for data run 3                
-            if value == 'processEvTime' and extrargs.runData and extrargs.run == '3': 
-                if extrargs.isProcessEvTime == "true":
-                    config[key][value] = "true"
-                    config[key]["processNoEvTime"] = "false"
-                    logging.debug(" - %s %s : true",key,value)
-                    logging.debug(" - [%s] processNoEvTime : false",key)  
-                if extrargs.isProcessEvTime == "false":
-                    config[key][value] = "false"
-                    config[key]["processNoEvTime"] = "true"
-                    logging.debug(" - %s %s : false",key,value) 
-                    logging.debug(" - [%s] processNoEvTime : true",key)  
-                    
-                    
+            # tof-event-time
+            if  (value in ft0Parameters) and extrargs.FT0:
+                if value  == extrargs.FT0:
+                    value2 = "true"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                elif value != extrargs.FT0:
+                    value2 = "false"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                                             
             # all d-q tasks and selections
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
@@ -1071,7 +1117,7 @@ for key, value in config.items():
             """
                     
             # dummy automizer
-            if value == 'processDummy' and extrargs.autoDummy and extrargs.runData and extrargs.run == '3':
+            if value == 'processDummy' and extrargs.autoDummy and extrargs.runData:
                 
                 if config["d-q-barrel-track-selection-task"]["processSelection"] == "true" or config["d-q-barrel-track-selection-task"]["processSelectionTiny"] == "true":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "false"
@@ -1104,7 +1150,7 @@ for key, value in config.items():
                     
 # LOGGER MESSAGES FOR DQ SELECTIONS
 
-if extrargs.run == "3" and extrargs.runData:
+if extrargs.runData:
 
     if DQ_FULL_SELECTED == True:
         logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
@@ -1172,8 +1218,9 @@ try:
 except:
     logging.warning("No process function provided in args, CLI Will not Check process validation for tableMaker/tableMakerMC process")
 
-            
-                
+     
+#TODO Fix help messages based on latest changes            
+"""              
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
 for key,value in configuredCommands.items():
     if(value != None):
@@ -1201,6 +1248,7 @@ for key,value in configuredCommands.items():
             logging.warning("--%s Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI", key)
         if key == 'isProcessEvTime' and (extrargs.run == '2' or extrargs.runMC):
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
+"""
                                          
 # Centrality table delete for pp processes
 if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):

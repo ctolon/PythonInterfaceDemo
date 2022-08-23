@@ -106,6 +106,8 @@ analysisSelections = {
     "eventSelection" : "Run event selection on DQ skimmed events",
     "muonSelection" : "Run muon selection on DQ skimmed muons",
     "trackSelection" : "Run barrel track selection on DQ skimmed tracks",
+    "eventMixingSelection" :"Run mixing on skimmed tracks based muon and track selections",
+    "eventMixingVnSelection" :"Run vn mixing on skimmed tracks based muon and track selections",
     "sameEventPairing" : "Run same event pairing selection on DQ skimmed data" ,
     "dileptonHadron" :  "Run dilepton-hadron pairing, using skimmed data"
 }
@@ -114,11 +116,13 @@ for k,v in analysisSelections.items():
     analysisSelectionsList.append(k)
 
 SameEventPairingProcessSelections = {
-    "JpsiToEE" : "Run electron-electron pairing, with skimmed tracks",
-    "JpsiToMuMu" : "Run muon-muon pairing, with skimmed muons",
-    "JpsiToMuMuVertexing" : "Run muon-muon pairing and vertexing, with skimmed muons",
+    "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
+    "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
+    "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
+    "VnJpsiToEESkimmed": "Run barrel-barrel vn mixing on skimmed tracks",
+    "VnJpsiToMuMuSkimmed": "Run muon-muon vn mixing on skimmed tracks",
     "ElectronMuon" : "Run electron-muon pairing, with skimmed tracks/muons" ,
-    "All" :  "Run all types of pairing, with skimmed tracks/muons"
+    "All": "Run all types of pairing, with skimmed tracks/muons"
 }
 SameEventPairingProcessSelectionsList = []
 for k,v in SameEventPairingProcessSelections.items():
@@ -249,42 +253,38 @@ groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don
 
 # Skimmed processes for SEE and Analysis Selections
 groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
-groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS').completer = ChoicesCompleterList(analysisSelectionsList)
+groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS', choices=analysisSelectionsList).completer = ChoicesCompleterList(analysisSelectionsList)
 
 for key,value in analysisSelections.items():
     groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
-groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
+groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS', choices=SameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
 groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in SameEventPairingProcessSelections.items():
     groupProcess.add_argument(key, help=value, action='none')
 
-# analysis-event-mixing
-groupAnalysisEventMixing = parser.add_argument_group(title='Data processor options: analysis-event-mixing')
-groupAnalysisEventMixing.add_argument('--isMixingEvent', help="analysis-event-mixing: process function activate for event mixing", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-
 # cfg for QA
-groupQASelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
+groupQASelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing')
 groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # analysis-event-selection
 groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')
-groupAnalysisEventSelection.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", nargs='*', action="store", type=str, metavar='CFGMIXINGVARS').completer = ChoicesCompleterList(allMixing)
-groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisEventSelection.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", nargs='*', action="store", type=str, metavar='CFGMIXINGVARS', choices=allMixing).completer = ChoicesCompleterList(allMixing)
+groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-muon-selection
 groupAnalysisMuonSelection = parser.add_argument_group(title='Data processor options: analysis-muon-selection')
-groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-track-selection
 groupAnalysisTrackSelection = parser.add_argument_group(title='Data processor options: analysis-track-selection')
-groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-dilepton-hadron
 groupAnalysisDileptonHadron = parser.add_argument_group(title='Data processor options: analysis-dilepton-hadron')
-groupAnalysisDileptonHadron.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGLEPTONCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisDileptonHadron.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGLEPTONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
@@ -292,7 +292,7 @@ groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the 
 groupAdditionalHelperCommands.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
@@ -460,7 +460,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.reader
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.reader)
                 
-            # analysis-skimmed-selections
+            # analysis-event-selection, analysis-track-selection, analysis-muon-selection, analysis-same-event-pairing
             if value =='processSkimmed' and extrargs.analysis:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Skipped None types, because can't iterate in None type
@@ -506,89 +506,71 @@ for key, value in config.items():
                             if 'sameEventPairing' not in valueCfg:
                                 ANALYSIS_SEE_SELECTED = False
                                     
-            # Analysis Event Mixing Selections
-            if value == 'processBarrelSkimmed' and extrargs.isMixingEvent:                        
+            # Analysis-event-mixing
+            if value == 'processBarrelSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Skipped None types, because can't iterate in None type
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
-                            if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                             
-                                if 'trackSelection' in valueCfg:
+                            if key == 'analysis-event-mixing':                             
+                                if 'trackSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'trackSelection' not in valueCfg:
+                                if 'eventMixingSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                         
-            if value == 'processMuonSkimmed' and extrargs.isMixingEvent:                        
+            if value == 'processMuonSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Skipped None types, because can't iterate in None type
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
-                            if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                                        
-                                if 'muonSelection' in valueCfg:
+                            if key == 'analysis-event-mixing':                                       
+                                if 'muonSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'muonSelection' not in valueCfg:
+                                if 'eventMixingSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                         
-            if value == 'processBarrelMuonSkimmed' and extrargs.isMixingEvent:                        
+            if value == 'processBarrelMuonSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Skipped None types, because can't iterate in None type
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
-                            if key == 'analysis-event-mixing' and extrargs.isMixingEvent == 'true':                                                             
-                                if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg:
+                            if key == 'analysis-event-mixing':                                                             
+                                if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'trackSelection' not in valueCfg or 'muonSelection' not in valueCfg:
+                                if 'eventMixingSelection' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
-                                           
-            # analysis-dummy-selections (We have automated thins so not need most of time)
-            """
-            if value =='processDummy' and extrargs.analysisDummy:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'analysisDummy': #  Only Select key for dummies
-                        
-                            if key == 'analysis-event-selection':
-                                if 'event' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'event' not in valueCfg:
-                                    config[key][value] = 'false' 
-                                   
-                            if key == 'analysis-track-selection':                      
-                                if 'track' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'track' not in valueCfg:
-                                    config[key][value] = 'false'
-                                                        
-                            if key == 'analysis-muon-selection':
-                                if 'muon' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'muon' not in valueCfg:
-                                    config[key][value] = 'false'
-                                        
-                            if key == 'analysis-event-mixing':
-                                if 'eventMixing' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'eventMixing' not in valueCfg:
-                                    config[key][value] = 'false'
                                     
-                            if key == 'analysis-same-event-pairing':
-                                if 'sameEventPairing' in valueCfg:
+            if value == 'processBarrelVnSkimmed' and extrargs.analysis:                        
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Skipped None types, because can't iterate in None type
+                        if keyCfg == 'analysis': #  Only Select key for analysis
+                            
+                            if key == 'analysis-event-mixing':                             
+                                if 'trackSelection' in valueCfg and 'eventMixingVnSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'sameEventPairing' not in valueCfg:
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                if 'eventMixingVnSelection' not in valueCfg:
                                     config[key][value] = 'false'
-                                        
-                            if key == 'analysis-dilepton-hadron':
-                                if 'dileptonHadron' in valueCfg:
+                                    logging.debug(" - [%s] %s : false",key,value)
+                                                                        
+            if value == 'processMuonVnSkimmed' and extrargs.analysis:                        
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Skipped None types, because can't iterate in None type
+                        if keyCfg == 'analysis': #  Only Select key for analysis
+                            
+                            if key == 'analysis-event-mixing':                                        
+                                if 'muonSelection' in valueCfg and 'eventMixingVnSelection' in valueCfg:
                                     config[key][value] = 'true'
-                                if 'dileptonHadron' not in valueCfg:
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                if 'eventMixingVnSelection' not in valueCfg:
                                     config[key][value] = 'false'
-            """
+                                    logging.debug(" - [%s] %s : false",key,value)
                  
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
@@ -670,6 +652,30 @@ for key, value in config.items():
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
+                            if 'VnJpsiToEE' in valueCfg and value == "processVnJpsiToEESkimmed":
+                                if ANALYSIS_TRACK_SELECTED == True:
+                                    config[key]["processVnJpsiToEESkimmed"] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                if ANALYSIS_TRACK_SELECTED == False:
+                                    logging.error("trackSelection not found in analysis for processVnJpsiToEESkimmed -> analysis-same-event-pairing")
+                                    sys.exit()
+
+                            if 'VnJpsiToEE' not in valueCfg and value == "processVnJpsiToEESkimmed":
+                                    config[key]["processVnJpsiToEESkimmed"] = 'false'
+                                    logging.debug(" - [%s] %s : false",key,value)
+                                    
+                            if 'VnJpsiToMuMu' in valueCfg and value == "processVnJpsiToMuMuSkimmed":
+                                if ANALYSIS_MUON_SELECTED == True:
+                                    config[key]["processVnJpsiToMuMuSkimmed"] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                if ANALYSIS_MUON_SELECTED == False:
+                                    logging.error("muonSelection not found in analysis for processVnJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                                    sys.exit()
+                                    
+                            if 'VnJpsiToMuMu' not in valueCfg and value == "processVnJpsiToMuMuSkimmed":
+                                config[key]["processVnJpsiToMuMuSkimmed"] = 'false'
+                                logging.debug(" - [%s] %s : false",key,value)
+                                
                             if 'ElectronMuon' in valueCfg and value == "processElectronMuonSkimmed":
                                 if ANALYSIS_TRACK_SELECTED == True and ANALYSIS_MUON_SELECTED == True:
                                     config[key]["processElectronMuonSkimmed"] = 'true'
@@ -696,6 +702,8 @@ for key, value in config.items():
                             config[key]["processJpsiToEESkimmed"] = 'false'
                             config[key]["processJpsiToMuMuSkimmed"] = 'false'
                             config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                            config[key]["processVnJpsiToEESkimmed"] = 'false'
+                            config[key]["processVnJpsiToMuMuSkimmed"] = 'false'
                             config[key]["processElectronMuonSkimmed"] = 'false'
                             config[key]["processAllSkimmed"] = 'false'
             
@@ -722,10 +730,10 @@ for key, value in config.items():
                 if config["analysis-event-mixing"]["processBarrelSkimmed"] == "false" and config["analysis-event-mixing"]["processMuonSkimmed"] == "false" and config["analysis-event-mixing"]["processBarrelMuonSkimmed"] == "false":
                     config["analysis-event-mixing"]["processDummy"] = "true"  
                     
-                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "true" or config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "true" or config["analysis-same-event-pairing"]["processAllSkimmed"] == "true":
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "true" or config["analysis-same-event-pairing"]["processVnJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processVnJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "true" or config["analysis-same-event-pairing"]["processAllSkimmed"] == "true":
                     config["analysis-same-event-pairing"]["processDummy"] = "false"
                             
-                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "false" and config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "false" and config["analysis-same-event-pairing"]["processAllSkimmed"] == "false":
+                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "false" and config["analysis-same-event-pairing"]["processVnJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processVnJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processElectronMuonSkimmed"] == "false" and config["analysis-same-event-pairing"]["processAllSkimmed"] == "false":
                     config["analysis-same-event-pairing"]["processDummy"] = "true"
                     
                 if config["analysis-dilepton-hadron"]["processSkimmed"] == "true":

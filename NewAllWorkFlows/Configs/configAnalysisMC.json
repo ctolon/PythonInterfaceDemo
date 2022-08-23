@@ -43,7 +43,7 @@
         "processDummy": "false"
     },
     "analysis-dilepton-track": {
-        "cfgLeptonCuts": "",
+        "cfgLeptonCuts": "muonQualityCuts",
         "cfgFillCandidateTable": "false",
         "cfgBarrelMCRecSignals": "mumuFromJpsiFromBc,mumumuFromBc",
         "cfgBarrelMCGenSignals": "Jpsi",

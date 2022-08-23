@@ -113,17 +113,26 @@ for k,v in dqSelections.items():
     dqSelectionsList.append(k)
 
 centralityTableSelections = {
-    "V0M" : "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDtks" :"Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDcls" :"Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL0" :"Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL1" : "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
+    "Run2V0M": "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDtks": "Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2SPDcls": "Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL0": "Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "Run2CL1": "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFV0A": "Produces centrality percentiles using FV0A multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFT0M": "Produces centrality percentiles using FT0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estFDDM": "Produces centrality percentiles using FDD multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
+    "estNTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)" 
 }
 centralityTableSelectionsList = []
 for k,v in centralityTableSelections.items():
     centralityTableSelectionsList.append(k)
     
-centralityTableParameters = ["estV0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1"]
+centralityTableParameters = ["estRun2V0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1","estFV0A","estFT0M","estFDDM","estNTPV"]
+#TODO: Add genname parameter
+
+ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
+
+ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
 
 V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
 
@@ -315,52 +324,64 @@ groupEventSelection.add_argument('--syst', help="Collision System Selection ex. 
 groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
 groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
 
+# multiplicity-table
+groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
+groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+# tof-pid, tof-pid-full
+groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
+groupTofPid.add_argument('--isWSlice', help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid.add_argument('--enableTimeDependentResponse', help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+
+#tof-pid-beta
+groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
+groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+
+# tof-event-time
+groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
+groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
+
 # DQ Task Selections
 groupProcessFilterPP= parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task, d-q-event-selection-task, d-q-barrel-track-selection, d-q-muons-selection ')
-groupProcessFilterPP.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(dqSelectionsList)
+groupProcessFilterPP.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS', choices=dqSelectionsList).completer = ChoicesCompleterList(dqSelectionsList)
 
 for key,value in dqSelections.items():
     groupProcessFilterPP.add_argument(key, help=value, action='none')
 
 # d-q-filter-p-p-task
 GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS').completer = ChoicesCompleterList(allSels)
+GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
 
 ## d-q-event-selection-task
 groupDQEventSelection = parser.add_argument_group(title='Data processor options: d-q-event-selection-task')
-groupDQEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+groupDQEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 ## d-q-barrel-track-selection
 groupDQBarrelTrackSelection = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection')
-groupDQBarrelTrackSelection.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupDQBarrelTrackSelection.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 ## d-q-muons-selection
 groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q-muons-selection')
-groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 #all d-q tasks and selections
 groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task')
 groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # pid
-groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
     
-# tof-pid-full, tof-pid
-groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-beta')
-groupTofPid.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
-groupTofPid.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
-
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
 groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
@@ -445,6 +466,11 @@ if extrargs.cutLister:
 if extrargs.pid != None:
     prefix_pid = "pid-"
     extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
+    
+# add prefix for extrargs.FT0 for tof-event-time
+if extrargs.FT0 != None:
+    prefix_process = "process"
+    extrargs.FT0 = prefix_process + extrargs.FT0
     
 ######################################################################################
 
@@ -595,37 +621,6 @@ for key, value in config.items():
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
-
-                                    
-            # Run 2/3 and MC/DATA Selections for automations
-            """         
-            if extrargs.run == "2":
-                if value == 'isRun3':
-                    config[key][value] = "false"
-                if value == 'processRun3':
-                    config[key][value] = "false"
-                if value == 'processRun2':
-                    config[key][value] = "true"
-            if extrargs.run == "3":
-                if value == 'isRun3':
-                    config[key][value] = "true"
-                if value == 'processRun3':
-                    config[key][value] = "true"
-                if value == 'processRun2':
-                    config[key][value] = "false"
-            
-            if extrargs.run == '2' and extrargs.runMC:
-                if value == 'isRun2MC':
-                    config[key][value] = "true"
-            if extrargs.run != '2' and extrargs.runData:
-                if value == 'isRun2MC':
-                    config[key][value] = "false"
-                                            
-            if value == "isMC" and extrargs.runMC:
-                    config[key][value] = "true"
-            if value == "isMC" and extrargs.runData:
-                    config[key][value] = "false"                               
-            """     
                   
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
@@ -650,23 +645,52 @@ for key, value in config.items():
                 config[key][value] = extrargs.customDeltaBC
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC) 
                 
+            # multiplicity-table
+            if value == "doVertexZeq":
+                if extrargs.isVertexZeq == "true":
+                    config[key][value] = "true"
+                    config[key]["doDummyZeq"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] doDummyZeq : false",key)  
+                if extrargs.isVertexZeq == "false":
+                    config[key][value] = "false"
+                    config[key]["doDummyZeq"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] doDummyZeq : true",key)
+                    
+            # tof-pid, tof-pid-full
+            if value == "processWSlice":
+                if extrargs.isWSlice == "true":
+                    config[key][value] = "true"
+                    config[key]["processWoSlice"] = "false"
+                    logging.debug(" - %s %s : true",key,value)
+                    logging.debug(" - [%s] processWoSlice : false",key)  
+                if extrargs.isWSlice == "false":
+                    config[key][value] = "false"
+                    config[key]["processWoSlice"] = "true"
+                    logging.debug(" - %s %s : false",key,value) 
+                    logging.debug(" - [%s] processWoSlice : true",key)
+                    
+            if value == "enableTimeDependentResponse" and extrargs.enableTimeDependentResponse:
+                    config[key][value] = extrargs.enableTimeDependentResponse
+                    logging.debug(" - [%s] %s : %s",key,value,extrargs.enableTimeDependentResponse)
+                     
             # tof-pid-beta
             if value == 'tof-expreso' and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)   
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
+                
+            # tof-event-time
+            if  (value in ft0Parameters) and extrargs.FT0:
+                if value  == extrargs.FT0:
+                    value2 = "true"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                elif value != extrargs.FT0:
+                    value2 = "false"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)     
                                                     
-            # processEvTime    
-            if value == 'processEvTime':
-                if extrargs.isProcessEvTime == "true":
-                    config[key][value] = "true"
-                    config[key]["processNoEvTime"] = "false"
-                    logging.debug(" - %s %s : true",key,value)
-                    logging.debug(" - [%s] processNoEvTime : false",key)  
-                if extrargs.isProcessEvTime == "false":
-                    config[key][value] = "false"
-                    config[key]["processNoEvTime"] = "true"
-                    logging.debug(" - %s %s : false",key,value) 
-                    logging.debug(" - [%s] processNoEvTime : true",key)   
                                                   
             # dummy selection
             """
