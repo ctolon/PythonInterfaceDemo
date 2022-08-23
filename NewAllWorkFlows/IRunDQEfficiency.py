@@ -508,10 +508,23 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-dilepton-track':
-                                if 'dileptonTrackSelection' in valueCfg:
+                                if 'dileptonTrackDimuonMuonSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'dileptonTrackSelection' not in valueCfg:
+                                if 'dileptonTrackDimuonMuonSelection' not in valueCfg:
+                                    config[key][value] = 'false' 
+                                    logging.debug(" - [%s] %s : false",key,value)
+                                    
+            if value =='processDielectronKaonSkimmed' and extrargs.analysis:
+                for keyCfg,valueCfg in configuredCommands.items():
+                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
+                        if keyCfg == 'analysis': #  Only Select key for analysis
+                            
+                            if key == 'analysis-dilepton-track':
+                                if 'dileptonTrackDielectronKaonSelection' in valueCfg:
+                                    config[key][value] = 'true'
+                                    logging.debug(" - [%s] %s : true",key,value)
+                                if 'dileptonTrackDielectronKaonSelection' not in valueCfg:
                                     config[key][value] = 'false' 
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
