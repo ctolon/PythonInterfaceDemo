@@ -228,8 +228,8 @@ with open('tempCutsLibrary.h') as f:
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Arguments to pass')
-#groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-#groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
+groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
@@ -348,11 +348,16 @@ if len(sys.argv) < 2:
   sys.exit()
 
 # Load the configuration file provided as the first parameter
-# Load the configuration file provided as the first parameter
+cfgControl = sys.argv[1] == extrargs.cfgFileName 
 config = {}
 try:
-    with open(sys.argv[1]) as configFile:           
-        config = json.load(configFile)
+    if cfgControl:
+        with open(extrargs.cfgFileName) as configFile:           
+            config = json.load(configFile)
+    else:
+        logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
+        logging.info("  ./IRunTableReader.py <yourConfig.json> <-runData|-runMC> --param value ...")
+        sys.exit()
         
 except FileNotFoundError:
     isConfigJson = sys.argv[1].endswith('.json')
