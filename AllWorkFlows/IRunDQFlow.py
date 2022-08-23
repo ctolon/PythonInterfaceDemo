@@ -269,7 +269,7 @@ GroupAnalysisQvector.add_argument('--ccdbPath', help="base path to the ccdb obje
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST').completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
 groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)')
 
 for key,value in centralityTableSelections.items():
@@ -277,7 +277,7 @@ for key,value in centralityTableSelections.items():
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
@@ -287,7 +287,7 @@ groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Help
 groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 

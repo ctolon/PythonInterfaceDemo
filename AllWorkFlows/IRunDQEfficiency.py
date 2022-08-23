@@ -250,9 +250,9 @@ for key,value in analysisSelections.items():
     groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
-groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
-groupProcessSEESelections.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELMCRECSIGNALS').completer = ChoicesCompleterList(allMCSignals)
-groupProcessSEESelections.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELMCGENSIGNALS').completer = ChoicesCompleterList(allMCSignals)
+groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS', choices=SameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
+groupProcessSEESelections.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELMCRECSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+groupProcessSEESelections.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELMCGENSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options')
 
 for key,value in SameEventPairingProcessSelections.items():
@@ -264,23 +264,23 @@ groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", ac
 
 # analysis-event-selection
 groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')
-groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-track-selection
 groupAnalysisTrackSelection = parser.add_argument_group(title='Data processor options: analysis-track-selection')
-groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisTrackSelection.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", nargs='*', action="store", type=str, metavar='CFGTRACKMCSIGNALIS').completer = ChoicesCompleterList(allMCSignals)
+groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupAnalysisTrackSelection.add_argument('--cfgTrackMCSignals', help="Space separated list of MC signals", nargs='*', action="store", type=str, metavar='CFGTRACKMCSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 # analysis-muon-selection
 groupAnalysisMuonSelection = parser.add_argument_group(title='Data processor options: analysis-muon-selection')
-groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisMuonSelection.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", nargs='*', action="store", type=str, metavar='CFGMUONMCSIGNALS').completer = ChoicesCompleterList(allMCSignals)
+groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupAnalysisMuonSelection.add_argument('--cfgMuonMCSignals', help="Space separated list of MC signals", nargs='*', action="store", type=str, metavar='CFGMUONMCSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 
 # analysis-dilepton-track ONLY FOR MC
 groupAnalysisDileptonTrack = parser.add_argument_group(title='Data processor options: analysis-dilepton-track')
-groupAnalysisDileptonTrack.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELDILEPTONMCRECSIGNALS').completer = ChoicesCompleterList(allMCSignals)
-groupAnalysisDileptonTrack.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELDILEPTONMCRECSIGNALS').completer = ChoicesCompleterList(allMCSignals)
+groupAnalysisDileptonTrack.add_argument('--cfgBarrelDileptonMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELDILEPTONMCRECSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+groupAnalysisDileptonTrack.add_argument('--cfgBarrelDileptonMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELDILEPTONMCRECSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
@@ -288,7 +288,7 @@ groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the 
 groupAdditionalHelperCommands.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 

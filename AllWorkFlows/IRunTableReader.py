@@ -249,13 +249,13 @@ groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don
 
 # Skimmed processes for SEE and Analysis Selections
 groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron')
-groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS').completer = ChoicesCompleterList(analysisSelectionsList)
+groupAnalysisSelections.add_argument('--analysis', help="Skimmed process selections for Data Analysis", action="store", nargs='*', type=str, metavar='ANALYSIS', choices=analysisSelectionsList).completer = ChoicesCompleterList(analysisSelectionsList)
 
 for key,value in analysisSelections.items():
     groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
-groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS').completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
+groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS', choices=SameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
 groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options (when a value added to parameter, processSkimmed value is converted from false to true)')
 
 for key,value in SameEventPairingProcessSelections.items():
@@ -271,20 +271,20 @@ groupQASelections.add_argument('--cfgQA', help="If true, fill QA histograms", ac
 
 # analysis-event-selection
 groupAnalysisEventSelection = parser.add_argument_group(title='Data processor options: analysis-event-selection')
-groupAnalysisEventSelection.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", nargs='*', action="store", type=str, metavar='CFGMIXINGVARS').completer = ChoicesCompleterList(allMixing)
-groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisEventSelection.add_argument('--cfgMixingVars', help="Mixing configs separated by a space", nargs='*', action="store", type=str, metavar='CFGMIXINGVARS', choices=allMixing).completer = ChoicesCompleterList(allMixing)
+groupAnalysisEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-muon-selection
 groupAnalysisMuonSelection = parser.add_argument_group(title='Data processor options: analysis-muon-selection')
-groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisMuonSelection.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", nargs='*', action="store", type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-track-selection
 groupAnalysisTrackSelection = parser.add_argument_group(title='Data processor options: analysis-track-selection')
-groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisTrackSelection.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # analysis-dilepton-hadron
 groupAnalysisDileptonHadron = parser.add_argument_group(title='Data processor options: analysis-dilepton-hadron')
-groupAnalysisDileptonHadron.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGLEPTONCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisDileptonHadron.add_argument('--cfgLeptonCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGLEPTONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
@@ -292,7 +292,7 @@ groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the 
 groupAdditionalHelperCommands.add_argument('--mixingLister', help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 

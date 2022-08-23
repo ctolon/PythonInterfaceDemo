@@ -343,30 +343,30 @@ groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to
 
 # aod
 groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
-groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
 
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
-groupAutomations.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store", default="true", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # table-maker
 groupTableMakerConfigs = parser.add_argument_group(title='Data processor options: table-maker')
-groupTableMakerConfigs.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgBarrelTrackCuts', help=" Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs.add_argument('--cfgBarrelTrackCuts', help=" Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupTableMakerConfigs.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", nargs='*', type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 groupTableMakerConfigs.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
 groupTableMakerConfigs.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", type=str.lower).completer = ChoicesCompleter(booleanSelections)
+groupTableMakerConfigs.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupTableMakerConfigs.add_argument('--cfgDetailedQA', help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 #parser.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
 groupTableMakerConfigs.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
 groupTableMakerConfigs.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store", nargs='*', type=str, metavar='CFGMCSIGNALS').completer = ChoicesCompleterList(allMCSignals)
+groupTableMakerConfigs.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store", nargs='*', type=str, metavar='CFGMCSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 # table-maker process
 groupProcessTableMaker = parser.add_argument_group(title='Data processor options: table-maker/table-maker-m-c')
-groupProcessTableMaker.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(tablemakerProcessAllSelectionsList)
+groupProcessTableMaker.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs='*', metavar='PROCESS', choices=tablemakerProcessAllSelectionsList).completer = ChoicesCompleterList(tablemakerProcessAllSelectionsList)
 for key,value in tablemakerProcessAllSelections.items():
     groupProcessTableMaker.add_argument(key, help=value, action='none')
 
@@ -386,23 +386,23 @@ groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the 
 groupTofPidBeta.add_argument('--isProcessEvTime', help="tof-pid -> processEvTime : Process Selection options true or false (string)", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # d-q-track barrel-task
-GroupDQTrackBarrelTask = parser.add_argument_group(title='Data processor options: d-q-track barrel-task')
-GroupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default='false', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQTrackBarrelTask = parser.add_argument_group(title='Data processor options: d-q-track barrel-task')
+groupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default='false', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # d-q muons selection
-GroupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons selection')
-GroupDQMuonsSelection .add_argument('--cfgMuonsCuts', help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons selection')
+groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs='*', type=str, metavar='CFGMUONSCUT', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 # d-q-filter-p-p-task
-GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-GroupDQFilterPP.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", nargs='*', type=str, metavar='CFGPAIRCUTS').completer = ChoicesCompleterList(allCuts)
-GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
+groupDQFilterPP.add_argument('--cfgPairCuts', help="Space separated list of pair cuts", action="store", nargs='*', type=str, metavar='CFGPAIRCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST').completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
 
 for key,value in centralityTableSelections.items():
     groupCentralityTable.add_argument(key, help=value, action='none')
@@ -425,7 +425,7 @@ groupV0Selector.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="st
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
@@ -436,7 +436,7 @@ groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the 
 groupAdditionalHelperCommands.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 

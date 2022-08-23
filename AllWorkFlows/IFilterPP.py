@@ -317,27 +317,27 @@ groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FI
 
 # DQ Task Selections
 groupProcessFilterPP= parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task, d-q-event-selection-task, d-q-barrel-track-selection, d-q-muons-selection ')
-groupProcessFilterPP.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS').completer = ChoicesCompleterList(dqSelectionsList)
+groupProcessFilterPP.add_argument('--process',help="DQ Tasks process Selections options", action="store", type=str, nargs='*', metavar='PROCESS', choices=dqSelectionsList).completer = ChoicesCompleterList(dqSelectionsList)
 
 for key,value in dqSelections.items():
     groupProcessFilterPP.add_argument(key, help=value, action='none')
 
 # d-q-filter-p-p-task
 GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS').completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS').completer = ChoicesCompleterList(allSels)
+GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
 
 ## d-q-event-selection-task
 groupDQEventSelection = parser.add_argument_group(title='Data processor options: d-q-event-selection-task')
-groupDQEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS').completer = ChoicesCompleterList(allCuts)
+groupDQEventSelection.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 ## d-q-barrel-track-selection
 groupDQBarrelTrackSelection = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection')
-groupDQBarrelTrackSelection.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupDQBarrelTrackSelection.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 ## d-q-muons-selection
 groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q-muons-selection')
-groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT').completer = ChoicesCompleterList(allCuts)
+groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", nargs='*', type=str, metavar='CFGMUONSCUT', choices=allCuts).completer = ChoicesCompleterList(allCuts)
 
 #all d-q tasks and selections
 groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task')
@@ -345,7 +345,7 @@ groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms"
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid, tpc-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID').completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
 
 for key,value in PIDSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
@@ -360,7 +360,7 @@ groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Help
 groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO").completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
 groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
 groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
 
