@@ -234,9 +234,9 @@ groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-groupTaskAdders .add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
+groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ##################
 # Interface Part #

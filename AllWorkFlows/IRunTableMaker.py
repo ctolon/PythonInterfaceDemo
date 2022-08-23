@@ -332,9 +332,9 @@ groupCoreSelections.add_argument('-runMC', help="Run over MC", action="store_tru
 groupCoreSelections.add_argument('--run', help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
 #parser.add_argument('analysisString', metavar='text', help='my analysis string', required=False) # optional interface
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-groupTaskAdders .add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-groupTaskAdders .add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-groupTaskAdders .add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
+groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ########################
 # Interface Parameters #
