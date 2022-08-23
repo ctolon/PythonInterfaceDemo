@@ -229,8 +229,8 @@ with open('tempCutsLibrary.h') as f:
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Arguments to pass')
-groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
+#groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+#groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
@@ -414,8 +414,18 @@ if len(sys.argv) < 2:
 
 # Load the configuration file provided as the first parameter
 config = {}
-with open(sys.argv[1]) as configFile:
-  config = json.load(configFile)
+try:
+    with open(sys.argv[1]) as configFile:           
+        config = json.load(configFile)
+        
+except FileNotFoundError:
+    isConfigJson = sys.argv[1].endswith('.json')
+    if isConfigJson == False:
+            logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
+            logging.info(" ./IRunDQFlow.py <yourConfig.json> --param value ...")
+            sys.exit()
+    logging.error("Your JSON Config File found in path!!!")
+    sys.exit()
 
 taskNameInConfig = "analysis-qvector"
 taskNameInCommandLine = "o2-analysis-dq-flow"

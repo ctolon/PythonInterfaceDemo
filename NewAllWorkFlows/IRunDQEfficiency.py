@@ -222,8 +222,8 @@ parser = argparse.ArgumentParser(
     description='Arguments to pass')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
-groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
+#groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
+#groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
 groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
 groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
@@ -353,8 +353,18 @@ if len(sys.argv) < 2:
 
 # Load the configuration file provided as the first parameter
 config = {}
-with open(sys.argv[1]) as configFile:
-  config = json.load(configFile)
+try:
+    with open(sys.argv[1]) as configFile:           
+        config = json.load(configFile)
+        
+except FileNotFoundError:
+    isConfigJson = sys.argv[1].endswith('.json')
+    if isConfigJson == False:
+            logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
+            logging.info(" ./IRunDQEfficiency.py <yourConfig.json> --param value ...")
+            sys.exit()
+    logging.error("Your JSON Config File found in path!!!")
+    sys.exit()
 
 taskNameInCommandLine = "o2-analysis-dq-efficiency"
 

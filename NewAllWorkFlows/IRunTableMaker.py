@@ -334,7 +334,7 @@ parser = argparse.ArgumentParser(
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
+#groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 groupCoreSelections.add_argument('-runData', help="Run over data", action="store_true")
 groupCoreSelections.add_argument('-runMC', help="Run over MC", action="store_true")
 parser.add_argument('--run', help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
@@ -673,14 +673,23 @@ specificTables = {
 # Make some checks on provided arguments
 if len(sys.argv) < 3:
   logging.error("Invalid syntax! The command line should look like this:")
-  logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --run <2|3> --param value ...")
+  logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
 config = {}
-#cfgFileName = 'configTableMakerDataRun3.json'
-with open(extrargs.cfgFileName) as configFile:
-  config = json.load(configFile)
+try:
+    with open(sys.argv[1]) as configFile:           
+        config = json.load(configFile)
+        
+except FileNotFoundError:
+    isConfigJson = sys.argv[1].endswith('.json')
+    if isConfigJson == False:
+            logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
+            logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
+            sys.exit()
+    logging.error("Your JSON Config File found in path!!!")
+    sys.exit()
 
 # Check whether we run over data or MC
 if not (extrargs.runMC or extrargs.runData):
