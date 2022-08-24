@@ -106,8 +106,8 @@ analysisSelections = {
     "eventSelection" : "Run event selection on DQ skimmed events",
     "muonSelection" : "Run muon selection on DQ skimmed muons",
     "trackSelection" : "Run barrel track selection on DQ skimmed tracks",
-    "eventMixingSelection" :"Run mixing on skimmed tracks based muon and track selections",
-    "eventMixingVnSelection" :"Run vn mixing on skimmed tracks based muon and track selections",
+    "eventMixing" :"Run mixing on skimmed tracks based muon and track selections",
+    "eventMixingVn" :"Run vn mixing on skimmed tracks based muon and track selections",
     "sameEventPairing" : "Run same event pairing selection on DQ skimmed data" ,
     "dileptonHadron" :  "Run dilepton-hadron pairing, using skimmed data"
 }
