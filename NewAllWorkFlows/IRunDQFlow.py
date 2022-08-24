@@ -508,10 +508,21 @@ for key, value in config.items():
                     value2 = "1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
-                elif extrargs.onlySelect == "true":
+                elif value not in extrargs.pid:
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)
+                    
+            # centrality table
+            if (value in centralityTableParameters) and extrargs.est:
+                if value in extrargs.est:
+                    value2 = "1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)   
+                if value not in extrargs.est:
+                    value2 = "-1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)    
             
             # event-selection-task
             if value == 'syst' and extrargs.syst:

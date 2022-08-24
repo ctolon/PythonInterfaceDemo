@@ -644,12 +644,11 @@ for key, value in config.items():
                     value2 = "1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
-                elif extrargs.onlySelect == "true":
+                elif value not in extrargs.pid:
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
             
-
             # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
