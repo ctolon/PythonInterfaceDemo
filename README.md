@@ -10,7 +10,7 @@ Cevat Batuhan Tolon
 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows) includes old interface parameters based on orignal repository [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows)). Scripts and JSON configs found here are old, created only to test main scripts in O2DQWorkflows 
 
-New interface developed and it includes Latest Config JSON files and configurable parameters. So if your local O2_Version > nightly-2022_08_23 you can go witn interface in [`NewAllWorkflows`]https://github.com/ctolon/PythonInterfaceDemo/tree/main/NewAllWorkFlows). Although all the installation steps are the same as the interface compatible with O2DQWorkflows, only the configuration parameters are different in the interface. You can list new commands and their usage with -h or --help command. For all other steps you can follow this readme.    
+New interface developed and it includes Latest Config JSON files and configurable parameters. So if your local O2_Version > nightly-2022_08_23 you can go witn interface in [`NewAllWorkflows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/NewAllWorkFlows). Although all the installation steps are the same as the interface compatible with O2DQWorkflows, only the configuration parameters are different in the interface. You can list new commands and their usage with -h or --help command. For all other steps you can follow this readme.    
 
 
 ## Main Scripts
@@ -69,11 +69,6 @@ Main File | Data Model | Description
 While developing, python CLIs are prepared by creating python scripts with enough functions to override configuration values in JSON only (independent of O2). Then, O2DQWorkflow files are prepared that do not contain python CLI and can run the analysis with O2, then they are integrated into the previously prepared Python CLI O2DQWorkflows.
 
 * For O2DQWorkflow, a folder has been created for the 2nd stage tests containing python scripts to run inside O2 for each task. If the tests in the TestInteface folder pass, new developments are transferred here, where analysis tests are performed in O2.
-  * [`TableMaker`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableMaker)
-  * [`TableReader`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/TableReader)
-  * [`DQEfficiency`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/DQEfficiency)
-  * [`FilterPP`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/FilterPP)
-  * [`dqFlow`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/dqFlow)
 
 * AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
 [`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
