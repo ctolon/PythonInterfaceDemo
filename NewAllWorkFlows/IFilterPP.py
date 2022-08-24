@@ -569,8 +569,9 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                 if 'eventSelection' not in valueCfg:
-                                    config[key][value] = 'false'
-                                    logging.debug(" - [%s] %s : false",key,value)
+                                    logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --process parameter!! It is Missing and this issue will fixed by CLI")
+                                    config[key][value] = 'true' 
+                                    logging.debug(" - [%s] %s : true",key,value)
                                     
             # DQ Tiny Selection for barrel track
             if value =='processSelectionTiny' and extrargs.process:
