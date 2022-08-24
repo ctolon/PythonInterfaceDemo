@@ -693,12 +693,12 @@ for key, value in config.items():
                                 config[key]["processAllSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-                        if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
-                            config[key]["processJpsiToEESkimmed"] = 'false'
-                            config[key]["processJpsiToMuMuSkimmed"] = 'false'
-                            config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                            config[key]["processElectronMuonSkimmed"] = 'false'
-                            config[key]["processAllSkimmed"] = 'false'
+            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
+                config[key]["processJpsiToEESkimmed"] = 'false'
+                config[key]["processJpsiToMuMuSkimmed"] = 'false'
+                config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                config[key]["processElectronMuonSkimmed"] = 'false'
+                config[key]["processAllSkimmed"] = 'false'
             
             # Dummy automizer
             if value == 'processDummy' and extrargs.autoDummy:

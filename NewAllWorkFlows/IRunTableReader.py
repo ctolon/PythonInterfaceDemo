@@ -119,8 +119,8 @@ SameEventPairingProcessSelections = {
     "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
     "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
     "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
-    "VnJpsiToEESkimmed": "Run barrel-barrel vn mixing on skimmed tracks",
-    "VnJpsiToMuMuSkimmed": "Run muon-muon vn mixing on skimmed tracks",
+    "VnJpsiToEE": "Run barrel-barrel vn mixing on skimmed tracks",
+    "VnJpsiToMuMu": "Run muon-muon vn mixing on skimmed tracks",
     "ElectronMuon" : "Run electron-muon pairing, with skimmed tracks/muons" ,
     "All": "Run all types of pairing, with skimmed tracks/muons"
 }
@@ -530,10 +530,10 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-mixing':                             
-                                if 'trackSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
+                                if 'trackSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingSelection' not in valueCfg:
+                                if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                         
@@ -543,10 +543,10 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-mixing':                                       
-                                if 'muonSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
+                                if 'muonSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingSelection' not in valueCfg:
+                                if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                         
@@ -556,10 +556,10 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-mixing':                                                             
-                                if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg and 'eventMixingSelection' in valueCfg:
+                                if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingSelection' not in valueCfg:
+                                if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
@@ -569,10 +569,10 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-mixing':                             
-                                if 'trackSelection' in valueCfg and 'eventMixingVnSelection' in valueCfg:
+                                if 'trackSelection' in valueCfg and 'eventMixingVn' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingVnSelection' not in valueCfg:
+                                if 'eventMixingVn' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                         
@@ -582,10 +582,10 @@ for key, value in config.items():
                         if keyCfg == 'analysis': #  Only Select key for analysis
                             
                             if key == 'analysis-event-mixing':                                        
-                                if 'muonSelection' in valueCfg and 'eventMixingVnSelection' in valueCfg:
+                                if 'muonSelection' in valueCfg and 'eventMixingVn' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingVnSelection' not in valueCfg:
+                                if 'eventMixingVn' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                  
@@ -715,14 +715,14 @@ for key, value in config.items():
                                 config[key]["processAllSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-                        if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
-                            config[key]["processJpsiToEESkimmed"] = 'false'
-                            config[key]["processJpsiToMuMuSkimmed"] = 'false'
-                            config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                            config[key]["processVnJpsiToEESkimmed"] = 'false'
-                            config[key]["processVnJpsiToMuMuSkimmed"] = 'false'
-                            config[key]["processElectronMuonSkimmed"] = 'false'
-                            config[key]["processAllSkimmed"] = 'false'
+            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
+                config[key]["processJpsiToEESkimmed"] = 'false'
+                config[key]["processJpsiToMuMuSkimmed"] = 'false'
+                config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
+                config[key]["processVnJpsiToEESkimmed"] = 'false'
+                config[key]["processVnJpsiToMuMuSkimmed"] = 'false'
+                config[key]["processElectronMuonSkimmed"] = 'false'
+                config[key]["processAllSkimmed"] = 'false'
             
             # Dummy automizer
             if value == 'processDummy' and extrargs.autoDummy:
