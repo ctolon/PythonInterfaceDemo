@@ -344,6 +344,7 @@ groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to 
 # aod
 groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
 groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+groupDPLReader.add_argument('--aod-memory-rate-limit', help="Rate limit AOD processing based on memory", action="store", type=str)
 
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
@@ -1511,6 +1512,9 @@ print(writerConfig)
 #sys.exit()
       
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b"
+if extrargs.aod_memory_rate_limit:
+    commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + extrargs.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b"
+    
 for dep in depsToRun.keys():
   commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
   logging.debug("%s added your workflow",dep)
