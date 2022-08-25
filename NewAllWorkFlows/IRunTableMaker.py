@@ -124,7 +124,7 @@ for k,v in tablemakerProcessAllSelections.items():
     
 tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
         "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithQvector","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
-        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter","processMuonOnlyWithQvector"
+        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter","processMuonOnlyWithQvector",
         "processOnlyBCs"]
 
 centralityTableSelections = {
