@@ -200,7 +200,7 @@
         "processFullWithCent": "false",
         "processBarrelOnlyWithV0Bits": "false",
         "processBarrelOnlyWithEventFilter": "false",
-        "processBarrelOnlyWithQvector" : "true",
+        "processBarrelOnlyWithQvector" : "false",
         "processBarrelOnlyWithCent": "false",
         "processBarrelOnlyWithCov": "false",
         "processBarrelOnly": "false",
