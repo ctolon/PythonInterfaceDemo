@@ -565,7 +565,7 @@ if not works:
 
 if you used the command `sudo chsh -s /bin/bash <username>` after you are done with the scripts (It converts your system shell zsh to bash):
 
-* `sudo chsh -s /bin/zsh <username>` (It converts your system shell zash to zsh)
+* `sudo chsh -s /bin/zsh <username>` (It converts your system shell bash to zsh)
 
 
 if you used the command `exec bash` you don't need to do anything.
