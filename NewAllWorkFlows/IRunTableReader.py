@@ -536,6 +536,9 @@ for key, value in config.items():
                                 if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
+                                if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
+                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                                    sys.exit()
                                                                         
             if value == 'processMuonSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -549,6 +552,9 @@ for key, value in config.items():
                                 if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
+                                if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
+                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                                    sys.exit()
                                                                         
             if value == 'processBarrelMuonSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -562,6 +568,9 @@ for key, value in config.items():
                                 if 'eventMixing' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
+                                if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
+                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                                    sys.exit()
                                     
             if value == 'processBarrelVnSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -575,6 +584,9 @@ for key, value in config.items():
                                 if 'eventMixingVn' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
+                                if 'eventMixingVn' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
+                                    logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                                    sys.exit()
                                                                         
             if value == 'processMuonVnSkimmed' and extrargs.analysis:                        
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -588,6 +600,9 @@ for key, value in config.items():
                                 if 'eventMixingVn' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
+                                if 'eventMixingVn' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
+                                    logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                                    sys.exit()
                  
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
