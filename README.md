@@ -79,7 +79,7 @@ While developing, python CLIs are prepared by creating python scripts with enoug
 
 Clone Repository in your workspace:
 
-git clone `https://github.com/ctolon/PythonInterfaceDemo.git`
+`git clone https://github.com/ctolon/PythonInterfaceDemo.git`
 
 Then go AllWorkFlows folder with `cd` commands
 
@@ -985,6 +985,7 @@ must be converted to comma-separated strings
 * sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow
 
 
+# OLD INTERFACE IN ALLWORKFLOWS INSTRUCTIONS
 # Instructions for IRunTableMaker.py
 
 Add extrac tables and converters with:
@@ -1107,7 +1108,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--processCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
+`--isCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
 `--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
 `--processDummy` | String | Dummy function (No need If autoDummy is true) |  | str.lower
@@ -1463,7 +1464,7 @@ Arg | Opt | Task | nargs |
 `--cfgWithQA` |`true` </br> `false`  | `analysis-qvector`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-qvector`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-qvector`</br> | * |
-`--cfgMuonsCuts` | `allCuts` | `analysis-qvector` | * |
+`--cfgMuonCuts` | `allCuts` | `analysis-qvector` | * |
 `--cfgCutPtMin` | all  | `analysis-qvector`</br>  | 1 |
 `--cfgCutPtMax ` | all  | `analysis-qvector`</br> | 1 |
 `--cfgCutEta ` | all  | `analysis-qvector` | 1 |
@@ -1494,7 +1495,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts |  | str
-`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
 `--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
 `--cfgCutEta ` | Float | Eta range for tracksselection  |  | str
@@ -1565,3 +1566,4 @@ Date |  User | Type | Desc
 * `Aug 21, 2022` Choicer Completer Method integrated for pretty print display for auto completions, always_complete_options setted false for pretty print display with TAB, New ChoicesCompleterList Class Integrated to All Workflows for Getting choices nargs *, helper message updates in very detailed, all argparser groups has subgroups now, task adder help messages updated, some naming conventions setted for variables and code quality improved, not needed comments lines deleted for code quality, minimal fix for dqflow. Readme updated and Instructions for autocomplete added to readme, metavar explanations added to readme.
 * `Aug 22, 2022` Helper Messages Updated. One minimal display bug added to readme. New interface development is ongoing with new JSON Configs.based on nightly-2022_08_23
 * `Aug 23, 2022` AOD File checker fixed, Same Event Pairing process functionality fixed, centrality table fixed in new interface, new automated things provided.
+* `Aug 24-26, 2022` All bugs are fixed. All functionalities provided, all scripts are tested by different users. Interface development is completed.
