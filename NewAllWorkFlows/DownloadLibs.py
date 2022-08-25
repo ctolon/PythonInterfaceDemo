@@ -70,8 +70,6 @@ urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master
 
 isLibsExist = True
 
-print(ALICE_SOFTWARE_PATH)
-
 if extrargs.version != None:
     prefix_version = "nightly-"
     extrargs.version = prefix_version + extrargs.version
