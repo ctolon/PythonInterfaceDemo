@@ -75,7 +75,7 @@ Arg | Opt | Task | nargs |
 `--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--isBarrelSelectionTiny` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | |
+`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
 `--cfgWithQA` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> `d-q-filter-p-p-task`</br>`analysis-qvector`  | 1 |
 `--d_bz` | all | `v0-selector` | 1 |
 `--v0cospa` | all | `v0-selector` | 1 |
@@ -181,15 +181,6 @@ Arg | Ref Type| Desc | Default | Real Type
 
 # Instructions for IRunTableReader.py
 
-Add extrac tables and converters with:
-1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
-2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
-3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-
 * Minimum Required Parameter List:
   * `python3`
   * `IRunTableReader.py`
@@ -204,11 +195,9 @@ Examples(in AllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableReader.py Configs/configAnalysisData.json --aod Datas/AO2D_LHC21i3.root
+  python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
   ```
 
-
-TODO Add Details for multiple commands
 
 # Available configs in IRunTableReader Interface
 
@@ -221,9 +210,6 @@ Arg | Opt | Task | nargs |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`eventMixing`</br>`eventMixingVn`</br> `sameEventPairing`</br> `dileptonHadronSelection`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-event-mixing`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`VnJpsiToEE`</br>`VnJpsiToMuMu`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection`  | 1 |
 `--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br> | * |
@@ -247,31 +233,18 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
-`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
-`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
-`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgMixingVars` | String | Mixing configs separated by a space | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 # Instructions for IRunDQEfficiency.py
-
-Add extrac tables and converters with:
-1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
-2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
-3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-
 * Minimum Required Parameter List:
   * `python3`
   * `IRunDQEfficiency.py`
@@ -304,9 +277,6 @@ Arg | Opt | Task | nargs |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackDimuonMuonSelection`</br> `dileptonTrackDielectronKaonSelection`</br> | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| `analysis-same-event-pairing` | * |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 ||
 `--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection` | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
@@ -336,14 +306,11 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process selections for Same Event Pairing | - | str
-`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
-`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
-`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgTrackMCSignals` | String | Space separated list of MC signals | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgMuonMCSignals` | String | Space separated list of MC signals | - | str
 `--cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
@@ -353,10 +320,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
-
-
-P.S. Instructions for IFilterPP.py and IRunDQFlow.py is not updated yet.
-TODO update them
 
 # Instructions for IFilterPP.py
 
@@ -407,9 +370,12 @@ Arg | Opt | Task | nargs |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
+`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--isProcessEvTime` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` </br> `false`  | dq task selection</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `d-q-event-selection-task`</br>  | * |
 `--cfgBarrelTrackCuts` | `allCuts` | `d-q-barrel-track-selection`</br> | * |
@@ -435,15 +401,18 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
+`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
-`--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
+`--isWSlice` | Boolean | Process with track slices|  | str.lower
+`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
 `--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
-`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
+`--cfgMuonsCuts` | String | Space separated list of ADDITIONAL muon track cuts  |  | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
@@ -497,7 +466,12 @@ Arg | Opt | Task | nargs |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
+`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
+`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
+`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` </br> `false`  | `analysis-qvector`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-qvector`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-qvector`</br> | * |
@@ -527,12 +501,17 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
+`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
+`--isWSlice` | Boolean | Process with track slices|  | str.lower
+`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
+`--est` | String | Produces centrality percentiles parameters | | str
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts |  | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts |  | str
 `--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
 `--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
 `--cfgCutEta ` | Float | Eta range for tracksselection  |  | str
