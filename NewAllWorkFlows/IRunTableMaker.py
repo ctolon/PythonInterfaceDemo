@@ -1627,18 +1627,34 @@ writerConfig["OutputDirector"] = {
   "ntfmerge": 1,
   "OutputDescriptors": []
 }
+
+# Generate the aod-reader output descriptor json file
+readerConfig = {}
+readerConfig["InputDirector"] = {
+    "debugmode": True,
+    "InputDescriptors": []
+}
+
 iTable = 0
 for table in tablesToProduce.keys():
   writerConfig["OutputDirector"]["OutputDescriptors"].insert(iTable, tables[table])
+  readerConfig["InputDirector"]["InputDescriptors"].insert(iTable, tables[table])
   iTable += 1
   
 writerConfigFileName = "aodWriterTempConfig.json"
 with open(writerConfigFileName,'w') as writerConfigFile:
-  json.dump(writerConfig, writerConfigFile, indent=2)  
-
+  json.dump(writerConfig, writerConfigFile, indent=2)
+  
+  
+readerConfigFileName = "aodReaderTempConfig.json"
+with open(readerConfigFileName,'w') as readerConfigFile:
+  json.dump(readerConfig, readerConfigFile, indent=2)
+  
 logging.info("aodWriterTempConfig==========")  
 print(writerConfig)
 #sys.exit()
+logging.info("aodReaderTempConfig==========")  
+print(readerConfig)
       
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b"
 if extrargs.aod_memory_rate_limit:
