@@ -181,6 +181,25 @@
         "processFilterPPTiny": "false",
         "processDummy": "false"
     },
+    "analysis-qvector": {
+        "cfgEventCuts": "eventStandard",
+        "cfgTrackCuts": "jpsiPID1,jpsiPID2,jpsiPIDnsigma",
+        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
+        "cfgQA": "false",
+        "cfgCutPtMin": "0.2",
+        "cfgCutPtMax": "12",
+        "cfgCutEta": "0.8",
+        "cfgEtaLimit": "0.4",
+        "cfgNHarm": "2",
+        "cfgNPow": "0",
+        "cfgEfficiency": "",
+        "cfgAcceptance": "",
+        "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
+        "ccdb-path": "Users\/lm",
+        "ccdb-no-later-than": "1660516676044",
+        "processQvector": "true",
+        "processDummy": "false"
+    },
     "track-pid-qa": "",
     "v0-gamma-qa": "",
     "table-maker": {

@@ -275,7 +275,7 @@ groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Proc
 # DQ Flow Task Selections
 GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
 GroupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in d-q muons selection", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
 GroupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
 GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 GroupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
@@ -286,8 +286,7 @@ GroupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vect
 
 GroupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
 GroupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
-GroupAnalysisQvector.add_argument('--ccdb-url', help="url of the ccdb repository", action="store", type=str, metavar='')
-GroupAnalysisQvector.add_argument('--ccdbPath', help="base path to the ccdb object", action="store", type=str, metavar='')
+
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')

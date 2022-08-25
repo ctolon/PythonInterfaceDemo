@@ -228,6 +228,7 @@ DQ_EVENT_SELECTED = False
 DQ_FULL_SELECTED = False
 DQ_FILTERPP_SELECTED = False
 DQ_FILTERPPTINY_SELECTED = False
+DQ_QVECTOR_SELECTED = False
 
 
 ################################
@@ -421,6 +422,20 @@ groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection
 groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
 groupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
+GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
+#GroupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+#GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+#GroupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
+#GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+GroupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
+GroupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
+GroupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
+GroupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
+GroupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
+
+GroupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
+GroupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
+
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
 groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
@@ -429,7 +444,7 @@ for key,value in centralityTableSelections.items():
     groupCentralityTable.add_argument(key, help=value, action='none')
 
 #all d-q tasks and selections
-groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task')
+groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, analysis-qvector')
 groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # v0-selector
@@ -807,6 +822,9 @@ for key, value in config.items():
                     
                     # check extrargs is contain Filter for automatize Filter PP task
                     filterSearch = [s for s in extrargs.process if "Filter" in s]   
+                    
+                    # check extrargs is contain Qvector for automatize dqFlow task
+                    qvectorSearch = [s for s in extrargs.process if "Qvector" in s] 
                                                          
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
                     if len(fullSearch) > 0 and extrargs.runData:
@@ -872,7 +890,7 @@ for key, value in config.items():
                         config["d-q-event-selection-task"]["processEventSelection"] = "false"
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
                            
-                    # Automatization for Activate or Disable d-q filter pp run3
+                    # Automatization for Activate or Disable d-q filter-p-p
                     if len(filterSearch) > 0 and extrargs.runData:
                         config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
@@ -895,6 +913,15 @@ for key, value in config.items():
                         DQ_FILTERPPTINY_SELECTED = False 
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
+                        
+                    # Automatization for Activate or Disable analysis-qvector
+                    if len(qvectorSearch) > 0 and extrargs.runData:
+                        config["analysis-qvector"]["processQvector"] ="true"
+                        DQ_QVECTOR_SELECTED = True
+
+                    if len(qvectorSearch) == 0 and extrargs.runData:
+                        config["analysis-qvector"]["processQvector"] ="false"
+                        DQ_QVECTOR_SELECTED = False
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
@@ -950,7 +977,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : true",key,value)        
             if value == "isMC" and extrargs.runData:
                     config[key][value] = "false"
-                    logging.debug(" - [%s] %s : true",key,value)                          
+                    logging.debug(" - [%s] %s : false",key,value)                          
                        
             # PID Selections
             if  (value in PIDParameters) and extrargs.pid:
@@ -961,7 +988,31 @@ for key, value in config.items():
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)  
+                    logging.debug(" - [%s] %s : %s",key,value,value2)
+                    
+            # analysis-qvector selections    
+            #TODO some parameters not needed because we have cut selections in tablemaker. discuss this thing.  
+            if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
+                config[key][value] = extrargs.cfgCutPtMin
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
+            if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
+                config[key][value] = extrargs.cfgCutPtMax
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMax)
+            if value =='cfgCutEta' and extrargs.cfgCutEta:
+                config[key][value] = extrargs.cfgCutEta
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutEta)
+            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
+                config[key][value] = extrargs.cfgEtaLimit
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEtaLimit)
+            if value =='cfgNPow' and extrargs.cfgNPow:
+                config[key][value] = extrargs.cfgNPow
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNPow)
+            if value =='cfgEfficiency' and extrargs.cfgEfficiency:
+                config[key][value] = extrargs.cfgEfficiency
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEfficiency)
+            if value =='cfgAcceptance' and extrargs.cfgAcceptance:
+                config[key][value] = extrargs.cfgAcceptance
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)  
                     
             # v0-selector
             if value =='d_bz' and extrargs.d_bz:
@@ -1009,7 +1060,7 @@ for key, value in config.items():
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)  
-            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
+            if (value == 'cfgBarrelTrackCuts' or value == 'cfgTrackCuts') and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
                 config[key][value] = extrargs.cfgBarrelTrackCuts
@@ -1111,7 +1162,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
                                              
             # all d-q tasks and selections
-            if value == 'cfgWithQA' and extrargs.cfgWithQA:
+            if (value == 'cfgWithQA' or value == 'cfgQA') and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                                   
@@ -1170,6 +1221,10 @@ for key, value in config.items():
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
                     #logging.debug("d-q-filter-p-p-task:processDummy:true")
                     
+                if config["analysis-qvector"]["processQvector"] == "true":
+                    config["analysis-qvector"]["processDummy"] = "false" 
+                if config["analysis-qvector"]["processQvector"] == "false":
+                    config["analysis-qvector"]["processDummy"] = "true"             
                     
 # LOGGER MESSAGES FOR DQ SELECTIONS
 
@@ -1203,14 +1258,18 @@ if extrargs.runData:
         logging.debug(" - [d-q-muons-selection] processSelection : true")
     if DQ_MUON_SELECTED  == False and DQ_FULL_SELECTED == False:
         logging.debug(" - [d-q-muons-selection] processSelection : false")         
-    if DQ_FILTERPP_SELECTED == True and DQ_FULL_SELECTED == False:
+    if DQ_FILTERPP_SELECTED == True:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
-    if DQ_FILTERPP_SELECTED == False and DQ_FULL_SELECTED == False:
+    if DQ_FILTERPP_SELECTED == False:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")                  
-    if DQ_FILTERPPTINY_SELECTED == True and DQ_FULL_SELECTED == False:
+    if DQ_FILTERPPTINY_SELECTED == True:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
-    if DQ_FILTERPPTINY_SELECTED == False and DQ_FULL_SELECTED == False:
+    if DQ_FILTERPPTINY_SELECTED == False:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
+    if DQ_QVECTOR_SELECTED == True:
+        logging.debug(" - [analysis-qvector] processQvector : true") 
+    if DQ_QVECTOR_SELECTED == False:
+        logging.debug(" - [analysis-qvector] processQvector : false") 
 
 
 # Transaction Management for process function in TableMaker/TableMakerMC Task
