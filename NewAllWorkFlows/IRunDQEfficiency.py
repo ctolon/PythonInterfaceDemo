@@ -830,9 +830,9 @@ with open(updatedConfigFileName,'w') as outputFile:
 #depsToRun = {}
 #for dep in commonDeps:
   #depsToRun[dep] = 1
-
-      
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + extrargs.writer
+if extrargs.writer == "false":
+    commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
 
 if extrargs.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")

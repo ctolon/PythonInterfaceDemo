@@ -815,6 +815,9 @@ with open(updatedConfigFileName,'w') as outputFile:
 #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
+if extrargs.writer == "false":
+    commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
+
 #TODO: need check
 #if ANALYSIS_DILEPTON_HADRON_SELECTED == True:
     #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"

@@ -1,0 +1,11 @@
+{
+    "InputDirector": {
+        "debugmode": true,
+        "InputDescriptors": [
+            {
+                "table": "AOD/RTDILEPTON/0",
+                "treename": "Dileptons"
+            }
+        ]
+    }
+}
