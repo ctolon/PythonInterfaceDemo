@@ -109,11 +109,13 @@ tablemakerProcessAllSelections = {
   "BarrelOnlyWithCov" : "Build barrel-only DQ skimmed data model, w/ track cov matrix",
   "BarrelOnlyWithV0Bits" :"Build full DQ skimmed data model, w/o centrality, w/ V0Bits",
   "BarrelOnlyWithEventFilter" : "Build full DQ skimmed data model, w/o centrality, w/ event filter",
+  "BarrelOnlyWithQvector" : "Build full DQ skimmed data model, w/ centrality, w/ q vector",
   "BarrelOnlyWithCent" : "Build barrel-only DQ skimmed data model, w/ centrality", 
   "MuonOnly" : "Build muon-only DQ skimmed data model",
   "MuonOnlyWithCov" : "Build muon-only DQ skimmed data model, w/ muon cov matrix",
   "MuonOnlyWithCent" : "Build muon-only DQ skimmed data model, w/ centrality",
   "MuonOnlyWithFilter" : "Build muon-only DQ skimmed data model, w/ event filter",
+  "MuonOnlyWithQvector" : "Build muon-only DQ skimmed data model, w/ q vector",
   "OnlyBCs" : "Analyze the BCs to store sampled lumi"
 }
 tablemakerProcessAllSelectionsList = []
@@ -121,8 +123,8 @@ for k,v in tablemakerProcessAllSelections.items():
     tablemakerProcessAllSelectionsList.append(k)
     
 tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
-        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
-        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter",
+        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithQvector","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
+        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter","processMuonOnlyWithQvector"
         "processOnlyBCs"]
 
 centralityTableSelections = {
