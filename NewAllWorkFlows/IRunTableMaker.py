@@ -624,10 +624,12 @@ specificDeps = {
   "processBarrelOnlyWithCov" : [],
   "processBarrelOnlyWithV0Bits" : ["o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
   "processBarrelOnlyWithEventFilter" : ["o2-analysis-dq-filter-pp"],
+  "processBarrelOnlyWithQvector" : ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
   "processBarrelOnlyWithCent" : ["o2-analysis-centrality-table"],
   "processMuonOnly" : [],
   "processMuonOnlyWithCov" : [],
   "processMuonOnlyWithCent" : ["o2-analysis-centrality-table"],
+  "processMuonOnlyWithQvector" : ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
   "processMuonOnlyWithFilter" : ["o2-analysis-dq-filter-pp"]
   #"processFullWithCentWithV0Bits" : ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
   #"processFullWithEventFilterWithV0Bits" : ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
@@ -638,6 +640,7 @@ tables = {
   "ReducedEvents" : {"table": "AOD/REDUCEDEVENT/0", "treename": "ReducedEvents"},
   "ReducedEventsExtended" : {"table": "AOD/REEXTENDED/0", "treename": "ReducedEventsExtended"},
   "ReducedEventsVtxCov" : {"table": "AOD/REVTXCOV/0", "treename": "ReducedEventsVtxCov"},
+  "ReducedEventsQvector" : {"table": "AOD/REQVECTOR/0", "treename": "ReducedEventsQvector"},
   "ReducedMCEventLabels" : {"table": "AOD/REMCCOLLBL/0", "treename": "ReducedMCEventLabels"},
   "ReducedMCEvents" : {"table": "AOD/REMC/0", "treename": "ReducedMCEvents"},
   "ReducedTracks" : {"table": "AOD/REDUCEDTRACK/0", "treename": "ReducedTracks"},
@@ -663,11 +666,13 @@ specificTables = {
   "processBarrelOnly" : [],
   "processBarrelOnlyWithCov" : ["ReducedTracksBarrelCov"],
   "processBarrelOnlyWithV0Bits" : [],
+  "processBarrelOnlyWithQvector" : ["ReducedEventsQvector"],
   "processBarrelOnlyWithEventFilter" : [],
   "processBarrelOnlyWithCent" : [],
   "processMuonOnly" : [],
   "processMuonOnlyWithCov" : ["ReducedMuonsCov"],
   "processMuonOnlyWithCent" : [],
+  "processMuonOnlyWithQvector" : ["ReducedEventsQvector"],
   "processMuonOnlyWithFilter" : []
 }
 
