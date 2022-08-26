@@ -510,11 +510,11 @@ for key, value in config.items():
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)                                                                               
                             if key == 'analysis-dilepton-hadron':
-                                if 'dileptonHadronSelection' in valueCfg:
+                                if 'dileptonHadron' in valueCfg:
                                     config[key][value] = 'true'
                                     ANALYSIS_DILEPTON_HADRON_SELECTED = True
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'dileptonHadronSelection' not in valueCfg:
+                                if 'dileptonHadron' not in valueCfg:
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                        
