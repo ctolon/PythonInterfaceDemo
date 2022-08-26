@@ -1116,7 +1116,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)  
              
             # multiplicity-table
-            if value == "doVertexZeq":
+            if value == "doVertexZeq" and extrargs.isVertexZeq:
                 if extrargs.isVertexZeq == "true":
                     config[key][value] = "1"
                     config[key]["doDummyZeq"] = "0"
@@ -1129,7 +1129,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] doDummyZeq : 1",key)
                     
             # tof-pid, tof-pid-full
-            if value == "processWSlice":
+            if value == "processWSlice" and extrargs.isWSlice:
                 if extrargs.isWSlice == "true":
                     config[key][value] = "true"
                     config[key]["processWoSlice"] = "false"
@@ -1151,7 +1151,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
                 
             # tof-event-time
-            if  (value in ft0Parameters) and extrargs.FT0:
+            if  (value in ft0Parameters) and extrargs.FT0 and key == 'tof-event-time':
                 if value  == extrargs.FT0:
                     value2 = "true"
                     config[key][value] = value2
