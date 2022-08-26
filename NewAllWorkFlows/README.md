@@ -576,7 +576,7 @@ Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the
 
 ## MC Part
 
-### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp simulation)
+### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
 
 You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
@@ -586,7 +586,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muon --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop --debug debug --logFile
 ```
 
- ### Run dqEfficiency on MC (LHC21i3d2 pp simulation)
+ ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
 
 You need to produce reducedAod.root file with tableMakerMC in previous step.
 
@@ -596,7 +596,7 @@ Command To Run:
 python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
 ```
 
-### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Simulation)
+### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
 
 You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
@@ -606,7 +606,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process OnlyBCs BarrelOnly --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ
 ```
 
- ### Run dqEfficiency on MC (LHC21i3b pp Simulation)
+ ### Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)
 
 You need to produce reducedAod.root file with tableMakerMC in previous step.
 
@@ -616,7 +616,7 @@ Command To Run:
 python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgQA true --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile --aod reducedAod.root
 ```
 
-### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Simulation)
+### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
 
 You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
@@ -626,7 +626,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process OnlyBCs BarrelOnly --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty
 ```
 
- ### Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Sim)
+ ### Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)
 
 You need to produce reducedAod.root file with tableMakerMC in previous step.
 
@@ -652,7 +652,7 @@ For pp Data : AO2D.root to AO2D_ppDataRun3_LHC22c.root
 
 If you downloaded these datasets, you can start.
 
-### tableMaker on LHC15o (LHC15o PbPb Data)
+### tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 
@@ -660,7 +660,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process OnlyBCs BarrelOnlyWithCent --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --cfgBarrelTrackCuts jpsiO2MCdebugCuts
 ```
 
-### Run tableReader on Data (LHC15o PbPb Data)
+### Run tableReader on LHC15o (LHC15o PbPb Run2Data)
 
 You need to produce reducedAod.root file with tableMaker in previous step.
 
@@ -670,7 +670,7 @@ Command To Run:
 python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
 ```
 
-### Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Data)
+### Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)
 
 Command To Run:
 
@@ -678,7 +678,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process OnlyBCs FullWithCent BarrelOnlyWithQvector --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --cfgBarrelTrackCuts jpsiO2MCdebugCut
 ```
 
-### Run tableReader on Data with Generic Flow Analysis (LHC15o PbPb Data)
+### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
 
 You need to produce reducedAod.root file with tableMaker in previous step.
 
@@ -690,8 +690,15 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelec
 
 P.S. Note that we use the `--reader` parameter here when configuring the tablereader. The reason for this is that the reducedEventQvector table is not added in the reader json configuration files prepared to read the data beforehand. With the new update, IRunTableMaker.py has the potential to generate json config file containing all tables as Input Director and this json file is given to the `--reader` parameter for this command.
 
+### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)
 
-### Run tableMaker on LHC22c (LHC22c pp Data)
+Command To Run:
+```ruby
+python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --FT0 Run2 --isVertexZeq false
+
+```
+
+### Run tableMaker on LHC22c (LHC22c pp Run3Data)
 
 Command To Run:
 
@@ -699,7 +706,7 @@ Command To Run:
 python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --process OnlyBCs BarrelOnlyWithCov --aod Datas/AO2D_ppDataRun3_LHC22c.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --add_track_prop --isVertexZeq false
 ```
 
-### Run tableReader on Data (LHC22c pp Data)
+### Run tableReader on Data (LHC22c pp Run3Data)
 
 You need to produce reducedAod.root file with tableMaker in previous step.
 
@@ -709,7 +716,7 @@ Command To Run:
 python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
 ```
 
-### Run filterPP on LHC22c (LHC22c pp Data)
+### Run filterPP on LHC22c (LHC22c pp Run3Data)
 
 Command To Run:
 
