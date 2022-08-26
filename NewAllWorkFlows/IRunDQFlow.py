@@ -537,15 +537,15 @@ for key, value in config.items():
             # multiplicity-table
             if value == "doVertexZeq":
                 if extrargs.isVertexZeq == "true":
-                    config[key][value] = "true"
-                    config[key]["doDummyZeq"] = "false"
-                    logging.debug(" - %s %s : true",key,value)
-                    logging.debug(" - [%s] doDummyZeq : false",key)  
+                    config[key][value] = "1"
+                    config[key]["doDummyZeq"] = "0"
+                    logging.debug(" - %s %s : 1",key,value)
+                    logging.debug(" - [%s] doDummyZeq : 0",key)  
                 if extrargs.isVertexZeq == "false":
-                    config[key][value] = "false"
-                    config[key]["doDummyZeq"] = "true"
-                    logging.debug(" - %s %s : false",key,value) 
-                    logging.debug(" - [%s] doDummyZeq : true",key)
+                    config[key][value] = "0"
+                    config[key]["doDummyZeq"] = "1"
+                    logging.debug(" - %s %s : 0",key,value) 
+                    logging.debug(" - [%s] doDummyZeq : 1",key)
                     
             # tof-pid, tof-pid-full
             if value == "processWSlice":
