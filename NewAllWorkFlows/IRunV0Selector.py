@@ -515,19 +515,8 @@ if extrargs.aod != None:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
         
-####################################
-# Automations For Common Framework #
-####################################        
 
-if (extrargs.syst == None and config["multiplicity-table"]["doVertexZeq"] == 1) or extrargs.syst == "pp":
-    logging.warning("doVertexZeq have to be 0 for pp Data! It's an centrality calibration. It will fixed.")
-    config["multiplicity-table"]["doVertexZeq"] = "0"
-    config["multiplicity-table"]["doDummyZeq"] = "1"
-    logging.debug("- [multiplicity-table] doVertexZeq : 0")
-    logging.debug("- [multiplicity-table] doDummyZeq : 1")
-
-        
-        
+            
 #elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
         #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
         #sys.exit()
@@ -537,7 +526,7 @@ if (extrargs.syst == None and config["multiplicity-table"]["doVertexZeq"] == 1) 
 ###########################
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfigFilterPP.json"
+updatedConfigFileName = "tempConfigV0Selector.json"
 
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)

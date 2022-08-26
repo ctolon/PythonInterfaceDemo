@@ -39,8 +39,8 @@
         "processRun3": "false"
     },
     "multiplicity-table": {
-        "doVertexZeq": "1",
-        "doDummyZeq": "0",
+        "doVertexZeq": "0",
+        "doDummyZeq": "1",
         "processRun2": "false",
         "processRun3": "true"
     },
