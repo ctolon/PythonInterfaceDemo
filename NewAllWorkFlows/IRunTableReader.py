@@ -837,6 +837,7 @@ if extrargs.writer == "false":
 #if ANALYSIS_DILEPTON_HADRON_SELECTED == True:
     #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
 
+"""
 if extrargs.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
@@ -848,6 +849,7 @@ if extrargs.add_fdd_conv:
 if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-track-propagation added your workflow")
+"""
 
 print("====================================================================================================================")
 logging.info("Command to run:")

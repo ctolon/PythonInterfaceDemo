@@ -834,6 +834,7 @@ commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfi
 if extrargs.writer == "false":
     commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
 
+"""
 if extrargs.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
@@ -845,6 +846,7 @@ if extrargs.add_fdd_conv:
 if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-track-propagation added your workflow")
+"""
 
 #for dep in depsToRun.keys():
 #commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
