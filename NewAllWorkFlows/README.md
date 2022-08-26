@@ -695,7 +695,12 @@ P.S. Note that we use the `--reader` parameter here when configuring the tablere
 Command To Run:
 ```ruby
 python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --FT0 Run2 --isVertexZeq false
+```
+### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
+Command To Run:
+```ruby
+python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --isVertexZeq false
 ```
 
 ### Run tableMaker on LHC22c (LHC22c pp Run3Data)
