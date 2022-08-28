@@ -15,6 +15,10 @@
         "treename": "ReducedEventsVtxCov"
       },
       {
+        "table": "AOD/REQVECTOR/0",
+        "treename": "ReducedEventsQvector"
+      },
+      {
         "table": "AOD/REDUCEDTRACK/0",
         "treename": "ReducedTracks"
       },

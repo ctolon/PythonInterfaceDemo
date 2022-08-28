@@ -29,6 +29,14 @@
             {
                 "table": "AOD/RTDILEPTON/0",
                 "treename": "Dileptons"
+            },
+            {
+                "table": "AOD/RTDILEPTONEXTRA/0",
+                "treename": "DileptonsExtra"
+            },
+            {
+                "table": "AOD/RTDILEPTONFLOW/0",
+                "treename": "DileptonsFlow"
             }
         ]
     }

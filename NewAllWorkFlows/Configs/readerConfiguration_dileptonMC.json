@@ -27,18 +27,6 @@
         "treename": "ReducedMuonsCov"
       },
       {
-        "table": "AOD/RTDILEPTON/0",
-        "treename": "Dileptons"
-      },
-      {
-        "table": "AOD/RTDILEPTONEXTRA/0",
-        "treename": "DileptonsExtra"
-      },
-      {
-        "table": "AOD/RTDIMUONALL/0",
-        "treename": "DimuonsAll"
-      },
-      {
         "table": "AOD/REMC/0",
         "treename": "ReducedMCEvents"
       },
@@ -53,8 +41,23 @@
       {
         "table": "AOD/REMCCOLLBL/0",
         "treename": "ReducedMCEventLabels"
+      },
+      {
+        "table": "AOD/RTDILEPTON/0",
+        "treename": "Dileptons"
+      },
+      {
+        "table": "AOD/RTDILEPTONEXTRA/0",
+        "treename": "DileptonsExtra"
+      },
+      {
+        "table": "AOD/RTDIMUONALL/0",
+        "treename": "DimuonsAll"
+      },
+      {
+        "table": "AOD/RTDILEPTONTRACK/0",
+        "treename": "DileptonTrackCandidates"
       }
-
     ]
   }
 }
