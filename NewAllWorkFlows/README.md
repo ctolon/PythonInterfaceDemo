@@ -528,6 +528,8 @@ Arg | Ref Type| Desc | Default | Real Type
 
 TODO Add details for configure parameters
 
+TODO Update it
+
 Firstly, clone repository in your workspace
 
 `git clone https://github.com/ctolon/PythonInterfaceDemo.git`
@@ -572,13 +574,54 @@ if you used the command `exec bash` you don't need to do anything.
 
 You can Found MC Datas and Skimmed datas at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
-Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here:
+Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here.
+
+
+## Workflows In Tutorials
+
+* For MC:
+
+Workflow | Dataset | Skimmed | Process | Type | Col Syst
+--- | --- | --- | --- | --- | --- |
+`tableMakerMC` | `LHC21i3d2` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
+`dqEfficiency` | `LHC21i3d2` | `Yes`  | `JpsiToMuMu` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
+`tableMakerMC` | `LHC21i3b` | `No` | `BarrelOnly`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `pp`
+`dqEfficiency` | `LHC21i3b` | `Yes` | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−  | `pp`
+`tableMakerMC` | `LHC21i3f2` | `No` | `BarrelOnly`<br>`OnlyBCs` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
+`dqEfficiency` | `LHC21i3f2` | `Yes` | `JpsiToEE` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
+
+* For Data:
+
+Workflow | Dataset | Skimmed | Process | Selection | Col Syst
+--- | --- | --- | --- | --- | --- |
+`tableMaker` | `LHC15o` | `No` | `BarrelOnlyWithCent`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
+`tableReader`  | `LHC15o` | `Yes`  | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
+`tableMaker` | `LHC15o` | `No` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
+`tableReader` | `LHC15o` | `Yes`  | `VnJpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
+`dqFlow` | `LHC15o` | `No` | - | - | `PbPb`
+`v0Selector` | `LHC15o` | `No`  | - | - | `PbPb`
+`tableMaker` | `LHC22c` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
+`tableReader` | `LHC22c` | `Yes`  | `JpsiToMuMuVertexing` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
+`filterPP` | `fwdprompt` | `No`  | `eventSelection` <br> `barrelTrackSelection`  <br> `muonSelection` | All Events | `pp`
+
+* For Dilepton Analysis (Non-Standart Existing Workflows in DQ)
+
+Workflow | Dataset | Process | Type | Col Syst
+--- | --- | --- | --- | --- |
+`dqEfficiency` | `AO2D_Bc100` | `JpsiToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  | B<sub>c</sub> → J/ψ → (μ<sup>+</sup> μ<sup>−</sup>) + μ | `pp`
+`tableReader`  | `LHC15o` | `JpsiToEE`<br>`dileptonHadron` | `dileptonhadron` | `PbPb`
+
+
+TO BE ADDED : 
+Workflow | Dataset | Process | Type | Col Syst
+--- | --- | --- | --- | --- |
+`dqEfficiency` | `AO2D_Bplus` | `JpsiToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  |B<sup>+</sup> → J/ψ + K, → J/ψ → e<sup>+</sup> e<sup>−</sup> | `pp`
+
+
 
 ## MC Part
 
 ### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
-
-You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
 Command To Run:
 
@@ -598,8 +641,6 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 
 ### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
 
-You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
-
 Command To Run:
 
 ```ruby
@@ -617,8 +658,6 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 ```
 
 ### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
-
-You can find and download dataset from : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
 Command To Run:
 
@@ -691,12 +730,14 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 ### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
+
 ```ruby
 python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
+
 ```ruby
 python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --isVertexZeq false
 ```
@@ -721,20 +762,15 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 
 ### Run filterPP on fwdprompt(fwdprompt pp Run3Data)
 
-Download : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ  FileName : AO2D_fwdprompt.root
-
 Command To Run:
 
 ```ruby
 python3 IFilterPP.py Configs/configFilterPPRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
 ```
 
-## SPECIAL PART : DILEPTON ANALYSIS
+## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
 
-### MC -> Dilepton Track Analysis (On Bc Simulation)
-
-
-Download : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ FileName : AO2D_Bc100.root
+### MC : Dilepton Track Analysis (On Bc Simulation)
 
 First Command To Run:
 
@@ -753,7 +789,7 @@ Third Command To Run:
 python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root --analysis eventSelection muonSelection dileptonTrackDimuonMuonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
 ```
 
-### Data --> Dilepton Hadron Analysis (On PbPb Data LHC15o)
+### Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)
 
 First Command To Run:
 
