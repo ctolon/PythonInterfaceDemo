@@ -136,7 +136,7 @@ ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
 
 V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
 
-PIDSelections = {
+pidSelections = {
     "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
     "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
@@ -147,11 +147,11 @@ PIDSelections = {
     "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
 }
-PIDSelectionsList = []
-for k,v in PIDSelections.items():
-    PIDSelectionsList.append(k)
+pidSelectionsList = []
+for k,v in pidSelections.items():
+    pidSelectionsList.append(k)
     
-PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+pidParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
 
@@ -175,16 +175,16 @@ eventMuonSelections = ["0","1","2"]
 
 processDummySelections =["filter","event","barrel"]
     
-clist=[] # control list for type control
+clist = [] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
 allPairCuts = [] # only pair cuts
-nAddedAllCutsList = [] # e.g. muonQualityCuts::2
-nAddedPairCutsList = [] # e.g paircutMass::3
-SelsStyle1 = [] # track/muon cut::paircut::n
+nAddedAllCutsList = [] # e.g. muonQualityCuts:2
+nAddedPairCutsList = [] # e.g paircutMass:3
+selsWithOneColon = [] # track/muon cut:paircut:n
 allSels = [] # track/muon cut::n
-namespaceDef = ":" # Namespace reference
-namespaceDef2 = "::" # Namespace reference
+oneColon = ":" # Namespace reference
+doubleColon = "::" # Namespace reference
 
 # List for Transcation management for FilterPP
 muonCutList = [] # List --> transcation management for filterPP
@@ -253,10 +253,10 @@ with open('tempCutsLibrary.h') as f:
                         if 'pair' in y] 
             if getPairCuts: # if pair cut list is not empty
                 allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
+                namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
             allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
+            nameSpacedAllCuts = [x + oneColon for x in allCuts] # cut:
+            nameSpacedAllCutsTwoDots = [x + doubleColon for x in allCuts]  # cut::
 
 # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
 for k in range (1,10):
@@ -268,27 +268,12 @@ for k in range (1,10):
 # Style 1 <track-cut>:[<pair-cut>]:<n>:
 for i in nAddedPairCutsList:
     Style1 = [x + i for x in nameSpacedAllCuts]
-    SelsStyle1 = SelsStyle1 + Style1
+    selsWithOneColon = selsWithOneColon + Style1
       
 # Style 2 <track-cut>:<n> --> nAddedAllCutsList
 
 # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-allSels = SelsStyle1 + nAddedAllCutsList
-
-
-# Debug Print Options
-
-#print(allCuts)
-#print(allPairCuts)
-#print(allMCSignals)
-#print(allPairCuts)
-#print(namespacedPairCuts)
-#print(nameSpacedAllCuts)
-#print(nAddedAllCutsList)
-#print(nAddedPairCutsList)
-#print(SelsStyle1)
-#print(nAddedAllCutsList)
-#print(allSels)
+allSels = selsWithOneColon + nAddedAllCutsList
 
 
 ###################
@@ -349,9 +334,9 @@ for key,value in dqSelections.items():
     groupProcessFilterPP.add_argument(key, help=value, action='none')
 
 # d-q-filter-p-p-task
-GroupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-GroupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
-GroupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
+groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
 
 ## d-q-event-selection-task
 groupDQEventSelection = parser.add_argument_group(title='Data processor options: d-q-event-selection-task')
@@ -371,9 +356,9 @@ groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms"
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
-for key,value in PIDSelections.items():
+for key,value in pidSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
     
 # helper lister commands
@@ -456,11 +441,6 @@ if extrargs.cutLister:
 ######################
 # PREFIX ADDING PART #
 ###################### 
-
-# add prefix for extrargs.process for TableMaker and Filter PP
-#if extrargs.process != None:
-    #prefix_process = "process"
-    #extrargs.process = [prefix_process + sub for sub in extrargs.process]
 
 # add prefix for extrargs.pid for pid selection
 if extrargs.pid != None:
@@ -640,7 +620,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                   
             # PID Selections
-            if  (value in PIDParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2

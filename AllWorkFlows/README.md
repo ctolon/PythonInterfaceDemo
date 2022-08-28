@@ -1,68 +1,59 @@
-# New Python Interface
+# Old Interface
 
-This folder contains new interface based on nightly-20220823. You can follow the instructions and you can find tutorials end of the file. (For prerequisites, Installation guide for argcomplete and Some Informations good to know)
+This folder contains new interface based on [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows)
+
+P.S. The interface here has not been maintained. It is highly recommended to use the new interface. Many commands are missing and configurations are more complex
 
 ## Main Scripts
 
 * Script used to run both the skimming tasks (tableMaker.cxx and tableMakerMC.cxx)
-[`IRunTableMaker.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunTableMaker.py).
+[`IRunTableMaker.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunTableMaker.py).
 * Analyze DQ skimmed data tables. This workflow runs a few tasks: event selection, barrel track selection, muon track selection etc.
-[`IRunTableReader.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunTableMaker.py).
+[`IRunTableReader.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunTableMaker.py).
 * Which contains the tasks DQEventSelection for event selection, DQBarrelTrackSelection for barrel track selection and single track MC matching, and the DQQuarkoniumPairing for reconstructed track pairing, MC matching of the pairs and counting of generated MC signals.  
-[`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunDQEfficiency..py).
+[`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQEfficiency..py).
 * Produces a decision table for pp collisions. The decisions require that at least a selected pair (or just two tracks) exists for a given event. Currently up to 64 simultaneous decisions can be made, to facilitate studies for optimizing cuts. 
-[`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunFilterPP.py).
+[`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunFilterPP.py).
 * Task to compute Q vectors and other quanitites related from the generic framework. Generic framework O2 version is a port of the AliPhysics version. To be used in the DQ analyses aiming for flow measurements 
-[`IRunDQFlow.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunDQFlow.py).
-* V0 Selector makes Loops over a V0Data table and produces some standard analysis output.
-[`IRunV0Selector.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunV0Selector.py).
+[`IRunDQFlow.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/IRunDQFlow.py).
 * It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way. You can download libs with version as nightly
-[`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/DownloadLibs.py).
+[`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/DownloadLibs.py).
 
 ## Config Files
 
 * Contains workflow configuration files
-[`Configs`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/NewAllWorkFlows/Configs)
+[`Configs`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows/Configs)
 
 
 * JSON workflow configuration files List in Table
 
 Main File | Related Task on O2Physics | Description
 --- | --- | ---
-[`configTableMakerDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configTableMakerDataRun2.json) | [`TableMaker.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx) | run over Run-2 converted data
-[`configTableMakerDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configTableMakerDataRun3.json) | [`TableMaker.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx) | run over Run-3 data
-[`configTableMakerMCRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configTableMakerMCRun2.json) | [`TableMakerMC.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx) | run over Run-2 converted MC
-[`configTableMakerMCRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configTableMakerMCRun3.json) | [`TableMakerMC.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx) | run over Run-3 MC
-[`configAnalysisData.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configAnalysisData.json) | [`TableReader.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx) | run with tableReader.cxx
-[`configAnalysisMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configAnalysisMC.json) | [`dqEfficiency.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx) | run with dqEfficiency.cxx
-[`configFilterPPRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFilterPPRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
-[`configFilterPPDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
-[`configFlowDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFlowDataRun2.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
-[`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
-[`configV0SelectorDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configV0SelectorDataRun2.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx
-[`configV0SelectorDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configV0SelectorDataRun3.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx
+[`configTableMakerDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerDataRun2.json) | [`TableMaker.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx) | run over Run-2 converted data
+[`configTableMakerDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerDataRun3.json) | [`TableMaker.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx) | run over Run-3 data
+[`configTableMakerMCRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerMCRun2.json) | [`TableMakerMC.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx) | run over Run-2 converted MC
+[`configTableMakerMCRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configTableMakerMCRun3.json) | [`TableMakerMC.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx) | run over Run-3 MC
+[`configAnalysisData.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configAnalysisData.json) | [`TableReader.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx) | run with tableReader.cxx
+[`configAnalysisMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configAnalysisMC.json) | [`dqEfficiency.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx) | run with dqEfficiency.cxx
+[`configFilterPPRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
+[`configFilterPPDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
+[`configFlowDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFlowDataRun2.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
+[`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
 
 
-* JSON Reader Configuations for the Common DQ skimmed tables:
+* JSON Reader Configuations for the DQ skimmed tables
 
 Main File | Data Model | Description
 --- | --- | ---
 [`readerConfiguration_reducedEvent.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/readerConfiguration_reducedEvent.json) | DQ Skimmed Data Model | For Data
 [`readerConfiguration_reducedEventMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/readerConfiguration_reducedEventMC.json) | DQ Skimmed Data Model | For MC
 
-* JSON Reader Configuations for the DQ skimmed tables with extra dilepton tables:
+* JSON Writer Configuations for produce extra dilepton Tables in DQ skimmed tables
 
 Main File | Data Model | Description
 --- | --- | ---
-[`readerConfiguration_dileptons`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/readerConfiguration_dileptons.json) | DQ Skimmed Data Model With Extra Dilepton Tables | For Data
-[`readerConfiguration_dileptonMC`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/readerConfiguration_dileptonMC.json) | DQ Skimmed Data Model With Extra Dilepton Tables | For MC
-
-* JSON Writer Configuations for produce extra dilepton tables in DQ skimmed tables:
-
-Main File | Data Model | Description
---- | --- | ---
-[`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | For Data
-[`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | For MC
+[`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | for data
+[`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/AllWorkFlows/Configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | for MC
 
 ## Repository Organization and Development Strategy
 
@@ -70,8 +61,8 @@ While developing, python CLIs are prepared by creating python scripts with enoug
 
 * For O2DQWorkflow, a folder has been created for the 2nd stage tests containing python scripts to run inside O2 for each task. If the tests in the TestInteface folder pass, new developments are transferred here, where analysis tests are performed in O2.
 
-* NewAllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
-[`NewAllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/NewAllWorkFlows)
+* AllWorkFlows folder contains stable python workflow scripts with integrated Python CLI, their workflow configuration files and database files. Improvements should be moved here after done tests. 
+[`AllWorkFlows`](https://github.com/ctolon/PythonInterfaceDemo/tree/main/AllWorkFlows)
 
 # Prerequisites!!!
 
@@ -81,7 +72,7 @@ Clone Repository in your workspace:
 
 `git clone https://github.com/ctolon/PythonInterfaceDemo.git`
 
-Then go NewAllWorkFlows folder with `cd` commands
+Then go AllWorkFlows folder with `cd` commands
 
 Since the scripts are still in development, it is recommended to update daily regularly with the following command:
 
@@ -156,7 +147,7 @@ Then install the package:
 
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
-`cd ~/NewAllWorkFlows`
+`cd ~/allWorkFlows`
 
 And then, source your argcomplete script for autocomplete:
 
@@ -213,7 +204,7 @@ Then install the package:
 
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
-`cd ~/NewAllWorkFlows`
+`cd ~/allWorkFlows`
 
 And then, source your argcomplete script for autocomplete:
 
@@ -258,7 +249,7 @@ Configs/configFilterPPRun3.json                  Configs/configTableMakerMCRun2.
 Configs/configFlowDataRun2.json                  Configs/configTableMakerMCRun3.json              Configs/readerConfiguration_reducedEvent.json 
 ```
 
-then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3
+then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3)
 
 ```ruby
 python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json
@@ -376,7 +367,7 @@ list of metavar parameters:
 
 VERY IMPORTANT P.S: Downloading DQ libraries from Github is unstable and has a lot of issues. So use `DownloadLibs.py` script locally if you are working at local machine. It is highly recommended to skip this part directly and go to `Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine` (You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS).
 
-These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the `DownloadLibs.py` script in the NewAllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
+These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the `DownloadLibs.py` script in the AllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
 
 P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
 
@@ -708,7 +699,7 @@ You will see helper messages again. As long as this command is added in the para
 
 ### One Minimal Bug on Error Message
 
-It lists parameter values that do not actually need to be configured in the arguments that need to be configured. This is because the user lists the required values for some parameters while configuring the help messages and takes the explanation of these values from the dummy positional arguments.Required option of positional arguments cannot be changed.
+it lists parameter values that do not actually need to be configured in the arguments that need to be configured. This is because the user lists the required values for some parameters while configuring the help messages and takes the explanation of these values from the dummy positional arguments.Required option of positional arguments cannot be changed.
 
 Ex. tableMaker for help mesaage of `--process`:
 
@@ -981,9 +972,11 @@ must be converted to comma-separated strings
 ## Some Notes Before The Instructions
 
 * You don't have to configure all the parameters in the Python interface. the parameter you did not configure will remain as the value in the JSON.
-* Don't forget to configure your Config JSON file in interface for each workflow and also configure extra `-run<Data|MC>` parameters for tableMaker workflow only.
-* Sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow.
+* Don't forget to configure your Config JSON file in interface for each workflow and also configure extra `-run<Data|MC>` and `--run <2|3>` parameters for tablemaker workflow only
+* sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow
 
+
+# OLD INTERFACE IN ALLWORKFLOWS INSTRUCTIONS
 # Instructions for IRunTableMaker.py
 
 Add extrac tables and converters with:
@@ -1001,32 +994,34 @@ Add extrac tables and converters with:
   * `IRunTableMaker.py`
   * JSON Config File
     * Example usage: Configs/configTableMakerDataRun3.json 
+  * `--run <2|3>`  
+    * Usage (only select one value): `--run 2` or `--run 3`
   *  `-run<MC|Data>` 
      *  Usage (only select one value): `-runMC` or `-runData`
   *  `--process <Value>` 
      *  Usage examples (can take several value) : `--process MuonsOnly` or `--process BarrelOnly MuonOnly BarrelOnlyWithEventFilter`
 
-Examples(in NewAllWorkFlows):
+Examples(in AllWorkFlows):
 - Run TableMaker on Data run3 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --run 3 --process BarrelOnly --onlySelect true
   ```
 - Run TableMaker on MC run3 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process BarrelOnly --onlySelect true
   ```
 - Run TableMaker on Data run2 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --run 2 --process BarrelOnly --onlySelect true
   ```
 - Run TableMaker on MC run2 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --process BarrelOnly
+  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --run 2 --process BarrelOnly --onlySelect true
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
   ```
 
 # Available configs in IRunTableMaker Interface
@@ -1037,10 +1032,9 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--aod-memory-rate-limit` | all | `internal-dpl-aod-reader` | 1 |
 `--onlySelect` | `true`</br> `false`</br>  | Special Option | 1 |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
-`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyWithEventFilter`</br> `BarrelOnlyWithQvector` </br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br> `MuonOnlyWithQvector` </br>  `OnlyBCs`</br>  | `table-maker` | * |
+`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyWithEventFilter`</br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br>  `OnlyBCs`</br>  | `table-maker` | * |
 `--run` | `2`</br> `3`</br> | Special Option | 1 |
 `-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
 `-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
@@ -1050,15 +1044,13 @@ Arg | Opt | Task | nargs |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
 `--isCovariance` | `true`</br> `false`</br> | `track-propagation` | 1 |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
+`--isProcessEvTime` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
+`--processDummy` | `barrel`</br> `muon`</br> `event`</br> | `d-q-barrel-track-selection-task`</br> `d-q-muons-selection`</br> `d-q-event-selection-task`</br>  | * |
 `--isBarrelSelectionTiny` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
-`--cfgWithQA` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> `d-q-filter-p-p-task`</br>`analysis-qvector`  | 1 |
+`--est` | `VOM`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br>| `centrality-table` | |
+`--cfgWithQA` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> | 1 |
 `--d_bz` | all | `v0-selector` | 1 |
 `--v0cospa` | all | `v0-selector` | 1 |
 `--dcav0dau` | all | `v0-selector` | 1 |
@@ -1068,19 +1060,13 @@ Arg | Opt | Task | nargs |
 `--dcamax` | all | `v0-selector` |  1|
 `--mincrossedrows` | all | `v0-selector` | 1 |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
-`--cfgCutPtMin` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgCutPtMax ` | all  | `analysis-qvector`</br> | 1 |
-`--cfgCutEta ` | all  | `analysis-qvector` | 1 |
-`--cfgEtaLimit` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgNPow` | all  | `analysis-qvector`</br> | 1 |
-`--cfgEfficiency` | all  | `analysis-qvector` | 1 |
-`--cfgAcceptance` | all  | `analysis-qvector`</br>  | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
 `--isFilterPPTiny` | `true`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
+`--cfgPairCuts` | `allPairCuts` | `d-q-filter-p-p-task` | * |
 `--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgEventCuts` | `allCuts` | `table-maker` | * |
-`--cfgBarrelTrackCuts` | `allCuts` | `table-maker` | * |
+`--cfgBarrelTrackCuts` | [`allCuts` | `table-maker` | * |
 `--cfgMuonCuts` | `allCuts` | `table-maker` | * |
 `--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
 `--cfgBarrelLowPt` | all | `table-maker` | 1 |
@@ -1101,7 +1087,6 @@ Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your aod file with path  |  | str |
-`--aod-memory-rate-limit` | String | Rate limit AOD processing based on memory |  |  str
 `--onlySelect` | Boolean | An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)"| `false` | str.lower |
 `--autoDummy` | Boolean | Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa) | `true` | str.lower |
 `--process` | String | process selection for skimmed data model in tablemaker |  | str |
@@ -1114,12 +1099,10 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--isCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
-`--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
-`--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
+`--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
+`--processDummy` | String | Dummy function (No need If autoDummy is true) |  | str.lower
 `--isBarrelSelectionTiny` | Boolean | Run barrel track selection instead of normal(process func. for barrel selection must be true) |  | str.lower
 `--est` | String | Produces centrality percentiles parameters | | str
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
@@ -1132,21 +1115,15 @@ Arg | Ref Type| Desc | Default | Real Type
 `--dcamax` | Float | dcamax |  | str
 `--mincrossedrows` | Float | Min crossed rows  |  | str
 `--maxchi2tpc` | Float | max chi2/NclsTPC  |  | str
-`--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
-`--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
-`--cfgCutEta ` | Float | Eta range for tracksselection  |  | str
-`--cfgEtaLimit` | Float | Eta gap separation, only if using subEvents |  | str
-`--cfgNPow` | Integer | Power of weights for Q vector  |  | str
-`--cfgEfficiency` | String | CCDB path to efficiency object  |  | str
-`--cfgAcceptance` | String | CCDB path to acceptance object  |  | str
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--isFilterPPTiny` | Boolean | Run filter tiny task instead of normal (processFilterPP must be true) |  | str.lower
+`--cfgPairCuts` | String | Space separated list of pair cuts |  | str
 `--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker and analysis-qvector  |  | str
-`--cfgMuonsCuts` | String | Space separated list of ADDITIONAL muon track cuts  |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker  |  | str
+`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cfgBarrelLowPt` | Float | Specify the lowest pt cut for electrons; used in a Partition expression to improve CPU efficiency (GeV) |  | str
 `--cfgMuonLowPt` | Float | Specify the lowest pt cut for muons; used in a Partition expression to improve CPU efficiency  (GeV) |  | str
 `--cfgNoQA` | Boolean | If true, no QA histograms |  | str.lower
@@ -1163,13 +1140,22 @@ Arg | Ref Type| Desc | Default | Real Type
 
 # Instructions for IRunTableReader.py
 
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+
 * Minimum Required Parameter List:
   * `python3`
   * `IRunTableReader.py`
   * JSON Config File
     * Example For Most common usage: Configs/configAnalysisData.json  
 
-Examples(in NewAllWorkFlows):
+Examples(in AllWorkFlows):
 - Run TableReader on Data run3 With Minimum Commands
   ```ruby
   python3 IRunTableReader.py Configs/configAnalysisData.json
@@ -1177,9 +1163,11 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+  python3 IRunTableReader.py Configs/configAnalysisData.json --aod Datas/AO2D_LHC21i3.root
   ```
 
+
+TODO Add Details for multiple commands
 
 # Available configs in IRunTableReader Interface
 
@@ -1190,15 +1178,19 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`eventMixing`</br>`eventMixingVn`</br> `sameEventPairing`</br> `dileptonHadron`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-event-mixing`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
-`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`VnJpsiToEE`</br>`VnJpsiToMuMu`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br> `dileptonHadronSelection`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
+`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
-`--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection`  | 1 |
-`--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br> | * |
+`--isMixingEvent` | `true`</br>`false`</br>  | `analysis-event-mixing-selection` | 1 |
+`--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
+`--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br>  | * |
 `--cfgEventCuts` | `allCuts`  | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
-`--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-dilepton-hadron` | * |
+`--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-same-event-pairing` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--mixingLister` | No Param | `allMixing` | 0 |
 `--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
@@ -1215,25 +1207,38 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgMixingVars` | String | Mixing configs separated by a space | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 # Instructions for IRunDQEfficiency.py
+
+Add extrac tables and converters with:
+1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
+3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+
 * Minimum Required Parameter List:
   * `python3`
   * `IRunDQEfficiency.py`
   * JSON Config File
     * Example For Most common usage: Configs/configAnalysisMC.json  
 
-Examples(in NewAllWorkFlows):
+Examples(in AllWorkFlows):
 - Run DQEfficiency on Data run3 With Minimum Commands
   ```ruby
   python3 IRunDQEfficiency.py Configs/configAnalysisMC.json
@@ -1257,9 +1262,13 @@ Arg | Opt | Task | nargs |
 `--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackDimuonMuonSelection`</br> `dileptonTrackDielectronKaonSelection`</br> | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
+`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackSelection`</br>| `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
 `--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| `analysis-same-event-pairing` | * |
-`--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection` | 1 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
+`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
+`--cfgQA` |`true` </br> `false`  | `event-selection-task`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
 `--cfgTrackMCSignals` | `allMCSignals` | `analysis-track-selection` | * |
@@ -1267,9 +1276,6 @@ Arg | Opt | Task | nargs |
 `--cfgMuonMCSignals` | `allMCSignals` | `analysis-muon-selection` | * |
 `--cfgBarrelMCRecSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
 `--cfgBarrelMCGenSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
-`--cfgFlatTables` | `true` </br> `false` | `analysis-same-event-pairing` | 1 | 
-`--cfgLeptonCuts` | `allCuts` | `analysis-dilepton-track` | * | 
-`--cfgFillCandidateTable` | `true` </br> `false` | `analysis-dilepton-track` | 1 | 
 `--cfgBarrelDileptonMCRecSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
@@ -1288,11 +1294,14 @@ Arg | Ref Type| Desc | Default | Real Type
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process selections for Same Event Pairing | - | str
+`--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
+`--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
+`--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
 `--cfgEventCuts` |  String | Space separated list of event cuts | - | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgTrackMCSignals` | String | Space separated list of MC signals | - | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in tablemaker | - | str
 `--cfgMuonMCSignals` | String | Space separated list of MC signals | - | str
 `--cfgBarrelMCRecSignals` | String | Space separated list of MC signals (reconstructed) | - | str
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
@@ -1320,7 +1329,7 @@ Add extrac tables and converters with:
   * JSON Config File
     * Example For usage: Configs/configFilterPPRun3.json 
 
-Examples(in NewAllWorkFlows):
+Examples(in AllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
   python3 IFilterPP.py Configs/configFilterPPRun3.json
@@ -1352,12 +1361,9 @@ Arg | Opt | Task | nargs |
 `--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--isProcessEvTime` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` </br> `false`  | dq task selection</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `d-q-event-selection-task`</br>  | * |
 `--cfgBarrelTrackCuts` | `allCuts` | `d-q-barrel-track-selection`</br> | * |
@@ -1383,18 +1389,15 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
-`--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
+`--isProcessEvTime` | Boolean | Process Event Time Selection for `tof-pid-full tof-pid` |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
-`--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
 `--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
-`--cfgMuonsCuts` | String | Space separated list of ADDITIONAL muon track cuts  |  | str
+`--cfgMuonsCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
@@ -1408,7 +1411,7 @@ Arg | Ref Type| Desc | Default | Real Type
   * JSON Config File
     * Example For usage: Configs/configFlowDataRun3.json
 
-Examples(in NewAllWorkFlows):
+Examples(in AllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
   python3 IRunDQFlow.py Configs/configFlowDataRun3.json
@@ -1448,12 +1451,7 @@ Arg | Opt | Task | nargs |
 `--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
 `--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` </br> `false`  | `analysis-qvector`</br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-qvector`</br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-qvector`</br> | * |
@@ -1483,17 +1481,12 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
-`--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
-`--est` | String | Produces centrality percentiles parameters | | str
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
-`--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts |  | str
-`--cfgMuonCuts` | String | Space separated list of muon cuts |  | str
+`--cfgMuonCuts` | String | Space separated list of muon cuts in d-q muons selection  |  | str
 `--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
 `--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
 `--cfgCutEta ` | Float | Eta range for tracksselection  |  | str
@@ -1505,362 +1498,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
-# Points to consider when setting your configurations with python scripts and JSON configuration files
-
-TODO: Add Details
-
-# Tutorial Part
-
-Firstly, clone repository in your workspace
-
-`git clone https://github.com/ctolon/PythonInterfaceDemo.git`
-
-Before you start, you need to do the installations in the readme file
-
-P.S. Don't forget to install the O2 enviroment before running the scripts
-
-Ex. `alienv enter O2Physics/latest,QualityControl/latest`
-
-Assuming you have installed the argcomplete package, don't forget to source the bash script again in your O2 enviroment.
-
-`source argcomplete.sh`
-
-If you don't have time to read the documentation follow these steps:
-
-For Linux Based System:
-
-* `alienv enter O2Physics/latest,QualityControl/latest` (Load Your alienv, if you want you can install lxplus version without using QC)
-* `pip install argcomplete` and `pip3 install argcomplete`
-* `source argcomplete.sh`
-
-For MacOS Based System:
-
-* `brew install bash`
-* `alienv enter O2Physics/latest,QualityControl/latest` (Load Your alienv, if you want you can install lxplus version without using QC)
-* `pip install argcomplete` and `pip3 install argcomplete`
-* `exec bash` (temporary bash shell)
-* `source argcomplete.sh`
-
-if not works:
-
-* `sudo chsh -s /bin/bash <username>`
-* `source argcomplete.sh`
-
-if you used the command `sudo chsh -s /bin/bash <username>` after you are done with the scripts (It converts your system shell zsh to bash):
-
-* `sudo chsh -s /bin/zsh <username>` (It converts your system shell bash to zsh)
-
-
-if you used the command `exec bash` you don't need to do anything.
-
-## Download Datas For Tutorials
-
-You can Found MC Datas and Skimmed datas at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
-
-Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here.
-
-You can found Real Data for pp at : [Click Here](https://alimonitor.cern.ch/catalogue/index.jsp?path=%2Falice%2Fdata%2F2022%2FLHC22c%2F517616%2Fapass1#/alice/data/2022/LHC22c/517616/apass1)
-
-You can found Real Data for PbPb at : [Click Here](https://alimonitor.cern.ch/prod/jobs.jsp?t=20117&outputdir=PWGZZ/Run3_Conversion/242_20211215-1006_child_2$)
-
-or [Click Here](https://cernbox.cern.ch/index.php/s/6KLIdQdAlNXj5n1)
-
-P.S: Dont forget the change name of AO2D.root files for interface and Move this datas to you previously create Datas Folder.
-
-For PbPb Data : AO2D.root to AO2D_PbPbDataRun2_LHC15o.root
-
-For pp Data : AO2D.root to AO2D_ppDataRun3_LHC22c.root
-
-If you downloaded these datasets, you can start.
-
-## Workflows In Tutorials
-
-* For MC:
-
-Workflow | Dataset | Skimmed | Process | Type | Col Syst
---- | --- | --- | --- | --- | --- |
-`tableMakerMC` | `LHC21i3d2` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
-`dqEfficiency` | `LHC21i3d2` | `Yes`  | `JpsiToMuMu` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
-`tableMakerMC` | `LHC21i3b` | `No` | `BarrelOnly`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `pp`
-`dqEfficiency` | `LHC21i3b` | `Yes` | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−  | `pp`
-`tableMakerMC` | `LHC21i3f2` | `No` | `BarrelOnly`<br>`OnlyBCs` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
-`dqEfficiency` | `LHC21i3f2` | `Yes` | `JpsiToEE` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
-
-* For Data:
-
-Workflow | Dataset | Skimmed | Process | Selection | Col Syst
---- | --- | --- | --- | --- | --- |
-`tableMaker` | `LHC15o` | `No` | `BarrelOnlyWithCent`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableReader`  | `LHC15o` | `Yes`  | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableMaker` | `LHC15o` | `No` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableReader` | `LHC15o` | `Yes`  | `VnJpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`dqFlow` | `LHC15o` | `No` | - | - | `PbPb`
-`v0Selector` | `LHC15o` | `No`  | - | - | `PbPb`
-`tableMaker` | `LHC22c` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
-`tableReader` | `LHC22c` | `Yes`  | `JpsiToMuMuVertexing` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
-`filterPP` | `fwdprompt` | `No`  | `eventSelection` <br> `barrelTrackSelection`  <br> `muonSelection` | All Events | `pp`
-
-
-Workflow | Dataset | Process | Type | Col Syst
---- | --- | --- | --- | --- |
-`dqEfficiency` | `AO2D_Bc100` | `JpsiToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  | B<sub>c</sub> → J/ψ → (μ<sup>+</sup> μ<sup>−</sup>) + μ | `pp`
-`tableReader`  | `LHC15o` | `JpsiToEE`<br>`dileptonHadron` | `dileptonhadron` | `PbPb`
-
-
-TO BE ADDED IN TUTORIALS (Not Prepared Yet): 
-
-Workflow | Dataset | Process | Type | Col Syst
---- | --- | --- | --- | --- |
-`dqEfficiency` | `AO2D_Bplus` | `JpsiToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  |B<sup>+</sup> → J/ψ + K, → J/ψ → e<sup>+</sup> e<sup>−</sup> | `pp`
-
-## Skimmed Datas In Tutorials
-
-Reduced DQ skimmed data list created with tableMaker/tableMakerMC:
-
-Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
---- | --- | --- | --- |
-`reducedAod_ppMC_LHC21i3d2.root` | `LHC21i3d2` | `tableMakerMC` | `MuonOnlyWithCov`<br>`OnlyBCs`
-`reducedAod_ppMC_LHC21i3b.root` | `LHC21i3b` | `tableMakerMC` | `BarrelOnly`<br>`OnlyBCs`
-`reducedAod_ppMC_LHC21i3f2.root` | `LHC21i3f2` | `tableMakerMC` | `BarrelOnly`<br>`OnlyBCs`
-`reducedAod_ppMC_Bc100.root` | `Bc100` | `tableMakerMC` | `MuonOnlyWithCov`<br>`OnlyBCs`
-`reducedAod_PbPbData_LHC15o.root` | `LHC15o` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
-`reducedAod_PbPbData_LHC15o_Flow.root` | `LHC15o` | `tableMaker` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs`
-`reducedAod_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableMaker` | `BarrelOnly`<br>`OnlyBCs`
-`reducedAod_ppData_LHC222c.root` | `LHC222c` | `tableMaker` | `MuonOnlyWithCov`<br>`OnlyBCs`
-
-Reduced DQ Dileptons skimmed data list For Dilepton Analysis (dilepton-track and dilepton-hadron) created with tableReader/dqEfficiency:
-
-Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
---- | --- | --- | --- |
-`dileptonAOD_ppMC_BC100.root` | `Bc100` | `dqEfficiency` | `MuonOnlyWithCov`<br>`OnlyBCs`
-`dileptonAOD_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableReader` | `BarrelOnly`<br>`OnlyBCs`
-
-## Pre-Made JSON configuration Files In Tutorials
-
-Config JSON list created with Scripts.
-
-Common JSON Configs:
-
-Config | For | Description
---- | --- | --- |
-`configAnalysis_LHC21i3b_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3b Simulation → reducedAod_ppMC_LHC21i3b.root
-`configAnalysis_LHC21i3d2_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3d2 Simulation → reducedAod_ppMC_LHC21i3d2.root
-`configAnalysis_LHC21i3f2_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3f2 Simulation → reducedAod_ppMC_LHC21i3f2.root
-`ConfigAnalysis_LHC15o_Data.json` | `DataRun2` | Run tableReader on LHC15o Data without flow → reducedAod_PbPbData_LHC15o.root
-`ConfigAnalysis_LHC15o_Flow_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for Flow Analysis → reducedAod_PbPbData_LHC15o_Flow.root
-`ConfigAnalysis_LHC22c_Data.json` | `DataRun3` | Run tableReader on LHC22c Data → reducedAod_PbPbData_LHC15o.root
-`configTableMaker_LHC21i3b_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3b Simulation → AO2D_ppMCRun3_LHC21i3b.root
-`configTableMaker_LHC21i3d2_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3d2 Simulation → AO2D_ppMCRun3_LHC21i3d2.root
-`configTableMaker_LHC21i3f2_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3f2 Simulation → AO2D_ppMCRun3_LHC21i3f2.root
-`ConfigTableMaker_LHC15o_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o without Flow → AO2D_PbPbDataRun2_LHC15o.root
-`ConfigTableMaker_LHC15o_Flow_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o For Flow Analysis → AO2D_PbPbDataRun2_LHC15o.root
-`ConfigTableMaker_LHC22c_DataRun3.json` | `DataRun3` | Run tableMaker on LHC22c Data → AO2D_ppDataRun3_LHC22c.root
-`configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
-
-JSON Configs for Single Workflows:
-
-Config | For | Description
---- | --- | --- |
-`configFilterPP_fwdprompt_Run3.json` | `MCRun3` | Run filterPP on fwdprompt → AO2D_fwdprompt.root
-`configFlow_LHC15o_DataRun2.json` | `DataRun2` | Run dqFlow on LHC15o Data  → AO2D_PbPbDataRun2_LHC15o.root
-`configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
-
-JSON Configs for dilepton-hadron and dilepton-track analysis:
-
-Config | For | Description
---- | --- | --- |
-`configTableMaker_Bc100_MCRun3.json` | `MCRun3` | Run tableMakerMC on Bc100 Simulation for prepare dilepton-track analysis → AO2D_Bc100.root
-`configAnalysis_Bc100_MC.json` | `MCRun3` | Run dqEfficiency on Bc100 Simulation for prepare skimmed dileptons output → reducedAod_ppMC_Bc100.root
-`configAnalysisDilepton_Bc100_MC.json` | `MCRun3` | Run dqEfficiency on Bc100 Simulation for dilepton analysis → dileptonAOD_ppMC_BC100.root
-`configTableMaker_LHC15o_DileptonHadron_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o Data for prepare dilepton-hadron analysis → AO2D_PbPbDataRun2_LHC15o.root
-`configAnalysis_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for prepare skimmed dileptons output → reducedAod_PbPbData_LHC15o_dileptonHadron.root
-`configAnalysisDilepton_LHC15o_dileptonHadron_Data` | `DataRun2` | Run tableReader on LHC15o Data for dilepton analysis → reducedAod_PbPbData_LHC15o_dileptonHadron.root
-
-P.S. Root files are inputs for JSON configs
-
-## MC Part
-
-### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
-```
-
- ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
-
-You need to produce reducedAod.root file with tableMakerMC in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
-```
-
-### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ --debug debug --logFile
-```
-
- ### Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)
-
-You need to produce reducedAod.root file with tableMakerMC in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile
-```
-
-### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty --debug debug --logFile
-```
-
- ### Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)
-
-You need to produce reducedAod.root file with tableMakerMC in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi nonPromptJpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi eFromNonpromptJpsi --debug debug --logFile
-```
-
-## Data Part
-
-### tableMaker on LHC15o (LHC15o PbPb Run2Data)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
-```
-
-### Run tableReader on LHC15o (LHC15o PbPb Run2Data)
-
-You need to produce reducedAod.root file with tableMaker in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
-```
-
-### Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
-```
-
-### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
-
-You need to produce reducedAod.root file with tableMaker in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
-```
-
-### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)
-
-Command To Run:
-
-```ruby
-python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
-```
-### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
-
-Command To Run:
-
-```ruby
-python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --isVertexZeq false
-```
-
-### Run tableMaker on LHC22c (LHC22c pp Run3Data)
-
-Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
-```
-
-### Run tableReader on Data (LHC22c pp Run3Data)
-
-You need to produce reducedAod.root file with tableMaker in previous step.
-
-Command To Run:
-
-```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
-```
-
-### Run filterPP on fwdprompt(fwdprompt pp Run3Data)
-
-Command To Run:
-
-```ruby
-python3 IFilterPP.py Configs/configFilterPPRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
-```
-
-## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
-
-This section includes analysis with non-standard workflows in DQ workflows. These analyzes are carried out in 3 stages:
-
-1. DQ skimmed data is created with TableMaker/tableMakerMC (input: AO2D.root, output: AnalysisResults.root)
-
-2. DQ skimmed dilepton data is created with tableReader/dqEfficiency, and analysis results are created on reducedAod, which is reduced Data that does not contain dilepton data (input : reducedAod.root, output: AnalysisResults.root and dileptonAod.root)
-
-3. With tableReader/dqEfficiency, analysis is performed on DQ skimmed dilepton data created earlier (input: dileptonAod.root and output: AnalysisResults.root)
-
-### MC : Dilepton Track Analysis (On Bc Simulation)
-
-First Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_Bc100.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals Jpsi Bc anyBeautyHadron --cfgMuonCuts matchedGlobal --cfgMuonLowPt 0.0 --debug debug --logFile
-```
-
-Second Command To Run:
-
-```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
-```
-Third Command To Run:
-
-```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root --analysis eventSelection muonSelection dileptonTrackDimuonMuonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
-```
-
-### Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)
-
-First Command To Run:
-
-```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
-```
-
-Second Command To Run:
-
-```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
-```
-
-Third Command To Run:
-
-```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
-```
 
 ## TODO List For Python Workflows
 * `Finished` We need more meaningful explanations for argument explanations (helping comments).
@@ -1868,7 +1505,7 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.roo
 choices and data types.
 * `Finished` Also some JSON values are bound together (eg. if cfgRun2 is false, isRun3 variable should be true
 automatically) so some error handling and automation should be done for transaction management.
-* `Finished` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
+* `Closed` Some configurations for MC may not be available for data configurations (eg. cfgMCsignals or vice versa, also
 valid for Run2 Run3 options). Therefore, when we configure this variable for data, it does not throw an error or
 make any changes. For this, the python script should be configured.
 * `Open` Python CLI only works by overriding values, so some of the unattached configurations should be integrated
@@ -1882,6 +1519,7 @@ bash (Already Integrated for local).
 * `Closed` JSON databases can be refactored in a more meaningful way. Now key-value pairs are equal (After Setting Naming conventions).
 * `Closed` A transaction management should be written to search whether the entered aod file is in the location.
 * `Closed` If a configuration entered is not in JSON, a warning message should be written with a logger for this.
+* `Open` char refactor for prefixes
 * `Open` Transaction management, which checks whether the parameters are entered only once, should be written, for example -process BarrelOnly BarrelOnly should throw an error or a warning message should be checked by checking that the parameters are entered as value more than once with a warning.
 
 
@@ -1895,9 +1533,6 @@ Date |  User | Type | Desc
 `Aug 22, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a problem about aod checker functionality in interface. It fixed. (interface functionality)
 `Aug 23, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a bug for SEP Process functionality, It fixed. (for tableReader and dqEfficiency)
 `Aug 23, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a bug dilepton analysis for pp (for LHC22c). DileptonAOD.root ttres are created blank. It's not fixed now. (only for pp datas)
-
-If you have problem about running the scripts or you have some suggestions for interface, contact me at: `cevat.batuhan.tolon@cern.ch` or you can send a message on mattermost `@ctolon`. I will try to fix your problem ASAP.
-
 ## Design Notes
 
 * `Jul 20, 2022` Developed pythonCLI version 1 for tablemaker in its simplest form, not integrated into main task.
@@ -1923,8 +1558,3 @@ If you have problem about running the scripts or you have some suggestions for i
 * `Aug 22, 2022` Helper Messages Updated. One minimal display bug added to readme. New interface development is ongoing with new JSON Configs.based on nightly-2022_08_23
 * `Aug 23, 2022` AOD File checker fixed, Same Event Pairing process functionality fixed, centrality table fixed in new interface, new automated things provided.
 * `Aug 24-26, 2022` All bugs are fixed. All functionalities provided, all scripts are tested by different users. Interface development is completed.
-
-## Technical Details
-
-To be added
-

@@ -124,7 +124,7 @@ ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
 
 V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
 
-PIDSelections = {
+pidSelections = {
     "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
     "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
@@ -135,11 +135,11 @@ PIDSelections = {
     "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
 }
-PIDSelectionsList = []
-for k,v in PIDSelections.items():
-    PIDSelectionsList.append(k)
+pidSelectionsList = []
+for k,v in pidSelections.items():
+    pidSelectionsList.append(k)
     
-PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+pidParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 eventMuonSelections = ["0","1","2"]
 
@@ -242,9 +242,9 @@ groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms"
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
-for key,value in PIDSelections.items():
+for key,value in pidSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
     
 # helper lister commands
@@ -378,7 +378,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                   
             # PID Selections
-            if  (value in PIDParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2

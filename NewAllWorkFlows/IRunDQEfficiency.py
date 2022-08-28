@@ -114,14 +114,14 @@ analysisSelectionsList = []
 for k,v in analysisSelections.items():
     analysisSelectionsList.append(k)
 
-SameEventPairingProcessSelections = {
+sameEventPairingProcessSelections = {
     "JpsiToEE" : "Run electron-electron pairing, with skimmed tracks",
     "JpsiToMuMu" : "Run muon-muon pairing, with skimmed muons",
     "JpsiToMuMuVertexing" : "Run muon-muon pairing and vertexing, with skimmed muons"
 }
-SameEventPairingProcessSelectionsList = []
-for k,v in SameEventPairingProcessSelections.items():
-    SameEventPairingProcessSelectionsList.append(k)
+sameEventPairingProcessSelectionsList = []
+for k,v in sameEventPairingProcessSelections.items():
+    sameEventPairingProcessSelectionsList.append(k)
     
 booleanSelections = ["true","false"]
 
@@ -140,9 +140,9 @@ for k,v in debugLevelSelections.items():
 ANALYSIS_EVENT_SELECTED = False
 ANALYSIS_TRACK_SELECTED = False
 ANALYSIS_MUON_SELECTED = False
-ANALYSIS_SEE_SELECTED = False
+ANALYSIS_SEP_SELECTED = False
 
-clist=[] # control list for type control
+clist = [] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = []
 allMCSignals =[]
@@ -251,13 +251,13 @@ for key,value in analysisSelections.items():
     groupAnalysisSelections.add_argument(key, help=value, action='none')
 
 groupProcessSEESelections = parser.add_argument_group(title='Data processor options: analysis-same-event-pairing')    
-groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS', choices= SameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(SameEventPairingProcessSelectionsList)
+groupProcessSEESelections.add_argument('--process', help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs='*', type=str, metavar='PROCESS', choices= sameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
 groupProcessSEESelections.add_argument('--cfgBarrelMCRecSignals', help="Space separated list of MC signals (reconstructed)", nargs='*', action="store", type=str, metavar='CFGBARRELMCRECSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 groupProcessSEESelections.add_argument('--cfgBarrelMCGenSignals', help="Space separated list of MC signals (generated)", nargs='*', action="store", type=str, metavar='CFGBARRELMCGENSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 groupProcessSEESelections.add_argument('--cfgFlatTables', help="Produce a single flat tables with all relevant information of the pairs and single tracks", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupProcess = parser.add_argument_group(title='Choice List for analysis-same-event-pairing task Process options')
 
-for key,value in SameEventPairingProcessSelections.items():
+for key,value in sameEventPairingProcessSelections.items():
     groupProcess.add_argument(key, help=value, action='none')
 
 # cfg for QA
@@ -515,9 +515,9 @@ for key, value in config.items():
                                     logging.debug(" - [%s] %s : false",key,value)   
                                                             
                             if 'sameEventPairing' in valueCfg:
-                                ANALYSIS_SEE_SELECTED = True
+                                ANALYSIS_SEP_SELECTED = True
                             if 'sameEventPairing' not in valueCfg:
-                                ANALYSIS_SEE_SELECTED = False
+                                ANALYSIS_SEP_SELECTED = False
                                     
             if value =='processDimuonMuonSkimmed' and extrargs.analysis:
                 for keyCfg,valueCfg in configuredCommands.items():
@@ -626,9 +626,9 @@ for key, value in config.items():
                     if keyCfg == 'process': # Select process keys
                         if(valueCfg != None): # Skipped None types, because can't iterate in None type
 
-                            if ANALYSIS_SEE_SELECTED == False:
+                            if ANALYSIS_SEP_SELECTED == False:
                                 logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                ANALYSIS_SEE_SELECTED = True
+                                ANALYSIS_SEP_SELECTED = True
                     
                             if 'JpsiToEE' in valueCfg and value == "processJpsiToEESkimmed":
                                 if ANALYSIS_TRACK_SELECTED == True:
@@ -663,7 +663,7 @@ for key, value in config.items():
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEE_SELECTED == False:
+            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEP_SELECTED == False:
                 config[key]["processJpsiToEESkimmed"] = 'false'
                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'

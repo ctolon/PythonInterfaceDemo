@@ -151,7 +151,7 @@ ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
 
 ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
 
-PIDSelections = {
+pidSelections = {
     "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
     "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
@@ -162,11 +162,11 @@ PIDSelections = {
     "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
 }
-PIDSelectionsList = []
-for k,v in PIDSelections.items():
-    PIDSelectionsList.append(k)
+pidSelectionsList = []
+for k,v in pidSelections.items():
+    pidSelectionsList.append(k)
     
-PIDParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+pidParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
 
 collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
 
@@ -195,17 +195,17 @@ isValidProcessFunc = True
 
 threeSelectedList = []
 
-clist=[] # control list for type control
+clist = [] # control list for type control
 allValuesCfg = [] # counter for provided args
 allCuts = [] # all analysis cuts
-allMCSignals =[] # all MC Signals
+allMCSignals = [] # all MC Signals
 allPairCuts = [] # only pair cuts
-nAddedAllCutsList = [] # e.g. muonQualityCuts::2
-nAddedPairCutsList = [] # e.g paircutMass::3
-SelsStyle1  = [] # track/muon cut::paircut::n
+nAddedAllCutsList = [] # e.g. muonQualityCuts:2
+nAddedPairCutsList = [] # e.g paircutMass:3
+selsWithOneColon  = [] # track/muon cut:paircut:n
 allSels = [] # track/muon cut::n
-namespaceDef = ":" # Namespace reference
-namespaceDef2 = "::" # Namespace reference
+oneColon = ":" # Namespace reference
+doubleColon = "::" # Namespace reference
 
 # List for Transcation management for FilterPP
 muonCutList = [] # List --> transcation management for filterPP
@@ -289,10 +289,10 @@ with open('tempCutsLibrary.h') as f:
                         if 'pair' in y] 
             if getPairCuts: # if pair cut list is not empty
                 allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
-                namespacedPairCuts = [x + namespaceDef for x in allPairCuts] # paircut:
+                namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
             allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + namespaceDef for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + namespaceDef2 for x in allCuts]  # cut::
+            nameSpacedAllCuts = [x + oneColon for x in allCuts] # cut:
+            nameSpacedAllCutsTwoDots = [x + doubleColon for x in allCuts]  # cut::
 
  
 # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
@@ -305,27 +305,13 @@ for k in range (1,10):
 # Style 1 <track-cut>:[<pair-cut>]:<n>:
 for i in nAddedPairCutsList:
     Style1 = [x + i for x in nameSpacedAllCuts]
-    SelsStyle1 = SelsStyle1 + Style1
+    selsWithOneColon = selsWithOneColon + Style1
       
 # Style 2 <track-cut>:<n> --> nAddedAllCutsList
 
 # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-allSels = SelsStyle1 + nAddedAllCutsList
+allSels = selsWithOneColon + nAddedAllCutsList
 
-
-# Debug Print Options
-
-#print(allCuts)
-#print(allPairCuts)
-#print(allMCSignals)
-#print(allPairCuts)
-#print(namespacedPairCuts)
-#print(nameSpacedAllCuts)
-#print(nAddedAllCutsList)
-#print(nAddedPairCutsList)
-#print(SelsStyle1)
-#print(nAddedAllCutsList)
-#print(allSels)
     
 ###################
 # Main Parameters #
@@ -422,19 +408,19 @@ groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection
 groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
 groupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
-GroupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
-#GroupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-#GroupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
-#GroupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
-#GroupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-GroupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
-GroupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
-GroupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
-GroupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
-GroupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
+groupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
+#groupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+#groupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
+#groupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
+#groupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
+groupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
+groupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
+groupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
+groupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
 
-GroupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-GroupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
+groupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
+groupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
 
 # centrality-table
 groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
@@ -461,9 +447,9 @@ groupV0Selector.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="st
 
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=PIDSelectionsList).completer = ChoicesCompleterList(PIDSelectionsList)
+groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
-for key,value in PIDSelections.items():
+for key,value in pidSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
 
 # helper lister commands
@@ -980,7 +966,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : false",key,value)                          
                        
             # PID Selections
-            if  (value in PIDParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid:
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
