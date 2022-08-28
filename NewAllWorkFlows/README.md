@@ -1819,7 +1819,7 @@ This section includes analysis with non-standard workflows in DQ workflows. Thes
 
 1. DQ skimmed data is created with TableMaker/tableMakerMC (input: AO2D.root, output: AnalysisResults.root)
 
-2. DQ skimmed dilepton data is created with tableReader/dqEfficiency, and analysis results are created on reducedAod, which is reduced Data that does not contain dilepton data (input : reducedAod.root, output: AnalysisResults.root and dileptonAod.root)
+2. DQ skimmed extra dilepton tables are created with tableReader/dqEfficiency and with this way new DQ skimmed data with extra dilepton tables are created on dileptonAod.root, Normally reducedAod.root that does not contains dilepton tables (input : reducedAod.root, output: AnalysisResults.root and dileptonAod.root)
 
 3. With tableReader/dqEfficiency, analysis is performed on DQ skimmed dilepton data created earlier (input: dileptonAod.root and output: AnalysisResults.root)
 
