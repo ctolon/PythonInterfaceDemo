@@ -1555,7 +1555,7 @@ if you used the command `exec bash` you don't need to do anything.
 
 ## Download Datas For Tutorials
 
-You can Found MC Datas and Skimmed datas at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
+You can Found MC Datas, pre-made JSON config files and DQ Skimmed datas for tutorial at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
 Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here.
 
@@ -1674,7 +1674,7 @@ Config | For | Description
 `configAnalysisDilepton_Bc100_MC.json` | `MCRun3` | Run dqEfficiency on Bc100 Simulation for dilepton analysis → dileptonAOD_ppMC_BC100.root
 `configTableMaker_LHC15o_DileptonHadron_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o Data for prepare dilepton-hadron analysis → AO2D_PbPbDataRun2_LHC15o.root
 `configAnalysis_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for prepare skimmed dileptons output → reducedAod_PbPbData_LHC15o_dileptonHadron.root
-`configAnalysisDilepton_LHC15o_dileptonHadron_Data` | `DataRun2` | Run tableReader on LHC15o Data for dilepton analysis → reducedAod_PbPbData_LHC15o_dileptonHadron.root
+`configAnalysisDilepton_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for dilepton analysis → reducedAod_PbPbData_LHC15o_dileptonHadron.root
 
 P.S. Root files are inputs for JSON configs
 
