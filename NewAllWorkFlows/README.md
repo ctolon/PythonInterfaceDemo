@@ -1,6 +1,6 @@
-# NEW INTERFACE IN ALLWORKFLOWS INSTRUCTIONS
+# New Python Interface
 
-This folder contains new interface based on nightly-20220823. You can follow the instructions and you can find tutorials end of the file. see main readme file in PythonInterfaceDeme for general information (For prerequisites, Installation guide for argcomplete and Some Informations good to know)
+This folder contains new interface based on nightly-20220823. You can follow the instructions and you can find tutorials end of the file. see main readme file in PythonInterfaceDemo for general information (For prerequisites, Installation guide for argcomplete and Some Informations good to know)
 
 # Instructions for IRunTableMaker.py
 
@@ -523,12 +523,11 @@ Arg | Ref Type| Desc | Default | Real Type
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
+# Points to consider when setting your configurations with python scripts and JSON configuration files
+
+TODO: Add Details
 
 # Tutorial Part
-
-TODO Add details for configure parameters
-
-TODO Update it
 
 Firstly, clone repository in your workspace
 
@@ -572,10 +571,25 @@ if you used the command `sudo chsh -s /bin/bash <username>` after you are done w
 
 if you used the command `exec bash` you don't need to do anything.
 
+## Download Datas For Tutorials
+
 You can Found MC Datas and Skimmed datas at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
 Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here.
 
+You can found Real Data for pp at : [Click Here](https://alimonitor.cern.ch/catalogue/index.jsp?path=%2Falice%2Fdata%2F2022%2FLHC22c%2F517616%2Fapass1#/alice/data/2022/LHC22c/517616/apass1)
+
+You can found Real Data for PbPb at : [Click Here](https://alimonitor.cern.ch/prod/jobs.jsp?t=20117&outputdir=PWGZZ/Run3_Conversion/242_20211215-1006_child_2$)
+
+or [Click Here](https://cernbox.cern.ch/index.php/s/6KLIdQdAlNXj5n1)
+
+P.S: Dont forget the change name of AO2D.root files for interface and Move this datas to you previously create Datas Folder.
+
+For PbPb Data : AO2D.root to AO2D_PbPbDataRun2_LHC15o.root
+
+For pp Data : AO2D.root to AO2D_ppDataRun3_LHC22c.root
+
+If you downloaded these datasets, you can start.
 
 ## Workflows In Tutorials
 
@@ -604,7 +618,6 @@ Workflow | Dataset | Skimmed | Process | Selection | Col Syst
 `tableReader` | `LHC22c` | `Yes`  | `JpsiToMuMuVertexing` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
 `filterPP` | `fwdprompt` | `No`  | `eventSelection` <br> `barrelTrackSelection`  <br> `muonSelection` | All Events | `pp`
 
-* For Dilepton Analysis (Non-Standart Existing Workflows in DQ)
 
 Workflow | Dataset | Process | Type | Col Syst
 --- | --- | --- | --- | --- |
@@ -612,12 +625,76 @@ Workflow | Dataset | Process | Type | Col Syst
 `tableReader`  | `LHC15o` | `JpsiToEE`<br>`dileptonHadron` | `dileptonhadron` | `PbPb`
 
 
-TO BE ADDED : 
+TO BE ADDED IN TUTORIALS (Not Prepared Yet): 
+
 Workflow | Dataset | Process | Type | Col Syst
 --- | --- | --- | --- | --- |
 `dqEfficiency` | `AO2D_Bplus` | `JpsiToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  |B<sup>+</sup> → J/ψ + K, → J/ψ → e<sup>+</sup> e<sup>−</sup> | `pp`
 
+## Skimmed Datas In Tutorials
 
+Reduced DQ skimmed data list created with tableMaker/tableMakerMC:
+
+Data | Dataset | Used Workflow | Selected Processes |
+--- | --- | --- | --- |
+`reducedAod_ppMC_LHC21i3d2.root` | `LHC21i3d2` | `tableMakerMC` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_ppMC_LHC21i3b.root` | `LHC21i3b` | `tableMakerMC` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_ppMC_LHC21i3f2.root` | `LHC21i3f2` | `tableMakerMC` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_ppMC_Bc100.root` | `Bc100` | `tableMakerMC` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_PbPbData_LHC15o.root` | `LHC15o` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_PbPbData_LHC15o_Flow.root` | `LHC15o` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`reducedAod_ppData_LHC222c.root` | `LHC222c` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+
+Reduced DQ Dileptons skimmed data list For Dilepton Analysis (dilepton-track and dilepton-hadron) created with tableReader/dqEfficiency:
+
+Data | Dataset | Used Workflow | Selected Processes |
+--- | --- | --- | --- |
+`dileptonAOD_ppMC_BC100.root` | `Bc100` | `dqEfficiency` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+`dileptonAOD_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableReader` | `BarrelOnlyWithCent`<br>`OnlyBCs`
+
+## Pre-Made JSON configuration Files In Tutorials
+
+Config JSON list created with Scripts.
+
+Common JSON Configs:
+
+Config | For | Description
+--- | --- | --- |
+`configAnalysis_LHC21i3b_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3b Simulation → reducedAod_ppMC_LHC21i3b.root
+`configAnalysis_LHC21i3d2_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3d2 Simulation → reducedAod_ppMC_LHC21i3d2.root
+`configAnalysis_LHC21i3f2_MC.json` | `MCRun3` | Run dqEfficiency on LHC21i3f2 Simulation → reducedAod_ppMC_LHC21i3f2.root
+`ConfigAnalysis_LHC15o_Data.json` | `DataRun2` | Run tableReader on LHC15o Data without flow → reducedAod_PbPbData_LHC15o.root
+`ConfigAnalysis_LHC15o_Flow_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for Flow Analysis → reducedAod_PbPbData_LHC15o_Flow.root
+`ConfigAnalysis_LHC22c_Data.json` | `DataRun3` | Run tableReader on LHC22c Data → reducedAod_PbPbData_LHC15o.root
+`configTableMaker_LHC21i3b_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3b Simulation → AO2D_ppMCRun3_LHC21i3b.root
+`configTableMaker_LHC21i3d2_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3d2 Simulation → AO2D_ppMCRun3_LHC21i3d2.root
+`configTableMaker_LHC21i3f2_MCRun3.json` | `MCRun3` | Run tableMakerMC on LHC21i3f2 Simulation → AO2D_ppMCRun3_LHC21i3f2.root
+`ConfigTableMaker_LHC15o_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o without Flow → AO2D_PbPbDataRun2_LHC15o.root
+`ConfigTableMaker_LHC15o_Flow_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o For Flow Analysis → AO2D_PbPbDataRun2_LHC15o.root
+`ConfigTableMaker_LHC22c_DataRun3.json` | `DataRun3` | Run tableMaker on LHC22c Data → AO2D_ppDataRun3_LHC22c.root
+`configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
+
+JSON Configs for Single Workflows:
+
+Config | For | Description
+--- | --- | --- |
+`configFilterPP_fwdprompt_Run3.json` | `MCRun3` | Run filterPP on fwdprompt → AO2D_fwdprompt.root
+`configFlow_LHC15o_DataRun2.json` | `DataRun2` | Run dqFlow on LHC15o Data  → AO2D_PbPbDataRun2_LHC15o.root
+`configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
+
+JSON Configs for dilepton-hadron and dilepton-track analysis:
+
+Config | For | Description
+--- | --- | --- |
+`configTableMaker_Bc100_MCRun3.json` | `MCRun3` | Run tableMakerMC on Bc100 Simulation for prepare dilepton-track analysis → AO2D_Bc100.root
+`configAnalysis_Bc100_MC.json` | `MCRun3` | Run dqEfficiency on Bc100 Simulation for prepare skimmed dileptons output → reducedAod_ppMC_Bc100.root
+`configAnalysisDilepton_Bc100_MC.json` | `MCRun3` | Run dqEfficiency on Bc100 Simulation for dilepton analysis → dileptonAOD_ppMC_BC100.root
+`configTableMaker_LHC15o_DileptonHadron_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o Data for prepare dilepton-hadron analysis → AO2D_PbPbDataRun2_LHC15o.root
+`configAnalysis_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for prepare skimmed dileptons output → reducedAod_PbPbData_LHC15o_dileptonHadron.root
+`configAnalysisDilepton_LHC15o_dileptonHadron_Data` | `DataRun2` | Run tableReader on LHC15o Data for dilepton analysis → reducedAod_PbPbData_LHC15o_dileptonHadron.root
+
+P.S. Root files are inputs for JSON configs
 
 ## MC Part
 
@@ -676,20 +753,6 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 ```
 
 ## Data Part
-
-You can found Real Data for pp at : [Click Here](https://alimonitor.cern.ch/catalogue/index.jsp?path=%2Falice%2Fdata%2F2022%2FLHC22c%2F517616%2Fapass1#/alice/data/2022/LHC22c/517616/apass1)
-
-You can found Real Data for PbPb at : [Click Here](https://alimonitor.cern.ch/prod/jobs.jsp?t=20117&outputdir=PWGZZ/Run3_Conversion/242_20211215-1006_child_2$)
-
-or [Click Here](https://cernbox.cern.ch/index.php/s/6KLIdQdAlNXj5n1)
-
-P.S: Dont forget the change name of AO2D.root files for interface and Move this datas to you previously create Datas Folder.
-
-For PbPb Data : AO2D.root to AO2D_PbPbDataRun2_LHC15o.root
-
-For pp Data : AO2D.root to AO2D_ppDataRun3_LHC22c.root
-
-If you downloaded these datasets, you can start.
 
 ### tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
@@ -770,6 +833,14 @@ python3 IFilterPP.py Configs/configFilterPPRun3.json --aod Datas/AO2D_fwdprompt.
 
 ## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
 
+This section includes analysis with non-standard workflows in DQ workflows. These analyzes are carried out in 3 stages:
+
+1. DQ skimmed data is created with TableMaker/tableMakerMC (input: AO2D.root, output: AnalysisResults.root)
+
+2. DQ skimmed dilepton data is created with tableReader/dqEfficiency, and analysis results are created on reducedAod, which is reduced Data that does not contain dilepton data (input : reducedAod.root, output: AnalysisResults.root and dileptonAod.root)
+
+3. With tableReader/dqEfficiency, analysis is performed on DQ skimmed dilepton data created earlier (input: dileptonAod.root and output: AnalysisResults.root)
+
 ### MC : Dilepton Track Analysis (On Bc Simulation)
 
 First Command To Run:
@@ -809,9 +880,9 @@ Third Command To Run:
 python3 IRunTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
-## Feedbacks
+## Feedbacks and Suggestions
 
-If you have problem about running the scripts, contact me : cevat.batuhan.tolon@cern.ch or you can send a message on mattermost. I will try to fix your problem ASAP
+If you have problem about running the scripts or you have some suggestions for interface, contact me at: `cevat.batuhan.tolon@cern.ch` or you can send a message on mattermost `@ctolon`. I will try to fix your problem ASAP.
 
 ## Technical Details
 
