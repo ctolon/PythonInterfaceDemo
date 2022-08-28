@@ -583,7 +583,7 @@ You can find and download dataset from : [Click Here](https://cernbox.cern.ch/in
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muon --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop --debug debug --logFile
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
 ```
 
  ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
@@ -593,7 +593,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
 ```
 
 ### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
@@ -603,7 +603,7 @@ You can find and download dataset from : [Click Here](https://cernbox.cern.ch/in
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process OnlyBCs BarrelOnly --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ --debug debug --logFile
 ```
 
  ### Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)
@@ -613,7 +613,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgQA true --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile --aod reducedAod.root
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile
 ```
 
 ### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
@@ -623,7 +623,7 @@ You can find and download dataset from : [Click Here](https://cernbox.cern.ch/in
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process OnlyBCs BarrelOnly --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty --debug debug --logFile
 ```
 
  ### Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)
@@ -633,7 +633,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgBarrelMCGenSignals Jpsi nonPromptJpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgQA true --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi eFromNonpromptJpsi --debug debug --logFile --aod reducedAod.root
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi nonPromptJpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi eFromNonpromptJpsi --debug debug --logFile
 ```
 
 ## Data Part
@@ -657,7 +657,7 @@ If you downloaded these datasets, you can start.
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process OnlyBCs BarrelOnlyWithCent --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --cfgBarrelTrackCuts jpsiO2MCdebugCuts
+python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o (LHC15o PbPb Run2Data)
@@ -667,7 +667,7 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -675,7 +675,7 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelec
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process OnlyBCs FullWithCent BarrelOnlyWithQvector --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --cfgBarrelTrackCuts jpsiO2MCdebugCut
+python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -685,16 +685,14 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile --reader aodReaderTempConfig.json
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
-
-P.S. Note that we use the `--reader` parameter here when configuring the tablereader. The reason for this is that the reducedEventQvector table is not added in the reader json configuration files prepared to read the data beforehand. With the new update, IRunTableMaker.py has the potential to generate json config file containing all tables as Input Director and this json file is given to the `--reader` parameter for this command.
 
 ### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 ```ruby
-python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --debug debug --cfgWithQA true --logFile --est Run2V0M --add_fdd_conv --FT0 Run2 --isVertexZeq false
+python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
@@ -708,7 +706,7 @@ python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --process OnlyBCs BarrelOnlyWithCov --aod Datas/AO2D_ppDataRun3_LHC22c.root --cfgBarrelTrackCuts jpsiO2MCdebugCuts --syst pp --debug debug --logFile --cfgWithQA true --add_track_prop --isVertexZeq false
+python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
 ```
 
 ### Run tableReader on Data (LHC22c pp Run3Data)
@@ -718,15 +716,61 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
 ```
 
-### Run filterPP on LHC22c (LHC22c pp Run3Data)
+### Run filterPP on fwdprompt(fwdprompt pp Run3Data)
+
+Download : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ  FileName : AO2D_fwdprompt.root
 
 Command To Run:
 
 ```ruby
-python3 IFilterPP.py Configs/configFilterPPRun3.json --process barrelTrackSelection eventSelection muonSelection --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgBarrelSels jpsiO2MCdebugCuts:pairJpsi:2 --cfgMuonsCuts muonQualityCuts --cfgMuonSels muonQualityCuts:pairJpsi:2 --syst pp --aod Datas/AO2D_ppDataRun3_LHC22c.root --debug debug --logFile --add_track_prop --isVertexZeq false
+python3 IFilterPP.py Configs/configFilterPPRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
+```
+
+## SPECIAL PART : DILEPTON ANALYSIS
+
+### MC -> Dilepton Track Analysis (On Bc Simulation)
+
+
+Download : [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ FileName : AO2D_Bc100.root
+
+First Command To Run:
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_Bc100.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals Jpsi Bc anyBeautyHadron --cfgMuonCuts matchedGlobal --cfgMuonLowPt 0.0 --debug debug --logFile
+```
+
+Second Command To Run:
+
+```ruby
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
+```
+Third Command To Run:
+
+```ruby
+python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root --analysis eventSelection muonSelection dileptonTrackDimuonMuonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
+```
+
+### Data --> Dilepton Hadron Analysis (On PbPb Data LHC15o)
+
+First Command To Run:
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+```
+
+Second Command To Run:
+
+```ruby
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+```
+
+Third Command To Run:
+
+```ruby
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ## Feedbacks
