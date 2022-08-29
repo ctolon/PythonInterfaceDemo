@@ -712,7 +712,7 @@ for key, value in config.items():
                         actualConfig = config[key][value]
                         extrargs.cfgBarrelDileptonMCRecSignals = actualConfig + ',' + extrargs.cfgBarrelDileptonMCRecSignals   
                     config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
-                    logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgDileptonMCRecSignals)
+                    logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelDileptonMCRecSignals)
                     
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
                     if type(extrargs.cfgBarrelDileptonMCGenSignals) == type(clist):
@@ -720,7 +720,7 @@ for key, value in config.items():
                     if extrargs.onlySelect == 'false':
                         actualConfig = config[key][value]
                         extrargs.cfgBarrelDileptonMCGenSignals = actualConfig + ',' + extrargs.cfgBarrelDileptonMCGenSignals   
-                    config[key][value] = extrargs.cfgBarrelDileptonMCRecSignalss
+                    config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelDileptonMCGenSignals)            
                 if value == 'cfgLeptonCuts' and extrargs.cfgLeptonCuts:
                     if type(extrargs.cfgLeptonCuts) == type(clist):
