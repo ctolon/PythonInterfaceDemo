@@ -824,7 +824,7 @@ For example, when the file is logged, you should see a result like this when you
 
 ### Automated Things In IRunTableMaker
 
-* In TableMaker process function for Data Run 3, 
+* In TableMaker process function for Data, 
   * `Automate` If process contains only Barrel related value, it will automatically enable d-q-barrel-track-selection-task , d-q-event-selection-task and d-q-muons-selection task will be disabled
   * `Automate` if process contains only Muons related value, it will automatically enable d-q-muons-selection, d-q barrel-track-selection-task and d-q-event-selection-task it will disabled
   * `Automate` if process contains only BCs related value, it will automatically enable d-q-event-selection-task, d-q-muon-selection-task and d-q-barrel-track-selection-task will be disabled
@@ -841,7 +841,6 @@ For example, when the file is logged, you should see a result like this when you
   * `Automate` if runData is selected, centrality-table is deleted from JSON, if MC is deleted, centrality-table is not deleted since it is not in JSON
   * `Automate` if Table maker process function contains value related to Centrality (e.g. processMuonOnlyWithCent), Collision System pp can't be include related task about Centrality. They Will be removed in automation
   * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
-  * `Automate` if you forget configure name your output JSON with --outputjson (with overrided values), it will created as tempConfig.json. Also If you misstyped your file extension in json or if you forget this (e.g configs/ConfigTableMakerMCRun3) this will automaticly fixed to Configs/ConfigTableMakerMCRun3.json
 
 ### Logger Things In IRunTableMaker
 
@@ -942,37 +941,38 @@ For example, when the file is logged, you should see a result like this when you
           ```
 ## Features for IRunTableReader
 
-TODO Add Details
+### Automated Things In IRunTableReader
 
-### Automated Things In IRunTableMaker
-
-
-TODO Add Details
-
-### Logger Things In IRunTableMaker
-
-
-TODO Add Details
+* `Automate` If you forget to add the eventSelection option to the `--analysis` parameter it will add it automatically. This is because events must always be selected in the entire workflow of DQ.
+* `Automate` If you define a value for same event pairing in the `--process` argument and forget to set the sameEventPairing value in the `--analysis` argument, it will be assigned automatically
+* `Automate` The eventMixing value in the `--analysis` argument is automatically configured based on the trackSelection and muonSelection:
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection eventMixing then the processBarrelSkimmed process function inside the analysis-event-mixing task will be true, others false
+  * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection eventMixing then the processMuonSkimmed process function inside the analysis-event-mixing task will be true, others false
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection muonSelection eventMixing then the processBarrelMuonSkimmed process function inside the analysis-event-mixing task will be true, others false
+* `Automate` The eventMixingVn value in the `--analysis` argument is automatically configured based on the trackSelection and muonSelection:
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection eventMixingVn then the processBarrelVnSkimmed process function inside the analysis-event-mixing task will be true, others false
+  * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection eventMixingVn then the processMuonVnSkimmed process function inside the analysis-event-mixing task will be true, others false
+* `Automate` The sameEventPairing value in the `--analysis` argument is semi-automatically configured based on the trackSelection and muonSelection:
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToEE` and `VnJpsiToEE` and you will get an error if you configure it differently.
+  * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToMuMu`, `JpsiToMuMuVertexing` and `VnJpsiToMuMu` and you will get an error if you configure it differently.
 
 ## Features for IRunDQEfficiency
-
-
-TODO Add Details
 
 ### Automated Things In IRunDQEfficiency
 
 
-TODO Add Details
-
-### Logger Things In IRunDQEfficiency
-
-
-TODO Add Details
+* `Automate` If you forget to add the eventSelection option to the `--analysis` parameter it will add it automatically. This is because events must always be selected in the entire workflow of DQ.
+* `Automate` If you define a value for same event pairing in the `--process` argument and forget to set the sameEventPairing value in the `--analysis` argument, it will be assigned automatically
+* `Automate` The eventMixing value in the `--analysis` argument is automatically configured based on the trackSelection and muonSelection:
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection eventMixing then the processBarrelSkimmed process function inside the analysis-event-mixing task will be true, others false
+  * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection eventMixing then the processMuonSkimmed process function inside the analysis-event-mixing task will be true, others false
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection muonSelection eventMixing then the processBarrelMuonSkimmed process function inside the analysis-event-mixing task will be true, others false
+* `Automate` The sameEventPairing value in the `--analysis` argument is semi-automatically configured based on the trackSelection and muonSelection:
+  * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToEE` and you will get an error if you configure it differently.
+  * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToMuMu` and `JpsiToMuMuVertexing` and you will get an error if you configure it differently.
 
 ## Some Things You Should Be Careful For Using and Development
 
-* In JSON files, for example, when assigning a variable for the processFull argument, true or false must be
-entered, if True or False like this style, it will throw an error because there is no capitalization check.
 * There are also filters for some arguments. No value should be entered outside of these filters (look at the
 choices).
 * If the argument can take more than one value, when adding a new property choices is a list and the values
@@ -984,6 +984,186 @@ must be converted to comma-separated strings
 * Don't forget to configure your Config JSON file in interface for each workflow and also configure extra `-run<Data|MC>` parameters for tableMaker workflow only.
 * Sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow.
 
+## Interface Modes: JSON Overrider and JSON Additional
+
+The only select parameter gives you a choice depending on whether you want to keep your old configurations of the interface.
+
+If `--onlySelect` is configured to true, you will run in JSON overrider interface mode (default value of this parameter is true).
+only commands entered in the terminal for some parameters will preserved, while others are set to false.
+
+If --onlySelect is false, you will run in JSON additional interface mode. the values ​​in your original JSON file will be preserved, values ​​entered from the terminal will be appended to the JSON. It would be much better to explain this through an example.
+
+For example, let's say we're working on a tableMaker:
+
+    ```ruby
+    "table-maker": {
+        "cfgEventCuts": "eventStandardNoINT7",
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
+        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
+        "cfgBarrelLowPt": "0.5",
+        "cfgMuonLowPt": "0.5",
+        "cfgMinTpcSignal": "50",
+        "cfgMaxTpcSignal": "200",
+        "cfgNoQA": "false",
+        "cfgDetailedQA": "true",
+        "cfgIsRun2": "false",
+        "processFull": "true",
+        "processFullWithCov": "true",
+        "processFullWithCent": "false",
+        "processBarrelOnlyWithV0Bits": "false",
+        "processBarrelOnlyWithEventFilter": "false",
+        "processBarrelOnlyWithQvector" : "false",
+        "processBarrelOnlyWithCent": "false",
+        "processBarrelOnlyWithCov": "false",
+        "processBarrelOnly": "false",
+        "processMuonOnlyWithCent": "false",
+        "processMuonOnlyWithCov": "false",
+        "processMuonOnly": "false",
+        "processMuonOnlyWithQvector": "false",
+        "processMuonOnlyWithFilter": "false",
+        "processOnlyBCs": "true"
+    },
+    ```
+
+As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
+```
+P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
+
+    ```ruby
+    "table-maker": {
+        "cfgEventCuts": "eventStandardNoINT7",
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
+        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
+        "cfgBarrelLowPt": "0.5",
+        "cfgMuonLowPt": "0.5",
+        "cfgMinTpcSignal": "50",
+        "cfgMaxTpcSignal": "200",
+        "cfgNoQA": "false",
+        "cfgDetailedQA": "true",
+        "cfgIsRun2": "false",
+        "processFull": "false",
+        "processFullWithCov": "false",
+        "processFullWithCent": "false",
+        "processBarrelOnlyWithV0Bits": "false",
+        "processBarrelOnlyWithEventFilter": "false",
+        "processBarrelOnlyWithQvector" : "false",
+        "processBarrelOnlyWithCent": "true",
+        "processBarrelOnlyWithCov": "false",
+        "processBarrelOnly": "false",
+        "processMuonOnlyWithCent": "false",
+        "processMuonOnlyWithCov": "false",
+        "processMuonOnly": "false",
+        "processMuonOnlyWithQvector": "false",
+        "processMuonOnlyWithFilter": "false",
+        "processOnlyBCs": "true"
+    },
+    ```
+
+As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are set to true, while all other process functions in the tableMaker are set to false.
+
+If we configured onlySelect to false:
+
+```ruby
+python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
+```
+
+Then our output would be:
+
+    ```ruby
+    "table-maker": {
+        "cfgEventCuts": "eventStandardNoINT7",
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
+        "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
+        "cfgBarrelLowPt": "0.5",
+        "cfgMuonLowPt": "0.5",
+        "cfgMinTpcSignal": "50",
+        "cfgMaxTpcSignal": "200",
+        "cfgNoQA": "false",
+        "cfgDetailedQA": "true",
+        "cfgIsRun2": "false",
+        "processFull": "true",
+        "processFullWithCov": "true",
+        "processFullWithCent": "false",
+        "processBarrelOnlyWithV0Bits": "false",
+        "processBarrelOnlyWithEventFilter": "false",
+        "processBarrelOnlyWithQvector" : "false",
+        "processBarrelOnlyWithCent": "true",
+        "processBarrelOnlyWithCov": "false",
+        "processBarrelOnly": "false",
+        "processMuonOnlyWithCent": "false",
+        "processMuonOnlyWithCov": "false",
+        "processMuonOnly": "false",
+        "processMuonOnlyWithQvector": "false",
+        "processMuonOnlyWithFilter": "false",
+        "processOnlyBCs": "true"
+    },
+    ```
+
+As you can see, the old process values ​​Full and FullWithCov remained true, in addition, the BarrelOnlyWithCent process function was set to true. OnlyBCs was already true and remains true.
+
+This is the case for the `--analysis`, `--process`, `--pid` and `--est` parameters.
+
+A similar situation applies to Analysis Cut configurations and MC Signal configurations. Suppose there is a configuration like this in it (for tableReader):
+
+    ```ruby
+    "analysis-track-selection": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts2",
+        "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    ```
+
+Here we will configure the track cuts:
+
+```ruby
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
+```
+
+The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
+
+    ```ruby
+    "analysis-track-selection": {
+        "cfgTrackCuts": "jpsiPID1,jpsiPID2",
+        "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    ```
+
+As we can see, the old cut values ​​were deleted, the new cut values ​​were taken from the CLI.
+
+If onlySelect is False:
+
+```ruby
+python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
+```
+
+Then the JSON is in additional mode and the equivalent of this configuration is:
+
+    ```ruby
+    "analysis-track-selection": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts2,jpsiPID1,jpsiPID2",
+        "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
+        "cfgQA": "true",
+        "processSkimmed": "true",
+        "processDummy": "false"
+    },
+    ```
+
+As we can see, our old track cut value has been preserved and extra new ones have been added.
+
+This is the same for all analysis cuts, MC Signals, barrel and muon sels in filterPP and mixing vars.
+
+This is the main reason why Interface works in these two modes. If you already have a JSON configuration file prepared for a specific data for analysis, it makes sense to use JSON additional mode if you just want to add some values. Because you will want to preserve the old values.
+
+If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
+
 # Instructions for IRunTableMaker.py
 
 Add extrac tables and converters with:
@@ -994,7 +1174,6 @@ Add extrac tables and converters with:
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackPropagation.html))
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.` 
-
 
 * Minimum Required Parameter List:
   * `python3`
@@ -1923,8 +2102,4 @@ If you have problem about running the scripts or you have some suggestions for i
 * `Aug 22, 2022` Helper Messages Updated. One minimal display bug added to readme. New interface development is ongoing with new JSON Configs.based on nightly-2022_08_23
 * `Aug 23, 2022` AOD File checker fixed, Same Event Pairing process functionality fixed, centrality table fixed in new interface, new automated things provided.
 * `Aug 24-26, 2022` All bugs are fixed. All functionalities provided, all scripts are tested by different users. Interface development is completed.
-
-## Technical Details
-
-To be added
-
+* `Aug 26-29, 2022` Writer Config json files updated for reduced dileptons in dq skimmed data, dqFlow task integrated to tableReader and tableMaker, transaction management added for eventMixing Selections in tableReader, reader json creator functionality integrated to tableMaker, vertexZeq options manualy coverted to 0 for run 3 options otherwise process will crash, v0Selector added in pythonized workflows, Now interface has two mode : Overrider and additional, tutorials added to readme 
