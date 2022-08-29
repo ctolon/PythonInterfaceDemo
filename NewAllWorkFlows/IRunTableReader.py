@@ -249,6 +249,7 @@ groupDPLReader.add_argument('--writer', help="Add your AOD Writer JSON with path
 
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
+groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # Skimmed processes for SEE and Analysis Selections
@@ -463,6 +464,12 @@ if extrargs.mixingLister:
 # Start Interface Processes #
 #############################
 
+logging.info("Only Select Configured as %s", extrargs.onlySelect)
+if extrargs.onlySelect == "true":
+    logging.info("INTERFACE MODE : JSON Overrider")
+if extrargs.onlySelect == "false":
+    logging.info("INTERFACE MODE : JSON Additional")
+
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
@@ -497,7 +504,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                     ANALYSIS_TRACK_SELECTED = True
-                                if 'trackSelection' not in valueCfg:
+                                if 'trackSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                         
@@ -506,7 +513,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                     ANALYSIS_MUON_SELECTED = True
-                                if 'muonSelection' not in valueCfg:
+                                if 'muonSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)                                                                               
                             if key == 'analysis-dilepton-hadron':
@@ -514,7 +521,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     ANALYSIS_DILEPTON_HADRON_SELECTED = True
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'dileptonHadron' not in valueCfg:
+                                if 'dileptonHadron' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                                        
@@ -533,7 +540,7 @@ for key, value in config.items():
                                 if 'trackSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixing' not in valueCfg:
+                                if 'eventMixing' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                 if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
@@ -549,7 +556,7 @@ for key, value in config.items():
                                 if 'muonSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixing' not in valueCfg:
+                                if 'eventMixing' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                 if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
@@ -565,7 +572,7 @@ for key, value in config.items():
                                 if 'trackSelection' in valueCfg and 'muonSelection' in valueCfg and 'eventMixing' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixing' not in valueCfg:
+                                if 'eventMixing' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                 if 'eventMixing' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
@@ -581,7 +588,7 @@ for key, value in config.items():
                                 if 'trackSelection' in valueCfg and 'eventMixingVn' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingVn' not in valueCfg:
+                                if 'eventMixingVn' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                 if 'eventMixingVn' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
@@ -597,7 +604,7 @@ for key, value in config.items():
                                 if 'muonSelection' in valueCfg and 'eventMixingVn' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'eventMixingVn' not in valueCfg:
+                                if 'eventMixingVn' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                 if 'eventMixingVn' in valueCfg and ('trackSelection' not in valueCfg and 'muonSelection' not in valueCfg):
@@ -612,33 +619,48 @@ for key, value in config.items():
             # analysis-event-selection
             if value == 'cfgMixingVars' and extrargs.cfgMixingVars:
                 if type(extrargs.cfgMixingVars) == type(clist):
-                    extrargs.cfgMixingVars = listToString(extrargs.cfgMixingVars) 
+                    extrargs.cfgMixingVars = listToString(extrargs.cfgMixingVars)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMixingVars = actualConfig + ',' + extrargs.cfgMixingVars   
                 config[key][value] = extrargs.cfgMixingVars
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMixingVars)
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
-                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
+                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts   
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)
 
             # analysis-track-selection
             if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
-                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
+                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgTrackCuts = actualConfig + ',' + extrargs.cfgTrackCuts   
                 config[key][value] = extrargs.cfgTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
                 
             # analysis-muon-selection
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
-                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts
                 config[key][value] = extrargs.cfgMuonCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)
                 
             # analysis-dilepton-hadron
             if value =='cfgLeptonCuts' and extrargs.cfgLeptonCuts:
                 if type(extrargs.cfgLeptonCuts) == type(clist):
-                    extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts) 
+                    extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgLeptonCuts = actualConfig + ',' + extrargs.cfgLeptonCuts 
                 config[key][value] = extrargs.cfgLeptonCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgLeptonCuts)
             
@@ -658,7 +680,7 @@ for key, value in config.items():
                                 if ANALYSIS_TRACK_SELECTED == False:
                                     logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed":
+                            if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == 'true':
                                     config[key]["processJpsiToEESkimmed"] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
@@ -669,7 +691,7 @@ for key, value in config.items():
                                 if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed":
+                            if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
    
@@ -680,7 +702,7 @@ for key, value in config.items():
                                 if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
+                            if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
@@ -691,8 +713,7 @@ for key, value in config.items():
                                 if ANALYSIS_TRACK_SELECTED == False:
                                     logging.error("trackSelection not found in analysis for processVnJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-
-                            if 'VnJpsiToEE' not in valueCfg and value == "processVnJpsiToEESkimmed":
+                            if 'VnJpsiToEE' not in valueCfg and value == "processVnJpsiToEESkimmed" and extrargs.onlySelect == 'true':
                                     config[key]["processVnJpsiToEESkimmed"] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
@@ -702,9 +723,8 @@ for key, value in config.items():
                                     logging.debug(" - [%s] %s : true",key,value)
                                 if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processVnJpsiToMuMuSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                                    
-                            if 'VnJpsiToMuMu' not in valueCfg and value == "processVnJpsiToMuMuSkimmed":
+                                    sys.exit()                                   
+                            if 'VnJpsiToMuMu' not in valueCfg and value == "processVnJpsiToMuMuSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processVnJpsiToMuMuSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
@@ -715,7 +735,7 @@ for key, value in config.items():
                                 else:
                                     logging.error("trackSelection and muonSelection not found in analysis for processElectronMuonSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'ElectronMuon' not in valueCfg and value == "processElectronMuonSkimmed":
+                            if 'ElectronMuon' not in valueCfg and value == "processElectronMuonSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processElectronMuonSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
@@ -726,11 +746,11 @@ for key, value in config.items():
                                 else:
                                     logging.debug("eventSelection, trackSelection and muonSelection not found in analysis for processAllSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'All' not in valueCfg and value == "processAllSkimmed":
+                            if 'All' not in valueCfg and value == "processAllSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processAllSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEP_SELECTED == False:
+            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEP_SELECTED == False and extrargs.onlySelect == 'true':
                 config[key]["processJpsiToEESkimmed"] = 'false'
                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'

@@ -193,6 +193,7 @@ groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action
 
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # event-selection-task
 groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
@@ -361,8 +362,11 @@ if O2PHYSICS_ROOT == None:
 # Start Interface Processes #
 #############################
 
-# For adding a process function from TableMaker and all process should be added only once so set type used
-tableMakerProcessSearch= set ()
+logging.info("Only Select Configured as %s", extrargs.onlySelect)
+if extrargs.onlySelect == "true":
+    logging.info("INTERFACE MODE : JSON Overrider")
+if extrargs.onlySelect == "false":
+    logging.info("INTERFACE MODE : JSON Additional")
 
 for key, value in config.items():
     if type(value) == type(config):
@@ -383,7 +387,7 @@ for key, value in config.items():
                     value2 = "1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
-                elif value not in extrargs.pid:
+                elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  

@@ -248,6 +248,7 @@ groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action
 
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # event-selection-task
 groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
@@ -448,8 +449,11 @@ if O2PHYSICS_ROOT == None:
 # Start Interface Processes #
 #############################
 
-# For adding a process function from TableMaker and all process should be added only once so set type used
-tableMakerProcessSearch= set ()
+logging.info("Only Select Configured as %s", extrargs.onlySelect)
+if extrargs.onlySelect == "true":
+    logging.info("INTERFACE MODE : JSON Overrider")
+if extrargs.onlySelect == "false":
+    logging.info("INTERFACE MODE : JSON Additional")
 
 for key, value in config.items():
     if type(value) == type(config):
@@ -464,18 +468,27 @@ for key, value in config.items():
             if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgTrackCuts = actualConfig + ',' + extrargs.cfgTrackCuts 
                 config[key][value] = extrargs.cfgTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
-                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts) 
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
-                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
+                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts) 
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)
@@ -507,7 +520,7 @@ for key, value in config.items():
                     value2 = "1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
-                elif value not in extrargs.pid:
+                elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)
@@ -518,7 +531,7 @@ for key, value in config.items():
                     value2 = "1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)   
-                if value not in extrargs.est:
+                elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)    

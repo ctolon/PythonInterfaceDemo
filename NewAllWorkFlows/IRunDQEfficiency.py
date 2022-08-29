@@ -242,6 +242,7 @@ groupDPLReader.add_argument('--writer', help="Add your AOD Writer JSON with path
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # Skimmed processes for SEE and Analysis Selections
 groupAnalysisSelections = parser.add_argument_group(title='Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-dilepton-track')
@@ -467,6 +468,12 @@ if extrargs.MCSignalsLister:
 # Start Interface Processes #
 #############################
 
+logging.info("Only Select Configured as %s", extrargs.onlySelect)
+if extrargs.onlySelect == "true":
+    logging.info("INTERFACE MODE : JSON Overrider")
+if extrargs.onlySelect == "false":
+    logging.info("INTERFACE MODE : JSON Additional")
+
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
@@ -501,7 +508,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                     ANALYSIS_TRACK_SELECTED = True
-                                if 'trackSelection' not in valueCfg:
+                                if 'trackSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                                         
@@ -510,7 +517,7 @@ for key, value in config.items():
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
                                     ANALYSIS_MUON_SELECTED = True
-                                if 'muonSelection' not in valueCfg:
+                                if 'muonSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)   
                                                             
@@ -528,7 +535,7 @@ for key, value in config.items():
                                 if 'dileptonTrackDimuonMuonSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'dileptonTrackDimuonMuonSelection' not in valueCfg:
+                                if 'dileptonTrackDimuonMuonSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false' 
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
@@ -541,49 +548,11 @@ for key, value in config.items():
                                 if 'dileptonTrackDielectronKaonSelection' in valueCfg:
                                     config[key][value] = 'true'
                                     logging.debug(" - [%s] %s : true",key,value)
-                                if 'dileptonTrackDielectronKaonSelection' not in valueCfg:
+                                if 'dileptonTrackDielectronKaonSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false' 
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
-                                   
-            # analysis-dummy-selections (We have automated thins so not need most of time)
-            """
-            if value =='processDummy' and extrargs.analysisDummy:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can't iterate in None type
-                        if keyCfg == 'analysisDummy': #  Only Select key for dummies
-                        
-                            if key == 'analysis-event-selection':
-                                if 'event' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'event' not in valueCfg:
-                                    config[key][value] = 'false' 
-                                    
-                            if key == 'analysis-track-selection':                        
-                                if 'track' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'track' not in valueCfg:
-                                    config[key][value] = 'false' 
-                                    
-                            if key == 'analysis-muon-selection':
-                                if 'muon' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'muon' not in valueCfg:
-                                    config[key][value] = 'false'
-                                    
-                            if key == 'analysis-same-event-pairing':
-                                if 'sameEventPairing' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'sameEventPairing' not in valueCfg:
-                                    config[key][value] = 'false'  
-
-                            if key == 'analysis-dilepton-track':
-                                if 'dilepton' in valueCfg:
-                                    config[key][value] = 'true'
-                                if 'dilepton' not in valueCfg:
-                                    config[key][value] = 'false' 
-            """
-                 
+                                                    
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
                 config[key][value] = extrargs.cfgQA
@@ -592,31 +561,46 @@ for key, value in config.items():
             # analysis-event-selection
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
-                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts) 
+                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)
 
             # analysis-track-selection
-            if value =='cfgTrackCuts' and extrargs.cfgTrackCuts:
+            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
                 if type(extrargs.cfgTrackCuts) == type(clist):
                     extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgTrackCuts = actualConfig + ',' + extrargs.cfgTrackCuts 
                 config[key][value] = extrargs.cfgTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
             if value == 'cfgTrackMCSignals' and extrargs.cfgTrackMCSignals:
                 if type(extrargs.cfgTrackMCSignals) == type(clist):
-                    extrargs.cfgTrackMCSignals = listToString(extrargs.cfgTrackMCSignals) 
+                    extrargs.cfgTrackMCSignals = listToString(extrargs.cfgTrackMCSignals)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgTrackMCSignals = actualConfig + ',' + extrargs.cfgTrackMCSignals 
                 config[key][value] = extrargs.cfgTrackMCSignals
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackMCSignals)
                 
             # analysis-muon-selection
-            if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
+            if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
-                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts) 
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
                 config[key][value] = extrargs.cfgMuonCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts) 
             if value == 'cfgMuonMCSignals' and extrargs.cfgMuonMCSignals:
                 if type(extrargs.cfgMuonMCSignals) == type(clist):
                     extrargs.cfgMuonMCSignals = listToString(extrargs.cfgMuonMCSignals) 
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonMCSignals = actualConfig + ',' + extrargs.cfgMuonMCSignals 
                 config[key][value] = extrargs.cfgMuonMCSignals
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonMCSignals)
                 
@@ -637,7 +621,7 @@ for key, value in config.items():
                                 if ANALYSIS_TRACK_SELECTED == False:
                                     logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed":
+                            if 'JpsiToEE' not in valueCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == 'true':
                                     config[key]["processJpsiToEESkimmed"] = 'false'
                                     logging.debug(" - [%s] %s : false",key,value)
                                     
@@ -648,7 +632,7 @@ for key, value in config.items():
                                 if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed":
+                            if 'JpsiToMuMu' not in valueCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
    
@@ -659,11 +643,11 @@ for key, value in config.items():
                                 if ANALYSIS_MUON_SELECTED == False:
                                     logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
                                     sys.exit()
-                            if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
+                            if 'JpsiToMuMuVertexing' not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == 'true':
                                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
                                 logging.debug(" - [%s] %s : false",key,value)
                                 
-            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEP_SELECTED == False:
+            if key == 'analysis-same-event-pairing' and extrargs.process == None and ANALYSIS_SEP_SELECTED == False and extrargs.onlySelect == 'true':
                 config[key]["processJpsiToEESkimmed"] = 'false'
                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
@@ -700,12 +684,18 @@ for key, value in config.items():
                 if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
                     if type(extrargs.cfgBarrelMCRecSignals) == type(clist):
                         extrargs.cfgBarrelMCRecSignals = listToString(extrargs.cfgBarrelMCRecSignals) 
+                    if extrargs.onlySelect == 'false':
+                        actualConfig = config[key][value]
+                        extrargs.cfgBarrelMCRecSignals = actualConfig + ',' + extrargs.cfgBarrelMCRecSignals 
                     config[key][value] = extrargs.cfgBarrelMCRecSignals
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelMCRecSignals)
                            
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelMCGenSignals:
                     if type(extrargs.cfgBarrelMCGenSignals) == type(clist):
-                        extrargs.cfgBarrelMCGenSignals = listToString(extrargs.cfgBarrelMCGenSignals) 
+                        extrargs.cfgBarrelMCGenSignals = listToString(extrargs.cfgBarrelMCGenSignals)
+                    if extrargs.onlySelect == 'false':
+                        actualConfig = config[key][value]
+                        extrargs.cfgBarrelMCGenSignals = actualConfig + ',' + extrargs.cfgBarrelMCGenSignals  
                     config[key][value] = extrargs.cfgBarrelMCGenSignals
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelMCGenSignals)
                     
@@ -715,21 +705,29 @@ for key, value in config.items():
                 
             # analysis-dilepton-track
             if key == 'analysis-dilepton-track':
-                if value == 'cfgDileptonBarrelMCRecSignals' and extrargs.cfgBarrelDileptonMCRecSignals:
+                if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelDileptonMCRecSignals:
                     if type(extrargs.cfgBarrelDileptonMCRecSignals) == type(clist):
-                        extrargs.cfgBarrelDileptonMCRecSignals = listToString(extrargs.cfgBarrelDileptonMCRecSignals) 
+                        extrargs.cfgBarrelDileptonMCRecSignals = listToString(extrargs.cfgBarrelDileptonMCRecSignals)
+                    if extrargs.onlySelect == 'false':
+                        actualConfig = config[key][value]
+                        extrargs.cfgBarrelDileptonMCRecSignals = actualConfig + ',' + extrargs.cfgBarrelDileptonMCRecSignals   
                     config[key][value] = extrargs.cfgBarrelDileptonMCRecSignals
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgDileptonMCRecSignals)
                     
                 if value == 'cfgBarrelMCGenSignals' and extrargs.cfgBarrelDileptonMCGenSignals:
                     if type(extrargs.cfgBarrelDileptonMCGenSignals) == type(clist):
-                        extrargs.cfgBarrelDileptonMCGenSignals = listToString(extrargs.cfgBarrelDileptonMCGenSignals) 
-                    config[key][value] = extrargs.cfgBarrelDileptonMCGenSignals
-                    logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelDileptonMCGenSignals)
-                    
+                        extrargs.cfgBarrelDileptonMCGenSignals = listToString(extrargs.cfgBarrelDileptonMCGenSignals)
+                    if extrargs.onlySelect == 'false':
+                        actualConfig = config[key][value]
+                        extrargs.cfgBarrelDileptonMCGenSignals = actualConfig + ',' + extrargs.cfgBarrelDileptonMCGenSignals   
+                    config[key][value] = extrargs.cfgBarrelDileptonMCRecSignalss
+                    logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelDileptonMCGenSignals)            
                 if value == 'cfgLeptonCuts' and extrargs.cfgLeptonCuts:
                     if type(extrargs.cfgLeptonCuts) == type(clist):
-                        extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts) 
+                        extrargs.cfgLeptonCuts = listToString(extrargs.cfgLeptonCuts)
+                    if extrargs.onlySelect == 'false':
+                        actualConfig = config[key][value]
+                        extrargs.cfgLeptonCuts = actualConfig + ',' + extrargs.cfgLeptonCuts 
                     config[key][value] = extrargs.cfgLeptonCuts
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgLeptonCuts)
                     

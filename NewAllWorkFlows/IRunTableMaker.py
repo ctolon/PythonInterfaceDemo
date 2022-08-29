@@ -344,7 +344,7 @@ groupDPLReader.add_argument('--aod-memory-rate-limit', help="Rate limit AOD proc
 
 # automation params
 groupAutomations = parser.add_argument_group(title='Automation Parameters')
-groupAutomations.add_argument('--onlySelect', help="An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # table-maker
@@ -774,6 +774,12 @@ if O2PHYSICS_ROOT == None:
 # Start Interface Processes #
 #############################
 
+logging.info("Only Select Configured as %s", extrargs.onlySelect)
+if extrargs.onlySelect == "true":
+    logging.info("INTERFACE MODE : JSON Overrider")
+if extrargs.onlySelect == "false":
+    logging.info("INTERFACE MODE : JSON Additional")
+
 # For adding a process function from TableMaker and all process should be added only once so set type used
 tableMakerProcessSearch= set ()
 
@@ -1044,16 +1050,25 @@ for key, value in config.items():
             if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)  
             if (value == 'cfgBarrelTrackCuts' or value == 'cfgTrackCuts') and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgBarrelTrackCuts = actualConfig + ',' + extrargs.cfgBarrelTrackCuts 
                 config[key][value] = extrargs.cfgBarrelTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelTrackCuts)  
             if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
-                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)                
+                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
                 config[key][value] = extrargs.cfgMuonCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)  
             if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
@@ -1079,14 +1094,20 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMaxTpcSignal)  
             if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
                 if type(extrargs.cfgMCsignals) == type(clist):
-                    extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)                     
+                    extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMCsignals = actualConfig + ',' + extrargs.cfgMCsignals                     
                 config[key][value] = extrargs.cfgMCsignals
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMCsignals)  
                 
             #d-q-muons-selection
             if value =='cfgMuonsCuts' and extrargs.cfgMuonsCuts:
                 if type(extrargs.cfgMuonsCuts) == type(clist):
-                    extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)                
+                    extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)
+                if extrargs.onlySelect == 'false':
+                    actualConfig = config[key][value]
+                    extrargs.cfgMuonsCuts = actualConfig + ',' + extrargs.cfgMuonsCuts                  
                 config[key][value] = extrargs.cfgMuonsCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonsCuts) 
 
