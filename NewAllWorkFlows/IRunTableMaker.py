@@ -186,8 +186,6 @@ for k,v in debugLevelSelections.items():
 
 eventMuonSelections = ["0","1","2"]
 
-processDummySelections = ["filter","event","barrel"]
-
 noDeleteNeedForCent = True
 processLeftAfterCentDelete = True
 
@@ -720,15 +718,6 @@ if extrargs.runMC and extrargs.runData:
     logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
     sys.exit()
     
-"""  
-# Check whether we run over run 2 or run 3
-if not (extrargs.run == '3' or extrargs.run == '2'):
-    logging.error("You have to specify either --run 3 or --run 2 !")
-    logging.info("Example For run 2 : python3 IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --run 2 --param value ...")
-    logging.info("Example For run 3 : python3 IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --run 3 --param value ...")
-    sys.exit()
-"""
-
 runOverMC = False
 if (extrargs.runMC):
     runOverMC = True
@@ -983,7 +972,6 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)
                     
             # analysis-qvector selections    
-            #TODO some parameters not needed because we have cut selections in tablemaker. discuss this thing.  
             if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
@@ -1185,18 +1173,7 @@ for key, value in config.items():
                     config[key]["processCovariance"] = "true"
                     logging.debug(" - [%s] processStandart : false",key)
                     logging.debug(" - [%s] processCovariance : true",key) 
-                
-            # dummy selection
-            """
-            if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
-                if extrargs.processDummy == "event":
-                    config['d-q-event-selection-task']['processDummy'] = "true"
-                if extrargs.processDummy == "filter":
-                    config['d-q-filter-p-p-task']['processDummy'] = "true"
-                if extrargs.processDummy == "barrel":
-                    config['d-q-barrel-track-selection-task']['processDummy'] = "true"
-            """
-                    
+                                    
             # dummy automizer
             if value == 'processDummy' and extrargs.autoDummy and extrargs.runData:
                 
@@ -1306,10 +1283,7 @@ try:
 
 except:
     logging.warning("No process function provided in args, CLI Will not Check process validation for tableMaker/tableMakerMC process")
-
-     
-#TODO Fix help messages based on latest changes            
-"""              
+             
 # Transaction Management for Most of Parameters for debugging, monitoring and logging
 for key,value in configuredCommands.items():
     if(value != None):
@@ -1317,27 +1291,18 @@ for key,value in configuredCommands.items():
             listToString(value)
         if key in V0SelectorParameters and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
-        if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI", key)
+        if key == 'cfgWithQA' and extrargs.runMC:
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
         if key == 'est' and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI", key)
-        if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
+        if key =='isFilterPPTiny' and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
-        if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
+        if key == 'cfgMuonSels' and extrargs.runMC:
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
         if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
-        if key == 'cfgPairCuts' and (extrargs.runMC or extrargs.run == '3'):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run2, not MC and Run3. It will fixed by CLI", key)
-        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logging bug
-            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
+            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
         if key == 'cfgMCsignals' and extrargs.runData:
             logging.warning("--%s Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI", key)
-        if key == 'isProcessEvTime' and (extrargs.run == '2' or extrargs.runMC):
-            logging.warning("--%s Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
-"""
                                          
 # Centrality table delete for pp processes
 if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
@@ -1383,7 +1348,6 @@ if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extr
                 processLeftAfterCentDelete = True
                 leftProcessAfterDeleteCent.append(deletedParamTableMaker)
 
-    
     if extrargs.runMC:
         for deletedParamTableMaker in config["table-maker-m-c"]:
             if "process" not in deletedParamTableMaker: 
@@ -1435,23 +1399,18 @@ if extrargs.cfgMuonSels:
     # seperate string values to list with comma
     for muonSels in muonSelsList:
         muonSels = muonSels.split(",")    
-    #print("after split: ", muonSels)
 
     # remove string values after :
     for i in muonSels:
         i = i[ 0 : i.index(":")]
         muonSelsListAfterSplit.append(i)
-    #print("after split muonSels: ", muonSelsListAfterSplit)
 
     # Remove duplicated values with set convertion
     muonSelsListAfterSplit = set(muonSelsListAfterSplit)
     muonSelsListAfterSplit = list(muonSelsListAfterSplit)
-    #print("after remove duplicated values from muonSels: ", muonSelsListAfterSplit)
 
     for i in muonSelsListAfterSplit:
         if i in muonCut:
-            #print("selection: ", i,"in", muonCut)
-            #count = count +1
             continue
         else:
             print("====================================================================================================================")
@@ -1462,8 +1421,6 @@ if extrargs.cfgMuonSels:
                             
     for i in muonCut:    
         if i in muonSelsListAfterSplit:
-            #print("muon cut: ",i," in", muonSelsListAfterSplit)
-            #count2 = count2 +1
             continue
         else:
             print("====================================================================================================================")
@@ -1489,24 +1446,18 @@ if extrargs.cfgBarrelSels:
     # seperate string values to list with comma
     for barrelSels in barrelSelsList:
         barrelSels = barrelSels.split(",")   
-    #print("after split: ", barrelSels)
 
     # remove string values after :
-
     for i in barrelSels:
         i = i[ 0 : i.index(":")]
         barrelSelsListAfterSplit.append(i)
-    #print("after split barrelSels: ", barrelSelsListAfterSplit)
 
     # Remove duplicated values with set convertion
     barrelSelsListAfterSplit = set(barrelSelsListAfterSplit)
     barrelSelsListAfterSplit = list(barrelSelsListAfterSplit)
-    #print("after remove duplicated values from barrelSels: ", barrelSelsListAfterSplit)
 
     for i in barrelSelsListAfterSplit:
         if i in barrelTrackCut:
-            #print("selection: ", i,"in", barrelTrackCut)
-            #count = count +1
             continue
         else:
             print("====================================================================================================================")
@@ -1517,8 +1468,6 @@ if extrargs.cfgBarrelSels:
                             
     for i in barrelTrackCut:    
         if i in barrelSelsListAfterSplit:
-            #print("barrel track cut: ",i," in", barrelSelsListAfterSplit)
-            #count2 = count2 +1
             continue
         else:
             print("====================================================================================================================")
@@ -1527,7 +1476,7 @@ if extrargs.cfgBarrelSels:
             print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
             sys.exit()
             
-# AOD File checker from only interface TODO: We need also checker from JSON 
+# AOD File Checker 
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -1548,22 +1497,15 @@ if extrargs.aod != None:
             logging.error("%s File not found in path!!!", myAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
-                    
+            logging.info("%s has valid File Format and Path, File Found", myAod)                
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
-        
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
 
                 
 ###########################
 # End Interface Processes #
 ###########################
-
-
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableMaker.json"

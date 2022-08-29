@@ -217,10 +217,6 @@ with open('tempCutsLibrary.h') as f:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
 
- 
-#print(allCuts)
-#print(allMixing)    
-    
 ###################
 # Main Parameters #
 ###################
@@ -232,10 +228,6 @@ groupCoreSelections = parser.add_argument_group(title='Core configurations that 
 groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
 parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
-#groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-#groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-#groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-#groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ########################
 # Interface Parameters #
@@ -760,8 +752,7 @@ for key, value in config.items():
                 config[key]["processAllSkimmed"] = 'false'
             
             # Dummy automizer
-            if value == 'processDummy' and extrargs.autoDummy:
-                
+            if value == 'processDummy' and extrargs.autoDummy:           
                 if config["analysis-event-selection"]["processSkimmed"] == "true":
                     config["analysis-event-selection"]["processDummy"] = "false"
                 if config["analysis-event-selection"]["processSkimmed"] == 'false':
@@ -793,9 +784,7 @@ for key, value in config.items():
                 if config["analysis-dilepton-hadron"]["processSkimmed"] == "false":
                     config["analysis-dilepton-hadron"]["processDummy"] = "true"
                             
-# AOD and JSON Reader File Checker
-                
-# AOD File checker from only interface TODO: We need also checker from JSON 
+# AOD File and Reader-Writer Checker  
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -816,17 +805,10 @@ if extrargs.aod != None:
             logging.error("%s File not found in path!!!", myAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
-                    
+            logging.info("%s has valid File Format and Path, File Found", myAod)              
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
-
-        
-        
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
         
 if extrargs.reader != None:
     if os.path.isfile(extrargs.reader) == False:
@@ -840,7 +822,6 @@ elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == F
 # End Interface Processes #
 ###########################              
 
-
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableReader.json"
 
@@ -852,24 +833,6 @@ commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfi
 
 if extrargs.writer == "false":
     commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
-
-#TODO: need check
-#if ANALYSIS_DILEPTON_HADRON_SELECTED == True:
-    #commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + extrargs.writer + " -b"
-
-"""
-if extrargs.add_mc_conv:
-    logging.debug("o2-analysis-mc-converter added your workflow")
-    commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
-
-if extrargs.add_fdd_conv:
-    commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
-    logging.debug("o2-analysis-fdd-converter added your workflow")
-
-if extrargs.add_track_prop:
-    commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
-    logging.debug("o2-analysis-track-propagation added your workflow")
-"""
 
 print("====================================================================================================================")
 logging.info("Command to run:")

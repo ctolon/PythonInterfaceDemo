@@ -25,10 +25,6 @@ from logging import handlers
 from ast import parse
 import os
 import argparse
-import re
-import urllib.request
-from urllib.request import Request, urlopen
-import ssl
 
 """
 argcomplete - Bash tab completion for argparse
@@ -403,7 +399,6 @@ for key, value in config.items():
                 config[key][value] = extrargs.customDeltaBC
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC) 
                 
-
             # v0-selector
             if value =='d_bz' and extrargs.d_bz:
                 config[key][value] = extrargs.d_bz
@@ -443,7 +438,6 @@ for key, value in config.items():
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2) 
-
                 
             # multiplicity-table
             if value == "doVertexZeq" and extrargs.isVertexZeq:
@@ -490,9 +484,8 @@ for key, value in config.items():
                     value2 = "false"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)     
-                                                    
-                                                                    
-# AOD File checker from only interface TODO: We need also checker from JSON 
+      
+# AOD File Checker                                                    
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -513,18 +506,11 @@ if extrargs.aod != None:
             logging.error("%s File not found in path!!!", myAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
-                    
+            logging.info("%s has valid File Format and Path, File Found", myAod)                   
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
         
-
-            
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
-
 ###########################
 # End Interface Processes #
 ###########################

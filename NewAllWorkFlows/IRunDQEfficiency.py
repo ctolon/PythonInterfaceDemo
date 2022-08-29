@@ -209,9 +209,6 @@ with open('tempCutsLibrary.h') as f:
         for i in stringIfSearch:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
-
-#print(allCuts)
-#print(allMCSignals)
     
 ###################
 # Main Parameters #
@@ -224,10 +221,6 @@ parser.register('action', 'none', NoAction)
 parser.register('action', 'store_choice', ChoicesAction)
 groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
 groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
-#groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-#groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-#groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-#groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ########################
 # Interface Parameters #
@@ -343,9 +336,6 @@ if extrargs.logFile and extrargs.debug:
     fh.setFormatter(format)
     log.addHandler(fh)
     
-
-#commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-track-propagation", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   logging.error("Invalid syntax! The command line should look like this:")
@@ -551,8 +541,7 @@ for key, value in config.items():
                                 if 'dileptonTrackDielectronKaonSelection' not in valueCfg and extrargs.onlySelect == 'true':
                                     config[key][value] = 'false' 
                                     logging.debug(" - [%s] %s : false",key,value)
-                                    
-                                                    
+                                                                           
             # QA selections  
             if value =='cfgQA' and extrargs.cfgQA:
                 config[key][value] = extrargs.cfgQA
@@ -652,33 +641,6 @@ for key, value in config.items():
                 config[key]["processJpsiToMuMuSkimmed"] = 'false'
                 config[key]["processJpsiToMuMuVertexingSkimmed"] = 'false'
             
-            
-            """
-            if extrargs.processSameEventPairing == 'true': # Automate activated
-                
-                # Track automate
-                if config["analysis-track-selection"]["processSkimmed"] == 'true':
-                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'true'  
-                                
-                if config["analysis-track-selection"]["processSkimmed"] == 'false':
-                    config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] = 'false'    
-                    
-                # Muon automate     
-                if config["analysis-muon-selection"]["processSkimmed"] == 'true':
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'true'
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                    if extrargs.isVertexing == 'true':
-                        config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
-                        config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'true'
-                                
-                if config["analysis-muon-selection"]["processSkimmed"] == 'false':
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] = 'false'
-                    config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] = 'false'
-                
-            if extrargs.processSameEventPairing == 'false': # Automate disabled
-                continue
-            """
-
             # analysis-same-event-pairing
             if key == 'analysis-same-event-pairing':
                 if value == 'cfgBarrelMCRecSignals' and extrargs.cfgBarrelMCRecSignals:
@@ -767,9 +729,8 @@ for key, value in config.items():
                     config["analysis-dilepton-track"]["processDummy"] = "false"
                 if config["analysis-dilepton-track"]["processDielectronKaonSkimmed"] == 'false':
                     config["analysis-dilepton-track"]["processDummy"] = "true"
-                    
-        
-# AOD File checker from only interface TODO: We need also checker from JSON 
+
+# AOD File and Reader-Writer Checker                    
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -795,12 +756,6 @@ if extrargs.aod != None:
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
-
-        
-        
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
         
 if extrargs.reader != None:
     if os.path.isfile(extrargs.reader) == False:
@@ -809,13 +764,10 @@ if extrargs.reader != None:
 elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])) == False:
         print("[ERROR]",config["internal-dpl-aod-reader"]["aod-reader-json"],"File not found in path!!!")
         sys.exit()
-            
-            
-                
+                         
 ###########################
 # End Interface Processes #
 ###########################   
-
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigDQEfficiency.json"
@@ -823,32 +775,9 @@ updatedConfigFileName = "tempConfigDQEfficiency.json"
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)
 
-# Check which dependencies need to be run
-
-#depsToRun = {}
-#for dep in commonDeps:
-  #depsToRun[dep] = 1
 commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + extrargs.writer
 if extrargs.writer == "false":
     commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
-
-"""
-if extrargs.add_mc_conv:
-    logging.debug("o2-analysis-mc-converter added your workflow")
-    commandToRun += " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
-
-if extrargs.add_fdd_conv:
-    commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
-    logging.debug("o2-analysis-fdd-converter added your workflow")
-
-if extrargs.add_track_prop:
-    commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
-    logging.debug("o2-analysis-track-propagation added your workflow")
-"""
-
-#for dep in depsToRun.keys():
-#commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
-
 
 print("====================================================================================================================")
 logging.info("Command to run:")

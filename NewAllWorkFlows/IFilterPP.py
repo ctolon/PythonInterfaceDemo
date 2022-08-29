@@ -112,24 +112,6 @@ dqSelectionsList = []
 for k,v in dqSelections.items():
     dqSelectionsList.append(k)
 
-centralityTableSelections = {
-    "Run2V0M": "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDtks": "Produces Run2 centrality percentiles using SPD tracklets multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2SPDcls": "Produces Run2 centrality percentiles using SPD clusters multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL0": "Produces Run2 centrality percentiles using CL0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "Run2CL1": "Produces Run2 centrality percentiles using CL1 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "FV0A": "Produces centrality percentiles using FV0A multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "FT0M": "Produces centrality percentiles using FT0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "FDDM": "Produces centrality percentiles using FDD multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "NTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)" 
-}
-centralityTableSelectionsList = []
-for k,v in centralityTableSelections.items():
-    centralityTableSelectionsList.append(k)
-    
-centralityTableParameters = ["estRun2V0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1","estFV0A","estFT0M","estFDDM","estNTPV"]
-#TODO: Add genname parameter
-
 ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
 
 ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
@@ -455,12 +437,7 @@ if extrargs.FT0 != None:
     
 ######################################################################################
 
-#commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-track-propagation", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
 commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-#TODO we don't have o2-analysis-trackextension? we have track-prop. track-prop should be removed because we have add_track_prop option in interface.
-#e.g from tablemaker --> barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension","o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-
-
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
@@ -520,7 +497,7 @@ for key, value in config.items():
                 config[key][value] = extrargs.aod
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                 
-            # DQ Selections for muons and barrel tracks #todo: need transcation mang. for barrel tiny and normal process
+            # DQ Selections for muons and barrel tracks
             if value =='processSelection' and extrargs.process:
                 for keyCfg,valueCfg in configuredCommands.items():
                     if(valueCfg != None): # Cleaning None types, because can't iterate in None type
@@ -701,20 +678,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)     
                                                     
                                                   
-            # dummy selection
-            """
-            if value == 'processDummy' and extrargs.processDummy and extrargs.runData and extrargs.run == '3':
-                if extrargs.processDummy == "event":
-                    config['d-q-event-selection-task']['processDummy'] = "true"
-                if extrargs.processDummy == "filter":
-                    config['d-q-filter-p-p-task']['processDummy'] = "true"
-                if extrargs.processDummy == "barrel":
-                    config['d-q-barrel-track-selection-task']['processDummy'] = "true"
-            """
-                    
-            # dummy automizer #TODO: for transaction manag. we need logger for dummy
-            if value == 'processDummy' and extrargs.autoDummy:
-                
+            if value == 'processDummy' and extrargs.autoDummy:            
                 if config["d-q-barrel-track-selection"]["processSelection"] == "true":
                     config["d-q-barrel-track-selection"]["processDummy"] = "false"
                 if config["d-q-barrel-track-selection"]["processSelection"] == 'false':
@@ -735,27 +699,6 @@ for key, value in config.items():
                 if config["d-q-filter-p-p-task"]["processFilterPP"] == "false":
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
                 
-# Transaction Management for Most of Parameters for debugging, monitoring and logging
-"""
-for key,value in configuredCommands.items():
-    if(value != None):
-        if type(value) == type(clist):
-            listToString(value)
-        if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI")
-        if key == 'est' and extrargs.runMC:
-            print("[WARNING]","--"+key+" Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI")
-        if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logger bug
-            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        #if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
-            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-"""
 
 # ================================================================
 # Transcation Management for barrelsels and muonsels in filterPP 
@@ -797,17 +740,13 @@ if extrargs.cfgMuonSels:
     for i in muonSels:
         i = i[ 0 : i.index(":")]
         muonSelsListAfterSplit.append(i)
-    #print("after split muonSels: ", muonSelsListAfterSplit)
 
     # Remove duplicated values with set convertion
     muonSelsListAfterSplit = set(muonSelsListAfterSplit)
     muonSelsListAfterSplit = list(muonSelsListAfterSplit)
-    #print("after remove duplicated values from muonSels: ", muonSelsListAfterSplit)
 
     for i in muonSelsListAfterSplit:
         if i in muonCut:
-            #print("selection: ", i,"in", muonCut)
-            #count = count +1
             continue
         else:
             print("====================================================================================================================")
@@ -818,8 +757,6 @@ if extrargs.cfgMuonSels:
                             
     for i in muonCut:    
         if i in muonSelsListAfterSplit:
-            #print("muon cut: ",i," in", muonSelsListAfterSplit)
-            #count2 = count2 +1
             continue
         else:
             print("====================================================================================================================")
@@ -845,24 +782,18 @@ if extrargs.cfgBarrelSels:
     # seperate string values to list with comma
     for barrelSels in barrelSelsList:
         barrelSels = barrelSels.split(",")   
-    #print("after split: ", barrelSels)
 
     # remove string values after :
-
     for i in barrelSels:
         i = i[ 0 : i.index(":")]
         barrelSelsListAfterSplit.append(i)
-    #print("after split barrelSels: ", barrelSelsListAfterSplit)
 
     # Remove duplicated values with set convertion
     barrelSelsListAfterSplit = set(barrelSelsListAfterSplit)
     barrelSelsListAfterSplit = list(barrelSelsListAfterSplit)
-    #print("after remove duplicated values from barrelSels: ", barrelSelsListAfterSplit)
 
     for i in barrelSelsListAfterSplit:
         if i in barrelTrackCut:
-            #print("selection: ", i,"in", barrelTrackCut)
-            #count = count +1
             continue
         else:
             print("====================================================================================================================")
@@ -873,8 +804,6 @@ if extrargs.cfgBarrelSels:
                             
     for i in barrelTrackCut:    
         if i in barrelSelsListAfterSplit:
-            #print("barrel track cut: ",i," in", barrelSelsListAfterSplit)
-            #count2 = count2 +1
             continue
         else:
             print("====================================================================================================================")
@@ -884,7 +813,7 @@ if extrargs.cfgBarrelSels:
             sys.exit()
 
   
-# AOD File checker from only interface TODO: We need also checker from JSON 
+# AOD File Checker
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -911,12 +840,6 @@ if extrargs.aod != None:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
         
-        
-        
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
-
 ###########################
 # End Interface Processes #
 ###########################

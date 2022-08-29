@@ -217,10 +217,6 @@ with open('tempCutsLibrary.h') as f:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
             allCuts = allCuts + getAnalysisCuts
 
- 
-#print(allCuts)
-#print(allMixing)  
-
 
 ###################
 # Main Parameters #
@@ -402,9 +398,6 @@ if extrargs.FT0 != None:
 ######################################################################################
 
 commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table","o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-#o2-analysis-timestamp - b| o2-analysis-event-selection -b | o2-analysis-multiplicity-table -b | o2-analysis-centrality-table -b | o2-analysis-trackselection -b | o2-analysis-trackextension -b | o2-analysis-pid-tpc-full -b | o2-analysis-pid-tof-full -b | o2-analysis-pid-tof-base -b | o2-analysis-pid-tof-beta -b
-#| o2-analysis-dq-flow -b
-#| o2-analysis-fdd-converter -b
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
@@ -592,31 +585,8 @@ for key, value in config.items():
                     value2 = "false"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)   
-                                                    
-                                                                  
-# Transaction Management for Most of Parameters for debugging, monitoring and logging
-"""
-for key,value in configuredCommands.items():
-    if(value != None):
-        if type(value) == type(clist):
-            listToString(value)
-        if key == 'cfgWithQA' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run 3, not MC and Run 2. It will fixed by CLI")
-        if key == 'est' and extrargs.runMC:
-            print("[WARNING]","--"+key+" Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI")
-        if key =='isFilterPPTiny' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        if key == 'cfgMuonSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
-            print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        #if key == 'isBarrelSelectionTiny' and (extrargs.runMC or extrargs.run == '2') and extrargs.isBarrelSelectionTiny: TODO: fix logger bug
-            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-        #if key == 'processDummy' and (extrargs.runMC or extrargs.run == '2'):
-            #print("[WARNING]","--"+key+" Not Valid Parameter. This parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI")
-"""
-  
-# AOD File checker from only interface TODO: We need also checker from JSON 
+                                                      
+# AOD File Checker
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -637,17 +607,10 @@ if extrargs.aod != None:
             logging.error("%s File not found in path!!!", myAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
-                    
+            logging.info("%s has valid File Format and Path, File Found", myAod)                  
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
-
-        
-        
-#elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
-        #print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
-        #sys.exit()
 
 ###########################
 # End Interface Processes #
