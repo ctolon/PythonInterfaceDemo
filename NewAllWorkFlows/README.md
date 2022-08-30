@@ -35,7 +35,7 @@ Main File | Related Task on O2Physics | Description
 [`configTableMakerMCRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configTableMakerMCRun3.json) | [`TableMakerMC.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx) | run over Run-3 MC
 [`configAnalysisData.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configAnalysisData.json) | [`TableReader.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx) | run with tableReader.cxx
 [`configAnalysisMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configAnalysisMC.json) | [`dqEfficiency.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx) | run with dqEfficiency.cxx
-[`configFilterPPRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFilterPPRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
+[`configFilterPPDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFilterPPDataRun3.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
 [`configFilterPPDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFilterPPDataRun2.json) | [`filterPP.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx) | run with filterPP.cxx
 [`configFlowDataRun2.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFlowDataRun2.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
 [`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx
@@ -254,7 +254,7 @@ you will get this displayed options in your terminal:
 Configs/configAnalysisData.json                  Configs/configFlowDataRun3.json                  Configs/configtestFilterPPDataRun3.json          Configs/readerConfiguration_reducedEventMC.json
 Configs/configAnalysisMC.json                    Configs/configTableMakerDataRun2.json            Configs/configtestFlowDataRun3.json              Configs/writerConfiguration_dileptonMC.json
 Configs/configFilterPPDataRun2.json              Configs/configTableMakerDataRun3.json            Configs/configtestTableMakerDataRun3.json        Configs/writerConfiguration_dileptons.json
-Configs/configFilterPPRun3.json                  Configs/configTableMakerMCRun2.json              Configs/readerConfiguration_dilepton.json        
+Configs/configFilterPPDataRun3.json                  Configs/configTableMakerMCRun2.json              Configs/readerConfiguration_dilepton.json        
 Configs/configFlowDataRun2.json                  Configs/configTableMakerMCRun3.json              Configs/readerConfiguration_reducedEvent.json 
 ```
 
@@ -1499,12 +1499,12 @@ Add extrac tables and converters with:
   * `python3`
   * `IRunFilterPP.py`
   * JSON Config File
-    * Example For usage: Configs/configFilterPPRun3.json 
+    * Example For usage: Configs/configFilterPPDataRun3.json 
 
 Examples(in NewAllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
-  python3 IRunFilterPP.py Configs/configFilterPPRun3.json
+  python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json
   ```
 
 - Run filterPP on Data run2 With Minimum Commands
@@ -1514,7 +1514,7 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-python3 IRunFilterPP.py Configs/configFilterPPRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
   ```
 
 # Available configs in IRunFilterPP Interface
@@ -1602,7 +1602,7 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-python3 IRunDQFlow.py Configs/configFilterPPRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
+python3 IRunDQFlow.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
   ```
 
 # Available configs in IRunDQFlow Interface
@@ -1991,7 +1991,7 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 Command To Run:
 
 ```ruby
-python3 IRunFilterPP.py Configs/configFilterPPRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
+python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
 ```
 
 ## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
