@@ -166,17 +166,6 @@ ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-V0SelectorParameters = [
-    "d_bz",
-    "v0cospa",
-    "dcav0dau",
-    "v0RMin",
-    "v0Rmax",
-    "dcamin",
-    "dcamax,mincrossedrows",
-    "maxchi2tpc"
-]
-
 pidSelections = {
     "el": "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
     "mu": "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",

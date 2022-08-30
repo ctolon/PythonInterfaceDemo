@@ -208,7 +208,7 @@ centralityTableParameters = [
 ]
 # TODO: Add genname parameter
 
-V0SelectorParameters = [
+v0SelectorParameters = [
     "d_bz",
     "v0cospa",
     "dcav0dau",
@@ -1385,7 +1385,7 @@ for key,value in configuredCommands.items():
     if(value != None):
         if type(value) == type(clist):
             listToString(value)
-        if key in V0SelectorParameters and extrargs.runMC:
+        if key in v0SelectorParameters and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
         if key == 'cfgWithQA' and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
