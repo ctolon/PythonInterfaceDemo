@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
+# -*- coding: utf-8 -*- 
 #############################################################################
 ##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
 ##                   Author: ionut.cristian.arsene@cern.ch                 ##
