@@ -611,6 +611,21 @@ if extrargs.aod != None:
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
+        
+#####################
+# Deps Transcations #
+#####################
+
+# In extended tracks, o2-analysis-trackextension is not a valid dep for run 3
+# More Information : https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters
+"""
+Some of the track parameters used in the track selection require additional calculation effort and are then stored in a table called TracksExtended 
+which is produced by either the o2-analysis-trackextension task (Run 2) or o2-analysis-track-propagation (Run 3). 
+The quantities contained in this table can also be directly used in the analysis.
+"""
+if config["bc-selection-task"]["processRun3"] == "true":
+    commonDeps.remove("o2-analysis-trackextension")     
+    logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
 ###########################
 # End Interface Processes #
