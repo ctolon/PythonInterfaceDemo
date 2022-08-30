@@ -46,7 +46,7 @@ from argcomplete.completers import ChoicesCompleter
 def listToString(s):
     """
     ListToString provides converts lists to strings with commas.
-    This function is written to save as string type instead of list 
+    This function is written to save as string type instead of list
 
 
     Args:
@@ -57,19 +57,20 @@ def listToString(s):
     """
     if len(s) > 1:
         # initialize an empty string
-        str1 =","
-   
-        # return string 
-        return (str1.join(s))
+        str1 = ","
+
+        # return string
+        return str1.join(s)
     else:
         str1 = " "
-        
-        return (str1.join(s))
+
+        return str1.join(s)
+
 
 def stringToList(string):
     """
     stringToList provides converts strings to list with commas.
-    This function is written to save as list type instead of string 
+    This function is written to save as list type instead of string
 
     Args:
         string (string): Input as String
@@ -80,48 +81,55 @@ def stringToList(string):
     li = list(string.split(","))
     return li
 
+
 class NoAction(argparse.Action):
     """
-    NoAction class adds dummy positional arguments to an argument, 
+    NoAction class adds dummy positional arguments to an argument,
     so sub helper messages can be created
 
     Args:
         argparse (Class): Input as args
     """
+
     def __init__(self, **kwargs):
-        kwargs.setdefault('default', argparse.SUPPRESS)
-        kwargs.setdefault('nargs', 0)
+        kwargs.setdefault("default", argparse.SUPPRESS)
+        kwargs.setdefault("nargs", 0)
         super(NoAction, self).__init__(**kwargs)
+
     def __call__(self, parser, namespace, values, option_string=None):
         pass
 
+
 class ChoicesAction(argparse._StoreAction):
     """
-    ChoicesAction class is used to add extra choices 
+    ChoicesAction class is used to add extra choices
     to a parseargs choices list
 
     Args:
         argparse (Class): Input as args
     """
-    def add_choice(self, choice, help=''):
+
+    def add_choice(self, choice, help=""):
         if self.choices is None:
             self.choices = []
         self.choices.append(choice)
-        self.container.add_argument(choice, help=help, action='none')
-        
-        
+        self.container.add_argument(choice, help=help, action="none")
+
+
 class ChoicesCompleterList(object):
     """
-    For the ChoicesCompleterList package argcomplete, 
-    the TAB key is the class written for autocomplete and validation when an argument can take multiple values. 
-    By default, the argcomplete package has the ChoicesCompleter Class, 
+    For the ChoicesCompleterList package argcomplete,
+    the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
+    By default, the argcomplete package has the ChoicesCompleter Class,
     which can only validate arguments that take an one value and allows autocomplete with the TAB key.
 
     Args:
         object (list): parserargs choices object as a list
     """
+
     def __init__(self, choices):
-        self.choices = list(choices)        
+        self.choices = list(choices)
+
     def __call__(self, **kwargs):
         return self.choices
         
@@ -129,20 +137,20 @@ class ChoicesCompleterList(object):
 # Interface Predefined Selections #
 ###################################
 
-readerPath = 'Configs/readerConfiguration_reducedEvent.json'
-writerPath = 'Configs/writerConfiguration_dileptons.json'
+readerPath = "Configs/readerConfiguration_reducedEvent.json"
+writerPath = "Configs/writerConfiguration_dileptons.json"
 
 analysisSelections = {
-    "eventSelection" : "Run event selection on DQ skimmed events",
-    "muonSelection" : "Run muon selection on DQ skimmed muons",
-    "trackSelection" : "Run barrel track selection on DQ skimmed tracks",
-    "eventMixing" :"Run mixing on skimmed tracks based muon and track selections",
-    "eventMixingVn" :"Run vn mixing on skimmed tracks based muon and track selections",
-    "sameEventPairing" : "Run same event pairing selection on DQ skimmed data" ,
-    "dileptonHadron" :  "Run dilepton-hadron pairing, using skimmed data"
+    "eventSelection": "Run event selection on DQ skimmed events",
+    "muonSelection": "Run muon selection on DQ skimmed muons",
+    "trackSelection": "Run barrel track selection on DQ skimmed tracks",
+    "eventMixing": "Run mixing on skimmed tracks based muon and track selections",
+    "eventMixingVn": "Run vn mixing on skimmed tracks based muon and track selections",
+    "sameEventPairing": "Run same event pairing selection on DQ skimmed data",
+    "dileptonHadron": "Run dilepton-hadron pairing, using skimmed data"
 }
 analysisSelectionsList = []
-for k,v in analysisSelections.items():
+for k, v in analysisSelections.items():
     analysisSelectionsList.append(k)
 
 sameEventPairingProcessSelections = {
@@ -151,29 +159,29 @@ sameEventPairingProcessSelections = {
     "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
     "VnJpsiToEE": "Run barrel-barrel vn mixing on skimmed tracks",
     "VnJpsiToMuMu": "Run muon-muon vn mixing on skimmed tracks",
-    "ElectronMuon" : "Run electron-muon pairing, with skimmed tracks/muons" ,
+    "ElectronMuon": "Run electron-muon pairing, with skimmed tracks/muons",
     "All": "Run all types of pairing, with skimmed tracks/muons"
 }
 sameEventPairingProcessSelectionsList = []
-for k,v in sameEventPairingProcessSelections.items():
+for k, v in sameEventPairingProcessSelections.items():
     sameEventPairingProcessSelectionsList.append(k)
 
-booleanSelections = ["true","false"]
+booleanSelections = ["true", "false"]
 
 debugLevelSelections = {
-    "NOTSET" : "Set Debug Level to NOTSET",
-    "DEBUG" : "Set Debug Level to DEBUG",
-    "INFO" : "Set Debug Level to INFO",
-    "WARNING" : "Set Debug Level to WARNING",
-    "ERROR" : "Set Debug Level to ERROR", 
-    "CRITICAL" : "Set Debug Level to CRITICAL"
+    "NOTSET": "Set Debug Level to NOTSET",
+    "DEBUG": "Set Debug Level to DEBUG",
+    "INFO": "Set Debug Level to INFO",
+    "WARNING": "Set Debug Level to WARNING",
+    "ERROR": "Set Debug Level to ERROR",
+    "CRITICAL": "Set Debug Level to CRITICAL"
 }
 debugLevelSelectionsList = []
-for k,v in debugLevelSelections.items():
+for k, v in debugLevelSelections.items():
     debugLevelSelectionsList.append(k)
 
 
-clist = [] # control list for type control
+clist = []  # control list for type control
 allCuts = []
 allMixing = []
 
@@ -186,10 +194,10 @@ ANALYSIS_DILEPTON_HADRON_SELECTED = False
 threeSelectedList = []
 
 # Get system variables in alienv.
-O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
-QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
-O2_ROOT=os.environ.get('O2_ROOT')
-O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
+QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
+O2_ROOT = os.environ.get("O2_ROOT")
+O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 
 ################################
 # Download DQ Libs From Github #
@@ -198,7 +206,9 @@ O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
 # It works on for only master branch
 
 # header for github download
-headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+}
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'

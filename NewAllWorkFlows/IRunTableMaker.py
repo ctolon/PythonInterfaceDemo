@@ -47,7 +47,7 @@ from argcomplete.completers import ChoicesCompleter
 def listToString(s):
     """
     ListToString provides converts lists to strings with commas.
-    This function is written to save as string type instead of list 
+    This function is written to save as string type instead of list
 
 
     Args:
@@ -58,19 +58,20 @@ def listToString(s):
     """
     if len(s) > 1:
         # initialize an empty string
-        str1 =","
-   
-        # return string 
-        return (str1.join(s))
+        str1 = ","
+
+        # return string
+        return str1.join(s)
     else:
         str1 = " "
-        
-        return (str1.join(s))
+
+        return str1.join(s)
+
 
 def stringToList(string):
     """
     stringToList provides converts strings to list with commas.
-    This function is written to save as list type instead of string 
+    This function is written to save as list type instead of string
 
     Args:
         string (string): Input as String
@@ -81,81 +82,103 @@ def stringToList(string):
     li = list(string.split(","))
     return li
 
+
 class NoAction(argparse.Action):
     """
-    NoAction class adds dummy positional arguments to an argument, 
+    NoAction class adds dummy positional arguments to an argument,
     so sub helper messages can be created
 
     Args:
         argparse (Class): Input as args
     """
+
     def __init__(self, **kwargs):
-        kwargs.setdefault('default', argparse.SUPPRESS)
-        kwargs.setdefault('nargs', 0)
+        kwargs.setdefault("default", argparse.SUPPRESS)
+        kwargs.setdefault("nargs", 0)
         super(NoAction, self).__init__(**kwargs)
+
     def __call__(self, parser, namespace, values, option_string=None):
         pass
 
+
 class ChoicesAction(argparse._StoreAction):
     """
-    ChoicesAction class is used to add extra choices 
+    ChoicesAction class is used to add extra choices
     to a parseargs choices list
 
     Args:
         argparse (Class): Input as args
     """
-    def add_choice(self, choice, help=''):
+
+    def add_choice(self, choice, help=""):
         if self.choices is None:
             self.choices = []
         self.choices.append(choice)
-        self.container.add_argument(choice, help=help, action='none')
-        
-        
+        self.container.add_argument(choice, help=help, action="none")
+
+
 class ChoicesCompleterList(object):
     """
-    For the ChoicesCompleterList package argcomplete, 
-    the TAB key is the class written for autocomplete and validation when an argument can take multiple values. 
-    By default, the argcomplete package has the ChoicesCompleter Class, 
+    For the ChoicesCompleterList package argcomplete,
+    the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
+    By default, the argcomplete package has the ChoicesCompleter Class,
     which can only validate arguments that take an one value and allows autocomplete with the TAB key.
 
     Args:
         object (list): parserargs choices object as a list
     """
+
     def __init__(self, choices):
-        self.choices = list(choices)        
+        self.choices = list(choices)
+
     def __call__(self, **kwargs):
         return self.choices
+
         
 ###################################
 # Interface Predefined Selections #
 ###################################
    
 tablemakerProcessAllSelections = {
-  "Full" : "Build full DQ skimmed data model, w/o centrality",
-  "FullTiny" : "Build full DQ skimmed data model tiny",
-  "FullWithCov" : "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
-  "FullWithCent" : "Build full DQ skimmed data model, w/ centrality",
-  "BarrelOnly" : "Build barrel-only DQ skimmed data model, w/o centrality",
-  "BarrelOnlyWithCov" : "Build barrel-only DQ skimmed data model, w/ track cov matrix",
-  "BarrelOnlyWithV0Bits" :"Build full DQ skimmed data model, w/o centrality, w/ V0Bits",
-  "BarrelOnlyWithEventFilter" : "Build full DQ skimmed data model, w/o centrality, w/ event filter",
-  "BarrelOnlyWithQvector" : "Build full DQ skimmed data model, w/ centrality, w/ q vector",
-  "BarrelOnlyWithCent" : "Build barrel-only DQ skimmed data model, w/ centrality", 
-  "MuonOnly" : "Build muon-only DQ skimmed data model",
-  "MuonOnlyWithCov" : "Build muon-only DQ skimmed data model, w/ muon cov matrix",
-  "MuonOnlyWithCent" : "Build muon-only DQ skimmed data model, w/ centrality",
-  "MuonOnlyWithFilter" : "Build muon-only DQ skimmed data model, w/ event filter",
-  "MuonOnlyWithQvector" : "Build muon-only DQ skimmed data model, w/ q vector",
-  "OnlyBCs" : "Analyze the BCs to store sampled lumi"
+    "Full": "Build full DQ skimmed data model, w/o centrality",
+    "FullTiny": "Build full DQ skimmed data model tiny",
+    "FullWithCov": "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
+    "FullWithCent": "Build full DQ skimmed data model, w/ centrality",
+    "BarrelOnly": "Build barrel-only DQ skimmed data model, w/o centrality",
+    "BarrelOnlyWithCov": "Build barrel-only DQ skimmed data model, w/ track cov matrix",
+    "BarrelOnlyWithV0Bits": "Build full DQ skimmed data model, w/o centrality, w/ V0Bits",
+    "BarrelOnlyWithEventFilter": "Build full DQ skimmed data model, w/o centrality, w/ event filter",
+    "BarrelOnlyWithQvector": "Build full DQ skimmed data model, w/ centrality, w/ q vector",
+    "BarrelOnlyWithCent": "Build barrel-only DQ skimmed data model, w/ centrality",
+    "MuonOnly": "Build muon-only DQ skimmed data model",
+    "MuonOnlyWithCov": "Build muon-only DQ skimmed data model, w/ muon cov matrix",
+    "MuonOnlyWithCent": "Build muon-only DQ skimmed data model, w/ centrality",
+    "MuonOnlyWithFilter": "Build muon-only DQ skimmed data model, w/ event filter",
+    "MuonOnlyWithQvector": "Build muon-only DQ skimmed data model, w/ q vector",
+    "OnlyBCs": "Analyze the BCs to store sampled lumi"
 }
 tablemakerProcessAllSelectionsList = []
-for k,v in tablemakerProcessAllSelections.items():
+for k, v in tablemakerProcessAllSelections.items():
     tablemakerProcessAllSelectionsList.append(k)
-    
-tablemakerProcessAllParameters = ["processFull","processFullTiny","processFullWithCov","processFullWithCent",
-        "processBarrelOnlyWithV0Bits","processBarrelOnlyWithEventFilter","processBarrelOnlyWithQvector","processBarrelOnlyWithCent","processBarrelOnlyWithCov","processBarrelOnly",
-        "processMuonOnlyWithCent","processMuonOnlyWithCov","processMuonOnly","processMuonOnlyWithFilter","processMuonOnlyWithQvector",
-        "processOnlyBCs"]
+
+tablemakerProcessAllParameters = [
+    "processFull",
+    "processFullTiny",
+    "processFullWithCov",
+    "processFullWithCent",
+    "processBarrelOnlyWithV0Bits",
+    "processBarrelOnlyWithEventFilter",
+    "processBarrelOnlyWithQvector",
+    "processBarrelOnlyWithCent",
+    "processBarrelOnlyWithCov",
+    "processBarrelOnly",
+    "processMuonOnlyWithCent",
+    "processMuonOnlyWithCov",
+    "processMuonOnly",
+    "processMuonOnlyWithFilter",
+    "processMuonOnlyWithQvector",
+    "processOnlyBCs"
+]
 
 centralityTableSelections = {
     "Run2V0M": "Produces centrality percentiles using V0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
@@ -166,55 +189,84 @@ centralityTableSelections = {
     "FV0A": "Produces centrality percentiles using FV0A multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
     "FT0M": "Produces centrality percentiles using FT0 multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
     "FDDM": "Produces centrality percentiles using FDD multiplicity. -1: auto, 0: don't, 1: yes. Default: auto (-1)",
-    "NTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)" 
+    "NTPV": "Produces centrality percentiles using number of tracks contributing to the PV. -1: auto, 0: don't, 1: yes. Default: auto (-1)"
 }
 centralityTableSelectionsList = []
-for k,v in centralityTableSelections.items():
+for k, v in centralityTableSelections.items():
     centralityTableSelectionsList.append(k)
-    
-centralityTableParameters = ["estRun2V0M", "estRun2SPDtks","estRun2SPDcls","estRun2CL0","estRun2CL1","estFV0A","estFT0M","estFDDM","estNTPV"]
-#TODO: Add genname parameter
 
-V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+centralityTableParameters = [
+    "estRun2V0M",
+    "estRun2SPDtks",
+    "estRun2SPDcls",
+    "estRun2CL0",
+    "estRun2CL1",
+    "estFV0A",
+    "estFT0M",
+    "estFDDM",
+    "estNTPV"
+]
+# TODO: Add genname parameter
 
-ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
+V0SelectorParameters = [
+    "d_bz",
+    "v0cospa",
+    "dcav0dau",
+    "v0RMin",
+    "v0Rmax",
+    "dcamin",
+    "dcamax,mincrossedrows",
+    "maxchi2tpc"
+]
 
-ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
+ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
+
+ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
 pidSelections = {
-    "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
-    "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
-    "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+    "el": "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "mu": "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "pi": "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "ka": "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "pr": "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "de": "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "tr": "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "he": "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "al": "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
 }
 pidSelectionsList = []
-for k,v in pidSelections.items():
+for k, v in pidSelections.items():
     pidSelectionsList.append(k)
-    
-pidParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+
+pidParameters = [
+    "pid-el",
+    "pid-mu",
+    "pid-pi",
+    "pid-ka",
+    "pid-pr",
+    "pid-de",
+    "pid-tr",
+    "pid-he",
+    "pid-al"
+]
 
 collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
 
-booleanSelections = ["true","false"]
+booleanSelections = ["true", "false"]
 
 debugLevelSelections = {
-    "NOTSET" : "Set Debug Level to NOTSET",
-    "DEBUG" : "Set Debug Level to DEBUG",
-    "INFO" : "Set Debug Level to INFO",
-    "WARNING" : "Set Debug Level to WARNING",
-    "ERROR" : "Set Debug Level to ERROR", 
-    "CRITICAL" : "Set Debug Level to CRITICAL"
+    "NOTSET": "Set Debug Level to NOTSET",
+    "DEBUG": "Set Debug Level to DEBUG",
+    "INFO": "Set Debug Level to INFO",
+    "WARNING": "Set Debug Level to WARNING",
+    "ERROR": "Set Debug Level to ERROR",
+    "CRITICAL": "Set Debug Level to CRITICAL"
 }
 debugLevelSelectionsList = []
-for k,v in debugLevelSelections.items():
+for k, v in debugLevelSelections.items():
     debugLevelSelectionsList.append(k)
 
-eventMuonSelections = ["0","1","2"]
+eventMuonSelections = ["0", "1", "2"]
 
 noDeleteNeedForCent = True
 processLeftAfterCentDelete = True
@@ -223,35 +275,35 @@ isValidProcessFunc = True
 
 threeSelectedList = []
 
-clist = [] # control list for type control
-allValuesCfg = [] # counter for provided args
-allCuts = [] # all analysis cuts
-allMCSignals = [] # all MC Signals
-allPairCuts = [] # only pair cuts
-nAddedAllCutsList = [] # e.g. muonQualityCuts:2
-nAddedPairCutsList = [] # e.g paircutMass:3
-selsWithOneColon  = [] # track/muon cut:paircut:n
-allSels = [] # track/muon cut::n
-oneColon = ":" # Namespace reference
-doubleColon = "::" # Namespace reference
+clist = []  # control list for type control
+allValuesCfg = []  # counter for provided args
+allCuts = []  # all analysis cuts
+allMCSignals = []  # all MC Signals
+allPairCuts = []  # only pair cuts
+nAddedAllCutsList = []  # e.g. muonQualityCuts:2
+nAddedPairCutsList = []  # e.g paircutMass:3
+selsWithOneColon = []  # track/muon cut:paircut:n
+allSels = []  # track/muon cut::n
+oneColon = ":"  # Namespace reference
+doubleColon = "::"  # Namespace reference
 
 # List for Transcation management for FilterPP
-muonCutList = [] # List --> transcation management for filterPP
-barrelTrackCutList = [] # List --> transcation management for filterPP
+muonCutList = []  # List --> transcation management for filterPP
+barrelTrackCutList = []  # List --> transcation management for filterPP
 barrelSelsList = []
 muonSelsList = []
 barrelSelsListAfterSplit = []
 muonSelsListAfterSplit = []
 
-O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
-QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
-O2_ROOT=os.environ.get('O2_ROOT')
-O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
+QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
+O2_ROOT = os.environ.get("O2_ROOT")
+O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 
 # Predefined values for DQ Logger messages
 DQ_BARREL_SELECTED = False
 DQ_BARRELTINY_SELECTED = False
-DQ_MUON_SELECTED  = False
+DQ_MUON_SELECTED = False
 DQ_EVENT_SELECTED = False
 DQ_FULL_SELECTED = False
 DQ_FILTERPP_SELECTED = False
@@ -266,7 +318,9 @@ DQ_QVECTOR_SELECTED = False
 # It works on for only master branch
 
 # header for github download
-headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+}
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
@@ -644,67 +698,79 @@ if extrargs.FT0 != None:
     
 ######################################################################################
 
-commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
-barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension","o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+commonDeps = [
+    "o2-analysis-timestamp",
+    "o2-analysis-event-selection",
+    "o2-analysis-multiplicity-table"
+]
+barrelDeps = [
+    "o2-analysis-trackselection",
+    "o2-analysis-trackextension",
+    "o2-analysis-pid-tof-base",
+    "o2-analysis-pid-tof",
+    "o2-analysis-pid-tof-full",
+    "o2-analysis-pid-tof-beta",
+    "o2-analysis-pid-tpc-full"
+]
 specificDeps = {
-  "processFull" : [],
-  "processFullTiny" : [],
-  "processFullWithCov" : [],
-  "processFullWithCent" : ["o2-analysis-centrality-table"],
-  "processBarrelOnly" : [],
-  "processBarrelOnlyWithCov" : [],
-  "processBarrelOnlyWithV0Bits" : ["o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
-  "processBarrelOnlyWithEventFilter" : ["o2-analysis-dq-filter-pp"],
-  "processBarrelOnlyWithQvector" : ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
-  "processBarrelOnlyWithCent" : ["o2-analysis-centrality-table"],
-  "processMuonOnly" : [],
-  "processMuonOnlyWithCov" : [],
-  "processMuonOnlyWithCent" : ["o2-analysis-centrality-table"],
-  "processMuonOnlyWithQvector" : ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
-  "processMuonOnlyWithFilter" : ["o2-analysis-dq-filter-pp"]
-  #"processFullWithCentWithV0Bits" : ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
-  #"processFullWithEventFilterWithV0Bits" : ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
+  "processFull": [],
+  "processFullTiny": [],
+  "processFullWithCov": [],
+  "processFullWithCent": ["o2-analysis-centrality-table"],
+  "processBarrelOnly": [],
+  "processBarrelOnlyWithCov": [],
+  "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
+  "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
+  "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
+  "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
+  "processMuonOnly": [],
+  "processMuonOnlyWithCov": [],
+  "processMuonOnlyWithCent": ["o2-analysis-centrality-table"],
+  "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
+  "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp"]
+  #"processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
+  #"processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
 } 
 
 # Definition of all the tables we may write
 tables = {
-  "ReducedEvents" : {"table": "AOD/REDUCEDEVENT/0", "treename": "ReducedEvents"},
-  "ReducedEventsExtended" : {"table": "AOD/REEXTENDED/0", "treename": "ReducedEventsExtended"},
-  "ReducedEventsVtxCov" : {"table": "AOD/REVTXCOV/0", "treename": "ReducedEventsVtxCov"},
-  "ReducedEventsQvector" : {"table": "AOD/REQVECTOR/0", "treename": "ReducedEventsQvector"},
-  "ReducedMCEventLabels" : {"table": "AOD/REMCCOLLBL/0", "treename": "ReducedMCEventLabels"},
-  "ReducedMCEvents" : {"table": "AOD/REMC/0", "treename": "ReducedMCEvents"},
-  "ReducedTracks" : {"table": "AOD/REDUCEDTRACK/0", "treename": "ReducedTracks"},
-  "ReducedTracksBarrel" : {"table": "AOD/RTBARREL/0", "treename": "ReducedTracksBarrel"},
-  "ReducedTracksBarrelCov" : {"table": "AOD/RTBARRELCOV/0", "treename": "ReducedTracksBarrelCov"},
-  "ReducedTracksBarrelPID" : {"table": "AOD/RTBARRELPID/0", "treename": "ReducedTracksBarrelPID"},
-  "ReducedTracksBarrelLabels" : {"table": "AOD/RTBARRELLABELS/0", "treename": "ReducedTracksBarrelLabels"},
-  "ReducedMCTracks" : {"table": "AOD/RTMC/0", "treename": "ReducedMCTracks"},
-  "ReducedMuons" : {"table": "AOD/RTMUON/0", "treename": "ReducedMuons"},
+  "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0", "treename": "ReducedEvents"},
+  "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0", "treename": "ReducedEventsExtended"},
+  "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0", "treename": "ReducedEventsVtxCov"},
+  "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0", "treename": "ReducedEventsQvector"},
+  "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0", "treename": "ReducedMCEventLabels"},
+  "ReducedMCEvents": {"table": "AOD/REMC/0", "treename": "ReducedMCEvents"},
+  "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0", "treename": "ReducedTracks"},
+  "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0", "treename": "ReducedTracksBarrel"},
+  "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0", "treename": "ReducedTracksBarrelCov"},
+  "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0", "treename": "ReducedTracksBarrelPID"},
+  "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0", "treename": "ReducedTracksBarrelLabels"},
+  "ReducedMCTracks": {"table": "AOD/RTMC/0", "treename": "ReducedMCTracks"},
+  "ReducedMuons": {"table": "AOD/RTMUON/0", "treename": "ReducedMuons"},
   "ReducedMuonsExtra" : {"table": "AOD/RTMUONEXTRA/0", "treename": "ReducedMuonsExtra"},
-  "ReducedMuonsCov" : {"table": "AOD/RTMUONCOV/0", "treename": "ReducedMuonsCov"},
-  "ReducedMuonsLabels" : {"table": "AOD/RTMUONSLABELS/0", "treename": "ReducedMuonsLabels"}
+  "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0", "treename": "ReducedMuonsCov"},
+  "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0", "treename": "ReducedMuonsLabels"}
 }
 # Tables to be written, per process function
 commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov"]
 barrelCommonTables = ["ReducedTracks","ReducedTracksBarrel","ReducedTracksBarrelPID"]
 muonCommonTables = ["ReducedMuons", "ReducedMuonsExtra"]
 specificTables = {
-  "processFull" : [],
-  "processFullTiny" : [],
-  "processFullWithCov" : ["ReducedTracksBarrelCov", "ReducedMuonsCov"],
-  "processFullWithCent" : [],
-  "processBarrelOnly" : [],
-  "processBarrelOnlyWithCov" : ["ReducedTracksBarrelCov"],
-  "processBarrelOnlyWithV0Bits" : [],
-  "processBarrelOnlyWithQvector" : ["ReducedEventsQvector"],
-  "processBarrelOnlyWithEventFilter" : [],
-  "processBarrelOnlyWithCent" : [],
-  "processMuonOnly" : [],
-  "processMuonOnlyWithCov" : ["ReducedMuonsCov"],
-  "processMuonOnlyWithCent" : [],
-  "processMuonOnlyWithQvector" : ["ReducedEventsQvector"],
-  "processMuonOnlyWithFilter" : []
+  "processFull": [],
+  "processFullTiny": [],
+  "processFullWithCov": ["ReducedTracksBarrelCov", "ReducedMuonsCov"],
+  "processFullWithCent": [],
+  "processBarrelOnly": [],
+  "processBarrelOnlyWithCov": ["ReducedTracksBarrelCov"],
+  "processBarrelOnlyWithV0Bits": [],
+  "processBarrelOnlyWithQvector": ["ReducedEventsQvector"],
+  "processBarrelOnlyWithEventFilter": [],
+  "processBarrelOnlyWithCent": [],
+  "processMuonOnly": [],
+  "processMuonOnlyWithCov": ["ReducedMuonsCov"],
+  "processMuonOnlyWithCent": [],
+  "processMuonOnlyWithQvector": ["ReducedEventsQvector"],
+  "processMuonOnlyWithFilter": []
 }
 
 # Make some checks on provided arguments

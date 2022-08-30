@@ -47,7 +47,7 @@ from argcomplete.completers import ChoicesCompleter
 def listToString(s):
     """
     ListToString provides converts lists to strings with commas.
-    This function is written to save as string type instead of list 
+    This function is written to save as string type instead of list
 
 
     Args:
@@ -58,19 +58,20 @@ def listToString(s):
     """
     if len(s) > 1:
         # initialize an empty string
-        str1 =","
-   
-        # return string 
-        return (str1.join(s))
+        str1 = ","
+
+        # return string
+        return str1.join(s)
     else:
         str1 = " "
-        
-        return (str1.join(s))
+
+        return str1.join(s)
+
 
 def stringToList(string):
     """
     stringToList provides converts strings to list with commas.
-    This function is written to save as list type instead of string 
+    This function is written to save as list type instead of string
 
     Args:
         string (string): Input as String
@@ -81,48 +82,55 @@ def stringToList(string):
     li = list(string.split(","))
     return li
 
+
 class NoAction(argparse.Action):
     """
-    NoAction class adds dummy positional arguments to an argument, 
+    NoAction class adds dummy positional arguments to an argument,
     so sub helper messages can be created
 
     Args:
         argparse (Class): Input as args
     """
+
     def __init__(self, **kwargs):
-        kwargs.setdefault('default', argparse.SUPPRESS)
-        kwargs.setdefault('nargs', 0)
+        kwargs.setdefault("default", argparse.SUPPRESS)
+        kwargs.setdefault("nargs", 0)
         super(NoAction, self).__init__(**kwargs)
+
     def __call__(self, parser, namespace, values, option_string=None):
         pass
 
+
 class ChoicesAction(argparse._StoreAction):
     """
-    ChoicesAction class is used to add extra choices 
+    ChoicesAction class is used to add extra choices
     to a parseargs choices list
 
     Args:
         argparse (Class): Input as args
     """
-    def add_choice(self, choice, help=''):
+
+    def add_choice(self, choice, help=""):
         if self.choices is None:
             self.choices = []
         self.choices.append(choice)
-        self.container.add_argument(choice, help=help, action='none')
-        
-        
+        self.container.add_argument(choice, help=help, action="none")
+
+
 class ChoicesCompleterList(object):
     """
-    For the ChoicesCompleterList package argcomplete, 
-    the TAB key is the class written for autocomplete and validation when an argument can take multiple values. 
-    By default, the argcomplete package has the ChoicesCompleter Class, 
+    For the ChoicesCompleterList package argcomplete,
+    the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
+    By default, the argcomplete package has the ChoicesCompleter Class,
     which can only validate arguments that take an one value and allows autocomplete with the TAB key.
 
     Args:
         object (list): parserargs choices object as a list
     """
+
     def __init__(self, choices):
-        self.choices = list(choices)        
+        self.choices = list(choices)
+
     def __call__(self, **kwargs):
         return self.choices
     
@@ -132,85 +140,104 @@ class ChoicesCompleterList(object):
 
 # For filterPP, Filter PP Process should always true. So you don't need configure it
 dqSelections = {
-    "eventSelection" : "Run DQ event selection",
-    "barrelTrackSelection" : "Run DQ barrel track selection" ,
-    "muonSelection" : "Run DQ muon selection",
-    "barrelTrackSelectionTiny" : "Run DQ barrel track selection tiny",
-    "filterPPSelectionTiny" : "Run filter task tiny"
+    "eventSelection": "Run DQ event selection",
+    "barrelTrackSelection": "Run DQ barrel track selection",
+    "muonSelection": "Run DQ muon selection",
+    "barrelTrackSelectionTiny": "Run DQ barrel track selection tiny",
+    "filterPPSelectionTiny": "Run filter task tiny"
 }
 dqSelectionsList = []
-for k,v in dqSelections.items():
+for k, v in dqSelections.items():
     dqSelectionsList.append(k)
 
-ft0Selections = ["FT0","NoFT0","OnlyFT0","Run2"]
+ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
 
-ft0Parameters = ["processFT0","processNoFT0","processOnlyFT0","processRun2"]
+ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-V0SelectorParameters = ["d_bz","v0cospa","dcav0dau","v0RMin","v0Rmax","dcamin","dcamax,mincrossedrows","maxchi2tpc"]
+V0SelectorParameters = [
+    "d_bz",
+    "v0cospa",
+    "dcav0dau",
+    "v0RMin",
+    "v0Rmax",
+    "dcamin",
+    "dcamax,mincrossedrows",
+    "maxchi2tpc"
+]
 
 pidSelections = {
-    "el" : "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "mu" : "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)" ,
-    "pi" : "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "ka" : "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "pr" : "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)", 
-    "de" : "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "tr" : "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "he" : "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-    "al" : "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
+    "el": "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "mu": "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "pi": "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "ka": "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "pr": "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "de": "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "tr": "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "he": "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+    "al": "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)"
 }
 pidSelectionsList = []
-for k,v in pidSelections.items():
+for k, v in pidSelections.items():
     pidSelectionsList.append(k)
-    
-pidParameters = ["pid-el","pid-mu","pid-pi","pid-ka","pid-pr","pid-de","pid-tr","pid-he","pid-al"]
+
+pidParameters = [
+    "pid-el",
+    "pid-mu",
+    "pid-pi",
+    "pid-ka",
+    "pid-pr",
+    "pid-de",
+    "pid-tr",
+    "pid-he",
+    "pid-al"
+]
 
 collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
 
-booleanSelections = ["true","false"]
+booleanSelections = ["true", "false"]
 
-processDummySelections = ["filter","event","barrel"]
+processDummySelections = ["filter", "event", "barrel"]
 
 debugLevelSelections = {
-    "NOTSET" : "Set Debug Level to NOTSET",
-    "DEBUG" : "Set Debug Level to DEBUG",
-    "INFO" : "Set Debug Level to INFO",
-    "WARNING" : "Set Debug Level to WARNING",
-    "ERROR" : "Set Debug Level to ERROR", 
-    "CRITICAL" : "Set Debug Level to CRITICAL"
+    "NOTSET": "Set Debug Level to NOTSET",
+    "DEBUG": "Set Debug Level to DEBUG",
+    "INFO": "Set Debug Level to INFO",
+    "WARNING": "Set Debug Level to WARNING",
+    "ERROR": "Set Debug Level to ERROR",
+    "CRITICAL": "Set Debug Level to CRITICAL"
 }
 debugLevelSelectionsList = []
-for k,v in debugLevelSelections.items():
+for k, v in debugLevelSelections.items():
     debugLevelSelectionsList.append(k)
 
-eventMuonSelections = ["0","1","2"]
+eventMuonSelections = ["0", "1", "2"]
 
-processDummySelections =["filter","event","barrel"]
-    
-clist = [] # control list for type control
-allValuesCfg = [] # counter for provided args
-allCuts = [] # all analysis cuts
-allPairCuts = [] # only pair cuts
-nAddedAllCutsList = [] # e.g. muonQualityCuts:2
-nAddedPairCutsList = [] # e.g paircutMass:3
-selsWithOneColon = [] # track/muon cut:paircut:n
-allSels = [] # track/muon cut::n
-oneColon = ":" # Namespace reference
-doubleColon = "::" # Namespace reference
+processDummySelections = ["filter", "event", "barrel"]
+
+clist = []  # control list for type control
+allValuesCfg = []  # counter for provided args
+allCuts = []  # all analysis cuts
+allPairCuts = []  # only pair cuts
+nAddedAllCutsList = []  # e.g. muonQualityCuts:2
+nAddedPairCutsList = []  # e.g paircutMass:3
+selsWithOneColon = []  # track/muon cut:paircut:n
+allSels = []  # track/muon cut::n
+oneColon = ":"  # Namespace reference
+doubleColon = "::"  # Namespace reference
 
 # List for Transcation management for FilterPP
-muonCutList = [] # List --> transcation management for filterPP
-barrelTrackCutList = [] # List --> transcation management for filterPP
+muonCutList = []  # List --> transcation management for filterPP
+barrelTrackCutList = []  # List --> transcation management for filterPP
 barrelSelsList = []
 muonSelsList = []
 barrelSelsListAfterSplit = []
 muonSelsListAfterSplit = []
 
 # Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
-O2DPG_ROOT=os.environ.get('O2DPG_ROOT')
-QUALITYCONTROL_ROOT=os.environ.get('QUALITYCONTROL_ROOT')
-O2_ROOT=os.environ.get('O2_ROOT')
-O2PHYSICS_ROOT=os.environ.get('O2PHYSICS_ROOT')
+O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
+QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
+O2_ROOT = os.environ.get("O2_ROOT")
+O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 
 threeSelectedList = []
 
@@ -221,7 +248,9 @@ threeSelectedList = []
 # It works on for only master branch
 
 # header for github download
-headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+}
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
@@ -467,12 +496,23 @@ if extrargs.FT0 != None:
     
 ######################################################################################
 
-commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+commonDeps = [
+    "o2-analysis-timestamp",
+    "o2-analysis-event-selection",
+    "o2-analysis-multiplicity-table",
+    "o2-analysis-trackselection",
+    "o2-analysis-trackextension",
+    "o2-analysis-pid-tof-base",
+    "o2-analysis-pid-tof",
+    "o2-analysis-pid-tof-full",
+    "o2-analysis-pid-tof-beta",
+    "o2-analysis-pid-tpc-full"
+]
 
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   logging.error("Invalid syntax! The command line should look like this:")
-  logging.info("  ./IFilterPP.py <yourConfig.json> --param value ...")
+  logging.info("  ./IRunFilterPP.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -484,14 +524,14 @@ try:
             config = json.load(configFile)
     else:
         logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-        logging.info("  ./IFilterPP.py<yourConfig.json> <-runData|-runMC> --param value ...")
+        logging.info("  ./IRunFilterPP.py<yourConfig.json> <-runData|-runMC> --param value ...")
         sys.exit()
         
 except FileNotFoundError:
     isConfigJson = sys.argv[1].endswith('.json')
     if isConfigJson == False:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-            logging.info(" ./IFilterPP.py <yourConfig.json> --param value ...")
+            logging.info(" ./IRunFilterPP.py <yourConfig.json> --param value ...")
             sys.exit()
     logging.error("Your JSON Config File found in path!!!")
     sys.exit()

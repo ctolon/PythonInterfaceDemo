@@ -44,7 +44,9 @@ from argcomplete.completers import ChoicesCompleter
 # This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine
 
 # header for github download
-headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+}
 
 parser = argparse.ArgumentParser(description='Arguments to pass')
 parser.add_argument('--version', help="Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action="store", type=str.lower)
@@ -62,7 +64,7 @@ ALICE_SOFTWARE_PATH = os.environ["HOME"] + "/alice"
 
 localPathCutsLibrary = ALICE_SOFTWARE_PATH + '/O2Physics/PWGDQ/Core/CutsLibrary.h'
 localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + '/O2Physics/PWGDQ/Core/MCSignalLibrary.h'
-localPathEventMixing =ALICE_SOFTWARE_PATH + '/O2Physics/PWGDQ/Core/MixingLibrary.h'
+localPathEventMixing = ALICE_SOFTWARE_PATH + '/O2Physics/PWGDQ/Core/MixingLibrary.h'
 
 urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
 urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
