@@ -44,16 +44,18 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 import argcomplete  
 from argcomplete.completers import ChoicesCompleter
 
-"""    
-ListToString provides converts lists to strings with commas.
-This function is written to save as string type instead of list 
-
-Parameters
-------------------------------------------------
-s: list
-A simple Python List
-"""
 def listToString(s):
+    """
+    ListToString provides converts lists to strings with commas.
+    This function is written to save as string type instead of list 
+
+
+    Args:
+        s (list): Input as List
+
+    Returns:
+        string: Comma seperated string
+    """
     if len(s) > 1:
         # initialize an empty string
         str1 =","
@@ -64,20 +66,29 @@ def listToString(s):
         str1 = " "
         
         return (str1.join(s))
-"""
-stringToList provides converts strings to list with commas.
-This function is written to save as list type instead of string 
 
-Parameters
-------------------------------------------------
-s: list
-A simple Python String
-"""    
 def stringToList(string):
+    """
+    stringToList provides converts strings to list with commas.
+    This function is written to save as list type instead of string 
+
+    Args:
+        string (string): Input as String
+
+    Returns:
+        list: Comma separated list
+    """
     li = list(string.split(","))
     return li
 
 class NoAction(argparse.Action):
+    """
+    NoAction class adds dummy positional arguments to an argument, 
+    so sub helper messages can be created
+
+    Args:
+        argparse (Class): Input as args
+    """
     def __init__(self, **kwargs):
         kwargs.setdefault('default', argparse.SUPPRESS)
         kwargs.setdefault('nargs', 0)
@@ -86,13 +97,30 @@ class NoAction(argparse.Action):
         pass
 
 class ChoicesAction(argparse._StoreAction):
+    """
+    ChoicesAction class is used to add extra choices 
+    to a parseargs choices list
+
+    Args:
+        argparse (Class): Input as args
+    """
     def add_choice(self, choice, help=''):
         if self.choices is None:
             self.choices = []
         self.choices.append(choice)
         self.container.add_argument(choice, help=help, action='none')
         
+        
 class ChoicesCompleterList(object):
+    """
+    For the ChoicesCompleterList package argcomplete, 
+    the TAB key is the class written for autocomplete and validation when an argument can take multiple values. 
+    By default, the argcomplete package has the ChoicesCompleter Class, 
+    which can only validate arguments that take an one value and allows autocomplete with the TAB key.
+
+    Args:
+        object (list): parserargs choices object as a list
+    """
     def __init__(self, choices):
         self.choices = list(choices)        
     def __call__(self, **kwargs):
