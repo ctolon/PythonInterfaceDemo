@@ -841,7 +841,7 @@ For example, when the file is logged, you should see a result like this when you
   * `Automate` if runData is selected, centrality-table is deleted from JSON, if MC is deleted, centrality-table is not deleted since it is not in JSON
   * `Automate` if Table maker process function contains value related to Centrality (e.g. processMuonOnlyWithCent), Collision System pp can't be include related task about Centrality. They Will be removed in automation
   * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
-* `Automate` if your dataset is for run2, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. This selection is automated by configuring the process function in BcSelectionTask according to run2 or run3
+* `Automate` if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. This selection is automated by configuring the process function in BcSelectionTask according to run2 or run3
 
 ### Logger Things In IRunTableMaker
 
@@ -978,7 +978,7 @@ For example, when the file is logged, you should see a result like this when you
 choices).
 * If the argument can take more than one value, when adding a new property choices is a list and the values
 must be converted to comma-separated strings
-* if your dataset is for run2, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
+* if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
 
 ## Some Notes Before The Instructions
 
