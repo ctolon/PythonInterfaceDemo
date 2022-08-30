@@ -841,6 +841,7 @@ For example, when the file is logged, you should see a result like this when you
   * `Automate` if runData is selected, centrality-table is deleted from JSON, if MC is deleted, centrality-table is not deleted since it is not in JSON
   * `Automate` if Table maker process function contains value related to Centrality (e.g. processMuonOnlyWithCent), Collision System pp can't be include related task about Centrality. They Will be removed in automation
   * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
+* `Automate` if your dataset is for run2, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. This selection is automated by configuring the process function in BcSelectionTask according to run2 or run3
 
 ### Logger Things In IRunTableMaker
 
@@ -977,6 +978,7 @@ For example, when the file is logged, you should see a result like this when you
 choices).
 * If the argument can take more than one value, when adding a new property choices is a list and the values
 must be converted to comma-separated strings
+* if your dataset is for run2, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
 
 ## Some Notes Before The Instructions
 
@@ -2074,6 +2076,7 @@ Date |  User | Type | Desc
 `Aug 22, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a problem about aod checker functionality in interface. It fixed. (interface functionality)
 `Aug 23, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a bug for SEP Process functionality, It fixed. (for tableReader and dqEfficiency)
 `Aug 23, 2022` | `Liuyao Zhang` | `User Acceptance Test` | Reports a bug dilepton analysis for pp (for LHC22c). DileptonAOD.root ttres are created blank. It's not fixed now. (only for pp datas)
+`Aug 30, 2022` | `Liuyao Zhang` | `User Acceptance Test` | He reports, o2-analysis-trackextension is not valid option for run3, details added in code, so we have transacation management for this issue, it fixed now.
 
 If you have problem about running the scripts or you have some suggestions for interface, contact me at: `cevat.batuhan.tolon@cern.ch` or you can send a message on mattermost `@ctolon`. I will try to fix your problem ASAP.
 
@@ -2103,3 +2106,4 @@ If you have problem about running the scripts or you have some suggestions for i
 * `Aug 23, 2022` AOD File checker fixed, Same Event Pairing process functionality fixed, centrality table fixed in new interface, new automated things provided.
 * `Aug 24-26, 2022` All bugs are fixed. All functionalities provided, all scripts are tested by different users. Interface development is completed.
 * `Aug 26-29, 2022` Writer Config json files updated for reduced dileptons in dq skimmed data, dqFlow task integrated to tableReader and tableMaker, transaction management added for eventMixing Selections in tableReader, reader json creator functionality integrated to tableMaker, vertexZeq options manualy coverted to 0 for run 3 options otherwise process will crash, v0Selector added in pythonized workflows, Now interface has two mode : Overrider and additional, tutorials added to readme 
+* `Aug 30, 2022`  o2-analysis-trackextension is not valid option for run3, details added in code, so we have transacation management for this issue, it fixed now (this issue reported by Liuyao Zhang).
