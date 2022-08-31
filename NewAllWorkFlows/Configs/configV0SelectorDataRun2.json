@@ -118,7 +118,7 @@
         "processWoSlice": "false"
     },
     "event-selection-task": {
-        "syst": "pp",
+        "syst": "PbPb",
         "muonSelection": "0",
         "customDeltaBC": "300",
         "isMC": "false",
