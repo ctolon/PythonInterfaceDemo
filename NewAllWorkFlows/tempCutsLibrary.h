@@ -1,4 +1,4 @@
-/ Copyright 2019-2020 CERN and copyright holders of ALICE O2.
+// Copyright 2019-2020 CERN and copyright holders of ALICE O2.
 // See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
 // All rights not expressly granted are reserved.
 //
@@ -367,6 +367,11 @@ AnalysisCompositeCut* o2::aod::dqcuts::GetCompositeCut(const char* cutName)
 
   if (!nameStr.compare("mchTrack")) {
     cut->AddCut(GetAnalysisCut("mchTrack"));
+    return cut;
+  }
+
+  if (!nameStr.compare("matchedMchMid")) {
+    cut->AddCut(GetAnalysisCut("matchedMchMid"));
     return cut;
   }
 
@@ -769,6 +774,11 @@ AnalysisCut* o2::aod::dqcuts::GetAnalysisCut(const char* cutName)
 
   if (!nameStr.compare("mchTrack")) {
     cut->AddCut(VarManager::kMuonTrackType, 3.5, 4.5);
+    return cut;
+  }
+
+  if (!nameStr.compare("matchedMchMid")) {
+    cut->AddCut(VarManager::kMuonTrackType, 2.5, 3.5);
     return cut;
   }
 
