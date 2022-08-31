@@ -941,7 +941,7 @@ for key, value in config.items():
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
    
-                    if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
+                    if len(barrelSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                         config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
                         #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
@@ -951,7 +951,7 @@ for key, value in config.items():
                         config["d-q-muons-selection"]["processSelection"] = "true"
                         #logging.debug(" - [d-q-muons-selection] processSelection : true")
                         DQ_MUON_SELECTED  = True
-                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
+                    if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-muons-selection"]["processSelection"] = "false"
                         #logging.debug(" - [d-q-muons-selection] processSelection : false")
                             
@@ -959,7 +959,7 @@ for key, value in config.items():
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
                         DQ_EVENT_SELECTED = True
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
-                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData:
+                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-event-selection-task"]["processEventSelection"] = "false"
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
                            
@@ -979,7 +979,7 @@ for key, value in config.items():
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                                  
-                    if len(filterSearch) == 0 and extrargs.runData:
+                    if len(filterSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
                         DQ_FILTERPP_SELECTED = False
@@ -992,7 +992,7 @@ for key, value in config.items():
                         config["analysis-qvector"]["processQvector"] ="true"
                         DQ_QVECTOR_SELECTED = True
 
-                    if len(qvectorSearch) == 0 and extrargs.runData:
+                    if len(qvectorSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["analysis-qvector"]["processQvector"] ="false"
                         DQ_QVECTOR_SELECTED = False
                                                                         
