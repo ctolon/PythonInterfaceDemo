@@ -183,7 +183,7 @@
     },
     "analysis-qvector": {
         "cfgEventCuts": "eventStandard",
-        "cfgTrackCuts": "jpsiO2MCdebugCuts2",
+        "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
         "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
         "cfgQA": "false",
         "cfgCutPtMin": "0.2",

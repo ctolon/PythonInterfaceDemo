@@ -115,7 +115,7 @@
     },
     "analysis-qvector": {
         "cfgEventCuts": "eventStandard",
-        "cfgTrackCuts": "jpsiPID1",
+        "cfgBarrelTrackCuts": "jpsiPID1",
         "cfgMuonCuts": "muonQualityCuts",
         "cfgQA": "true",
         "cfgCutPtMin": "0.2",

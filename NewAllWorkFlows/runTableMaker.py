@@ -1135,7 +1135,7 @@ for key, value in config.items():
                     extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)  
-            if (value == 'cfgBarrelTrackCuts' or value == 'cfgTrackCuts') and extrargs.cfgBarrelTrackCuts:
+            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
                 if extrargs.onlySelect == 'false':

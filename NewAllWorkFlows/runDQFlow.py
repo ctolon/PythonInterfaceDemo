@@ -332,7 +332,7 @@ groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Proc
 
 # DQ Flow Task Selections
 groupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
-groupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
+groupAnalysisQvector.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
 groupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
 groupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
 groupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
@@ -530,14 +530,14 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                                                                                                      
             # analysis-qvector selections      
-            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
-                if type(extrargs.cfgTrackCuts) == type(clist):
-                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
+            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
+                if type(extrargs.cfgBarrelTrackCuts) == type(clist):
+                    extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts) 
                 if extrargs.onlySelect == 'false':
                     actualConfig = config[key][value]
-                    extrargs.cfgTrackCuts = actualConfig + ',' + extrargs.cfgTrackCuts 
-                config[key][value] = extrargs.cfgTrackCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
+                    extrargs.cfgBarrelTrackCuts = actualConfig + ',' + extrargs.cfgBarrelTrackCuts 
+                config[key][value] = extrargs.cfgBarrelTrackCuts
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelTrackCuts)
             if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
