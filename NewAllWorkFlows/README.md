@@ -5,17 +5,17 @@ This folder contains new interface based on nightly-20220823. You can follow the
 ## Main Scripts
 
 * Script used to run both the skimming tasks (tableMaker.cxx and tableMakerMC.cxx)
-[`IRunTableMaker.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunTableMaker.py).
+[`runTableMaker.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runTableMaker.py).
 * Analyze DQ skimmed data tables. This workflow runs a few tasks: event selection, barrel track selection, muon track selection etc.
-[`IRunTableReader.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunTableMaker.py).
+[`runTableReader.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runTableMaker.py).
 * Which contains the tasks DQEventSelection for event selection, DQBarrelTrackSelection for barrel track selection and single track MC matching, and the DQQuarkoniumPairing for reconstructed track pairing, MC matching of the pairs and counting of generated MC signals.  
-[`IRunDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunDQEfficiency..py).
+[`runDQEfficiency.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runDQEfficiency..py).
 * Produces a decision table for pp collisions. The decisions require that at least a selected pair (or just two tracks) exists for a given event. Currently up to 64 simultaneous decisions can be made, to facilitate studies for optimizing cuts. 
-[`IRunFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunFilterPP.py).
+[`runFilterPP.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runFilterPP.py).
 * Task to compute Q vectors and other quanitites related from the generic framework. Generic framework O2 version is a port of the AliPhysics version. To be used in the DQ analyses aiming for flow measurements 
-[`IRunDQFlow.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunDQFlow.py).
+[`runDQFlow.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runDQFlow.py).
 * V0 Selector makes Loops over a V0Data table and produces some standard analysis output.
-[`IRunV0Selector.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/IRunV0Selector.py).
+[`runV0selector.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/runV0selector.py).
 * It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way. You can download libs with version as nightly
 [`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/DownloadLibs.py).
 
@@ -236,9 +236,9 @@ step 1: type python3 (If your symbolic link is python for python3, type python)
 python3
 ```
 
-step 2: type the name of your script (eg IRunTableMaker.py)
+step 2: type the name of your script (eg runTableMaker.py)
 ```ruby
-python3 IRunTableMaker.py
+python3 runTableMaker.py
 ```
 
 step 3: At this stage, since the JSON configuration files are in the Configs folder, enter the name of your JSON config file by completing it with TAB or listing the available options
@@ -246,7 +246,7 @@ step 3: At this stage, since the JSON configuration files are in the Configs fol
 for ex. if you type:
 
 ```ruby
-python3 IRunTableMaker.py Configs
+python3 runTableMaker.py Configs
 ```
 
 you will get this displayed options in your terminal:
@@ -261,7 +261,7 @@ Configs/configFlowDataRun2.json                  Configs/configTableMakerMCRun3.
 then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json
 ```
 
 P.S You can Complete this with a TAB key after each word and character you type in command line.
@@ -269,7 +269,7 @@ P.S You can Complete this with a TAB key after each word and character you type 
 step 4: now when you type -- and press TAB key all parameter options in interface will be listed
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json --
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json --
 ```
 
 if you type like this and press TAB you will see all the parameters in the interface in your terminal like this:
@@ -282,10 +282,10 @@ if you type like this and press TAB you will see all the parameters in the inter
 --cfgBarrelLowPt         --cfgMCsignals           --cfgNoQA                --dcamax                 --isBarrelSelectionTiny  --MCSignalsLister        --run 
 ```
 
-VERY IMPORTANT STEP AND P.S: When configuring the IRunTableMaker.py script, the -runData and -runMC parameters are used when configuring the tablemaker for MC or Data. Since these parameters start with a single minus, do not forget to configure the TableMaker script only at the first time, by pressing the tab and configuring it (other interfaces do not have a parameter that starts with a single minus)
+VERY IMPORTANT STEP AND P.S: When configuring the runTableMaker.py script, the -runData and -runMC parameters are used when configuring the tablemaker for MC or Data. Since these parameters start with a single minus, do not forget to configure the TableMaker script only at the first time, by pressing the tab and configuring it (other interfaces do not have a parameter that starts with a single minus)
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -
 ```
 
 Then you will see -runData and -runMC in your parameters:
@@ -300,10 +300,10 @@ Then you will see -runData and -runMC in your parameters:
 --cfgBarrelSels          --cfgMuonCuts            --customDeltaBC          --est                    --logFile                --process                --v0Rmax  
 ```
 
-step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for IRunTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
+step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for runTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
 ```
 
 
@@ -332,7 +332,7 @@ eventMuonStandard                    jpsiPIDnsigmaRandomized              matche
 step 6: after configuring the config, type space and -- again to see other parameters again and see other parameters and use autocomplete with TAB as you type
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
 ```
 
 ```ruby
@@ -351,11 +351,11 @@ VERY IMPORTANT P.S: Not every parameter in the interface has a value to configur
 Example:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --add_track_prop
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --add_track_prop
 ```
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
 ```
 
 list of metavar parameters:
@@ -441,12 +441,12 @@ Arg | Ref Type| Desc | Default | Real Type
 
 ## Helper Command Functionality
 
-With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. CLI has same formatted messages in O2-DPL. It is recommended to use this command at least once before using the interface. If you do not remember the parameters related to the interface, you can list all valid parameters and the values that these parameters can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important parameter. For example, if you want to get a help message with the `python3 IRunTableMaker.py -h` command:
+With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. CLI has same formatted messages in O2-DPL. It is recommended to use this command at least once before using the interface. If you do not remember the parameters related to the interface, you can list all valid parameters and the values that these parameters can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important parameter. For example, if you want to get a help message with the `python3 runTableMaker.py -h` command:
 
 P.S The default values you see in the helper messages are the default values for the interface. The values you see None will directly take the default values from JSON
 
 ```ruby
-usage: IRunTableMaker.py [-h] [-runData] [-runMC] [--run {2,3}]
+usage: runTableMaker.py [-h] [-runData] [-runMC] [--run {2,3}]
                          [--add_mc_conv] [--add_fdd_conv] [--add_track_prop]
                          [--aod AOD] [--onlySelect ONLYSELECT]
                          [--autoDummy {true,false}]
@@ -701,7 +701,7 @@ Choice List for debug Parameters:
 
 You will receive a message that. also the command can likewise be added after configuring other parameters. For example:
 ```ruby
- python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D -h
+ python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D -h
  ```
  
 You will see helper messages again. As long as this command is added in the parameters, the script will not run and will only show a help message.
@@ -744,7 +744,7 @@ Data processor options: table-maker/table-maker-m-c:
  We can solve this as a positional argument by putting -- at the beginning of each value. But this will cause confusion in the user help message. Because they are values (Full, FullTiny, BarrelOnly...), not parameters (like --process). If you get an error like this:
 
 ```ruby
-IRunTableMaker.py: error: the following arguments are required: Config.json, Full, FullTiny, FullWithCov, FullWithCent, BarrelOnly, BarrelOnlyWithCov, BarrelOnlyWithV0Bits, BarrelOnlyWithEventFilter, BarrelOnlyWithCent, MuonOnly, MuonOnlyWithCov, MuonOnlyWithCent, MuonOnlyWithFilter, OnlyBCs, V0M, Run2SPDtks, Run2SPDcls, Run2CL0, Run2CL1, el, mu, pi, ka, pr, de, tr, he, al, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
+runTableMaker.py: error: the following arguments are required: Config.json, Full, FullTiny, FullWithCov, FullWithCent, BarrelOnly, BarrelOnlyWithCov, BarrelOnlyWithV0Bits, BarrelOnlyWithEventFilter, BarrelOnlyWithCent, MuonOnly, MuonOnlyWithCov, MuonOnlyWithCent, MuonOnlyWithFilter, OnlyBCs, V0M, Run2SPDtks, Run2SPDcls, Run2CL0, Run2CL1, el, mu, pi, ka, pr, de, tr, he, al, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 ```
   
 This means only your JSON config file is missing from your workflow. ignore the rest
@@ -772,13 +772,13 @@ You can see the debug messages of the numeric value you selected and the level a
 Example usage Logging for Both File and terminal:
 
 ```ruby 
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
 ```
 
 Example usage for only logging to terminal:
 
 ```ruby 
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
 ```
 
 For example, when the file is logged, you should see a result like this when you open the relevant file.
@@ -820,9 +820,9 @@ For example, when the file is logged, you should see a result like this when you
   2022-08-17 17:15:06,633 - [INFO] --MCSignalsLister : False 
   2022-08-17 17:15:06,633 - [INFO] --debug : DEBUG 
 ```
-## Features for IRunTableMaker
+## Features for runTableMaker
 
-### Automated Things In IRunTableMaker
+### Automated Things In runTableMaker
 
 * In TableMaker process function for Data, 
   * `Automate` If process contains only Barrel related value, it will automatically enable d-q-barrel-track-selection-task , d-q-event-selection-task and d-q-muons-selection task will be disabled
@@ -843,7 +843,7 @@ For example, when the file is logged, you should see a result like this when you
   * `Automate` if Table maker process function contains value related to Centrality, Collision System pp can't be include related task about Centrality. They will be removed in automation. Also, it will not run automatically in the o2-analysis-centrality-table task. Because if the process function contains only Centrality, this task runs and in this part, the centrality values ​​are automatically set to false in the process function.
 * `Automate` if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. This selection is automated by configuring the process function in BcSelectionTask according to run2 or run3
 
-### Logger Things In IRunTableMaker
+### Logger Things In runTableMaker
 
 * For TableMaker Process Function
   * If the value related to the process function is not defined in the tablemakerMC, the message that it is not defined is printed on the screen. This situation is handled automatically in the CLI and no error is thrown 
@@ -851,7 +851,7 @@ For example, when the file is logged, you should see a result like this when you
       print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!") 
       ```
     * ```bash
-      # Example for MC Run3. commands are python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC 
+      # Example for MC Run3. commands are python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC 
       [WARNING] processBarrelOnlyWithEventFilter is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!
       ``` 
 * Other Loggers based on parameters, MC and Data
@@ -940,9 +940,9 @@ For example, when the file is logged, you should see a result like this when you
                                   logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                                   sys.exit()
           ```
-## Features for IRunTableReader
+## Features for runTableReader
 
-### Automated Things In IRunTableReader
+### Automated Things In runTableReader
 
 * `Automate` If you forget to add the eventSelection option to the `--analysis` parameter it will add it automatically. This is because events must always be selected in the entire workflow of DQ.
 * `Automate` If you define a value for same event pairing in the `--process` argument and forget to set the sameEventPairing value in the `--analysis` argument, it will be assigned automatically
@@ -957,9 +957,9 @@ For example, when the file is logged, you should see a result like this when you
   * `Automate` if the `--analysis` parameter is configured as eventSelection trackSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToEE` and `VnJpsiToEE` and you will get an error if you configure it differently.
   * `Automate` if the `--analysis` parameter is configured as eventSelection muonSelection sameEventPairing, The `--process` parameter for SameEventPairing can only be `JpsiToMuMu`, `JpsiToMuMuVertexing` and `VnJpsiToMuMu` and you will get an error if you configure it differently.
 
-## Features for IRunDQEfficiency
+## Features for runDQEfficiency
 
-### Automated Things In IRunDQEfficiency
+### Automated Things In runDQEfficiency
 
 
 * `Automate` If you forget to add the eventSelection option to the `--analysis` parameter it will add it automatically. This is because events must always be selected in the entire workflow of DQ.
@@ -1030,7 +1030,7 @@ For example, let's say we're working on a tableMaker:
 As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
+python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
 ```
 P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
 
@@ -1069,7 +1069,7 @@ As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are se
 If we configured onlySelect to false:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
+python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
 ```
 
 Then our output would be:
@@ -1123,7 +1123,7 @@ A similar situation applies to Analysis Cut configurations and MC Signal configu
 Here we will configure the track cuts:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
 ```
 
 The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
@@ -1143,7 +1143,7 @@ As we can see, the old cut values ​​were deleted, the new cut values ​​w
 If onlySelect is False:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
 ```
 
 Then the JSON is in additional mode and the equivalent of this configuration is:
@@ -1166,7 +1166,7 @@ This is the main reason why Interface works in these two modes. If you already h
 
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
 
-# Instructions for IRunTableMaker.py
+# Instructions for runTableMaker.py
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -1179,7 +1179,7 @@ Add extrac tables and converters with:
 
 * Minimum Required Parameter List:
   * `python3`
-  * `IRunTableMaker.py`
+  * `runTableMaker.py`
   * JSON Config File
     * Example usage: Configs/configTableMakerDataRun3.json 
   *  `-run<MC|Data>` 
@@ -1190,29 +1190,29 @@ Add extrac tables and converters with:
 Examples(in NewAllWorkFlows):
 - Run TableMaker on Data run3 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --process BarrelOnly
+  python3 runTableMaker.py Configs/configTableMakerDataRun3.json -runData --process BarrelOnly
   ```
 - Run TableMaker on MC run3 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process BarrelOnly
+  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process BarrelOnly
   ```
 - Run TableMaker on Data run2 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --process BarrelOnly
+  python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --process BarrelOnly
   ```
 - Run TableMaker on MC run2 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 IRunTableMaker.py Configs/configTableMakerMCRun2.json -runMC --process BarrelOnly
+  python3 runTableMaker.py Configs/configTableMakerMCRun2.json -runMC --process BarrelOnly
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
   ```
 
-# Available configs in IRunTableMaker Interface
+# Available configs in runTableMaker Interface
 
-* For `IRunTableMaker.py` Selections
+* For `runTableMaker.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -1276,7 +1276,7 @@ Arg | Opt | Task | nargs |
 `--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
-* Details parameters for `IRunTableMaker.py`
+* Details parameters for `runTableMaker.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -1342,27 +1342,27 @@ Arg | Ref Type| Desc | Default | Real Type
 
 
 
-# Instructions for IRunTableReader.py
+# Instructions for runTableReader.py
 
 * Minimum Required Parameter List:
   * `python3`
-  * `IRunTableReader.py`
+  * `runTableReader.py`
   * JSON Config File
     * Example For Most common usage: Configs/configAnalysisData.json  
 
 Examples(in NewAllWorkFlows):
 - Run TableReader on Data run3 With Minimum Commands
   ```ruby
-  python3 IRunTableReader.py Configs/configAnalysisData.json
+  python3 runTableReader.py Configs/configAnalysisData.json
   ```
 
 In case of multiple configs example
   ```ruby
-  python3 IRunTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+  python3 runTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
   ```
 
 
-# Available configs in IRunTableReader Interface
+# Available configs in runTableReader Interface
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -1385,7 +1385,7 @@ Arg | Opt | Task | nargs |
 `--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
-* Details parameters for `IRunTableReader.py`
+* Details parameters for `runTableReader.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -1407,29 +1407,29 @@ Arg | Ref Type| Desc | Default | Real Type
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
-# Instructions for IRunDQEfficiency.py
+# Instructions for runDQEfficiency.py
 * Minimum Required Parameter List:
   * `python3`
-  * `IRunDQEfficiency.py`
+  * `runDQEfficiency.py`
   * JSON Config File
     * Example For Most common usage: Configs/configAnalysisMC.json  
 
 Examples(in NewAllWorkFlows):
 - Run DQEfficiency on Data run3 With Minimum Commands
   ```ruby
-  python3 IRunDQEfficiency.py Configs/configAnalysisMC.json
+  python3 runDQEfficiency.py Configs/configAnalysisMC.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
 
 
   ```
 
-# Available configs in IRunDQEfficiency Interface
+# Available configs in runDQEfficiency Interface
 
-* For `IRunDQEfficiency.py` Selections
+* For `runDQEfficiency.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -1458,7 +1458,7 @@ Arg | Opt | Task | nargs |
 `--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
-* Details parameters for `IRunDQEfficiency.py`
+* Details parameters for `runDQEfficiency.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -1484,7 +1484,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
-# Instructions for IRunFilterPP.py
+# Instructions for runFilterPP.py
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -1497,29 +1497,29 @@ Add extrac tables and converters with:
 
 * Minimum Required Parameter List:
   * `python3`
-  * `IRunFilterPP.py`
+  * `runFilterPP.py`
   * JSON Config File
     * Example For usage: Configs/configFilterPPDataRun3.json 
 
 Examples(in NewAllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
-  python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json
+  python3 runFilterPP.py Configs/configFilterPPDataRun3.json
   ```
 
 - Run filterPP on Data run2 With Minimum Commands
   ```ruby
-  python3 IRunFilterPP.py Configs/configFilterPPDataRun2.json
+  python3 runFilterPP.py Configs/configFilterPPDataRun2.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+python3 runFilterPP.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
   ```
 
-# Available configs in IRunFilterPP Interface
+# Available configs in runFilterPP Interface
 
-* For `IRunFilterPP.py` Selections
+* For `runFilterPP.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -1550,7 +1550,7 @@ Arg | Opt | Task | nargs |
 `--logFile` | No Param | special option  | 0 |
 
 
-* Details parameters for `IRunFilterPP.py`
+* Details parameters for `runFilterPP.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -1581,31 +1581,31 @@ Arg | Ref Type| Desc | Default | Real Type
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 
-# Instructions for IRunDQFlow.py
+# Instructions for runDQFlow.py
 
 * Minimum Required Parameter List:
   * `python3`
-  * `IRunDQFlow.py`
+  * `runDQFlow.py`
   * JSON Config File
     * Example For usage: Configs/configFlowDataRun3.json
 
 Examples(in NewAllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
-  python3 IRunDQFlow.py Configs/configFlowDataRun3.json
+  python3 runDQFlow.py Configs/configFlowDataRun3.json
   ```
 
 - Run filterPP on Data run2 With Minimum Commands
   ```ruby
-  python3 IRunDQFlow.py Configs/configFlowDataRun2.json
+  python3 runDQFlow.py Configs/configFlowDataRun2.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 IRunDQFlow.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
+python3 runDQFlow.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
   ```
 
-# Available configs in IRunDQFlow Interface
+# Available configs in runDQFlow Interface
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -1616,7 +1616,7 @@ Add extrac tables and converters with:
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
-* For `IRunDQFlow.py` Selections
+* For `runDQFlow.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -1652,7 +1652,7 @@ Arg | Opt | Task | nargs |
 
 
 
-* Details parameters for `IRunDQFlow.py`
+* Details parameters for `runDQFlow.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -1866,7 +1866,7 @@ P.S. Root files are inputs for JSON configs
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
 ```
 
  ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
@@ -1876,7 +1876,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
 ```
 
 ### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
@@ -1884,7 +1884,7 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3b.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi Jpsi LMeeLF LMeeLFQ --debug debug --logFile
 ```
 
  ### Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)
@@ -1894,7 +1894,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile
 ```
 
 ### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
@@ -1902,7 +1902,7 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3f2.root --process OnlyBCs BarrelOnly --syst pp --cfgWithQA true --cfgBarrelTrackCuts jpsiO2MCdebugCuts --cfgMCsignals electronPrimary eFromJpsi eFromNonpromptJpsi eFromLMeeLF LMeeLF Jpsi everythingFromBeauty --debug debug --logFile
 ```
 
  ### Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)
@@ -1912,7 +1912,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi nonPromptJpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi eFromNonpromptJpsi --debug debug --logFile
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi nonPromptJpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi eFromNonpromptJpsi --debug debug --logFile
 ```
 
 ## Data Part
@@ -1922,7 +1922,7 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o (LHC15o PbPb Run2Data)
@@ -1932,7 +1932,7 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -1940,7 +1940,7 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -1950,7 +1950,7 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)
@@ -1958,14 +1958,14 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 Command To Run:
 
 ```ruby
-python3 IRunDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
+python3 runDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 
 ```ruby
-python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --isVertexZeq false
+python3 runV0selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --isVertexZeq false
 ```
 
 ### Run tableMaker on LHC22c (LHC22c pp Run3Data)
@@ -1973,7 +1973,7 @@ python3 IRunV0Selector.py Configs/configV0SelectorDataRun2.json --aod Datas/AO2D
 Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
 ```
 
 ### Run tableReader on Data (LHC22c pp Run3Data)
@@ -1983,7 +1983,7 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
 ```
 
 ### Run filterPP on fwdprompt(fwdprompt pp Run3Data)
@@ -1991,7 +1991,7 @@ python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root
 Command To Run:
 
 ```ruby
-python3 IRunFilterPP.py Configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
+python3 runFilterPP.py Configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
 ```
 
 ## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
@@ -2009,18 +2009,18 @@ This section includes analysis with non-standard workflows in DQ workflows. Thes
 First Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_Bc100.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals Jpsi Bc anyBeautyHadron --cfgMuonCuts matchedGlobal --cfgMuonLowPt 0.0 --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_Bc100.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals Jpsi Bc anyBeautyHadron --cfgMuonCuts matchedGlobal --cfgMuonLowPt 0.0 --debug debug --logFile
 ```
 
 Second Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
 ```
 Third Command To Run:
 
 ```ruby
-python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root --analysis eventSelection muonSelection dileptonTrackDimuonMuonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
+python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root --analysis eventSelection muonSelection dileptonTrackDimuonMuonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgMuonCuts matchedGlobal --cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi --cfgBarrelDileptonMCRecSignals mumuFromJpsiFromBc mumumuFromBc --cfgBarrelDileptonMCGenSignals Jpsi --debug debug --logFile
 ```
 
 ### Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)
@@ -2028,19 +2028,19 @@ python3 IRunDQEfficiency.py Configs/configAnalysisMC.json --aod dileptonAOD.root
 First Command To Run:
 
 ```ruby
-python3 IRunTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
 ```
 
 Second Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 Third Command To Run:
 
 ```ruby
-python3 IRunTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+python3 runTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ## TODO List For Python Workflows
@@ -2088,14 +2088,14 @@ If you have problem about running the scripts or you have some suggestions for i
 * `Jul 23, 2022` CLI for TableMaker for automations and transaction management has been heavily refactored and some automations imported.
 * `Jul 24, 2022` In the CLI written for tableMaker, some options were refactored and automated. Version 2 released with minimal testing.
 * `Jul 25, 2022` A lot of tests have been done for the CLI written for tableMaker and the necessary refactor and automation tests have been done. CLI development for TableMaker is fully completed and Integrated to python script. Writing User Manual Documentation in progress.
-* `Jul 26, 2022` Readme completed for `IRunTableMaker.py` and TableReader DQEfficiency workflows CLI based v1 released. processEvTime transaction management refactoring, for pp collisionsi centrality-table o2 task and JSON configs deleting automatized. New checker for Run/MC added.
+* `Jul 26, 2022` Readme completed for `runTableMaker.py` and TableReader DQEfficiency workflows CLI based v1 released. processEvTime transaction management refactoring, for pp collisionsi centrality-table o2 task and JSON configs deleting automatized. New checker for Run/MC added.
 * `Jul 27, 2022` Fixed a bug for filterpp tiny selection in Tablemaker, AOD File Checker added to TableMaker, readme updated (instructions added), New Critical Transaction Managements Added, For TableMaker process Function, Workflow Decision Tree Added   
 * `Jul 28, 2022` Workflows with CLI for TableReader and DQEfficiency Completed. Demo versions and Old Version Deleted. JSON path's for single workflows updated. Mixing Library added for Skimmed processes, runtime errors fixed, writer configs added to CLI, CommandToRun Fixed in TableReader in DQEfficiency, MC Rec Gen Signals fixed for dileptons in DQEfficiency, only-select automation parameter will implemnt for TableReader and DQEfficiency, installation guide for argcomplate added, Instructions and avaiable commands added readme for TableMaker DQ Efficiency
 * `Jul 29, 2022` All Tests passed for workflows and development is completed. Only some parts need refactoring for clean code and readme will updated.
 * `Aug 09, 2022` JSON Databases removed as suggested. We have compiled time solutions regarding to O2Physics (based on regex exp. and some string operations). TableMaker and DQEfficiency Workflows refactored for user friendliness. All things are discussed with Ionut.
 * `Aug 10, 2022` path fix for writer configs. Transcation management added for Same Event Pairing and readme guide updated.
 * `Aug 11, 2022` provide a native solution for libraries with urllib, cut and mcsignal lister added, helper messages has beauty format, for filter pp task, sels are fixed. readme update, added new script for internet based solution: `DownloadLibs.py`. Some parameter value names has refactored in DQ Efficiency, fix for dileptonTrack Selection DQ Efficiency task, fix for Same event pairing automation logger message (when you try give an process function in DQEfficiency or TableReader if you forget give a parameter value in e.g --analysis eventSelection --process JpsiToMuMu sameEventPairing value automaticaly added to analysis workflow like this (Logger Message: `"[WARNING] You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI."`) --> --analysis eventSelection sameEventPairing we provide this way with automation)
-* `Aug 12, 2022` IRunFilterPP.py Interface refactored and released. `--cfgMuonsCuts` parameter added tablemaker and filterpp workflow (it's different from `--cfgMuonCuts`). listToString method impl to barrel and muon sels. Readme update for instructions and available configs in FilterPP python script.
+* `Aug 12, 2022` runFilterPP.py Interface refactored and released. `--cfgMuonsCuts` parameter added tablemaker and filterpp workflow (it's different from `--cfgMuonCuts`). listToString method impl to barrel and muon sels. Readme update for instructions and available configs in FilterPP python script.
 * `Aug 13, 2022` In FilterPP, processEvTime and Tiny Options added to JSON files and python scripts, we need trans. manag for them, processDummy option added for run 3 Data in tablemaker, dummy automizer activated for dq muons selection. Protection Added to all scripts for alienv load. Transaction management protection added for cfgMuonSels and cfgBarrelSels in filterPP Task (TableMaker and FilterPP python scripts) also logger message and fix instructions added, forget to assign value to parameters transcation management carried to top of code, String to List method update, nargs fix for Sels in filter pp
 * `Aug 14, 2022` `o2-analysis-mc-converter` `o2-analysis-fdd-converter` and `o2-analysis-track-propagation` task adders added to all Workflows as parameters. taskNameInConfig in dqflow is fixed. DQ Flow JSON configs fixed. `o2-analysis-track-propagation` dep removed and `o2-analysis-trackextension` added in DQ Flow as deps.
 * `Aug 15, 2022` version based downloaded functionality added to DownloadLibs.py and fixed download functionality to DQ libs for all python scripts, unused comment lines deleted, metavar deleted from process function in filterpp for help messages, in filterepp `o2-analysis-trackextension` analysis task added as dep and removed `o2-analysis-track-propagation` as dep, because in before we add parameters for adding this additional tasks. filterpp tiny process selection fixed for transcation management, writer configs for dilepton analysis will bu updated, test configs added for local test, they will be removed. we should discussed some common tasks configs should deleted from json for using default params in DPL config. readme update for dqflow and others. SSL certificates added for download DQ libs due to github validation

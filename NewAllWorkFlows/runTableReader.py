@@ -378,7 +378,7 @@ if extrargs.logFile and extrargs.debug:
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   logging.error("Invalid syntax! The command line should look like this:")
-  logging.info("  ./IRunTableReader.py <yourConfig.json> --param value ...")
+  logging.info("  ./runTableReader.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -390,14 +390,14 @@ try:
             config = json.load(configFile)
     else:
         logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-        logging.info("  ./IRunTableReader.py <yourConfig.json> <-runData|-runMC> --param value ...")
+        logging.info("  ./runTableReader.py <yourConfig.json> <-runData|-runMC> --param value ...")
         sys.exit()
         
 except FileNotFoundError:
     isConfigJson = sys.argv[1].endswith('.json')
     if isConfigJson == False:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-            logging.info(" ./IRunTableReader.py <yourConfig.json> --param value ...")
+            logging.info(" ./runTableReader.py <yourConfig.json> --param value ...")
             sys.exit()
     logging.error("Your JSON Config File found in path!!!")
     sys.exit()

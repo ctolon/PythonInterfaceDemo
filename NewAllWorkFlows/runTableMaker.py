@@ -772,7 +772,7 @@ specificTables = {
 # Make some checks on provided arguments
 if len(sys.argv) < 3:
   logging.error("Invalid syntax! The command line should look like this:")
-  logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
+  logging.info("  ./runTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -784,14 +784,14 @@ try:
             config = json.load(configFile)
     else:
         logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-        logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
+        logging.info("  ./runTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
         sys.exit()
         
 except FileNotFoundError:
     isConfigJson = sys.argv[1].endswith('.json')
     if isConfigJson == False:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-            logging.info("  ./IRunTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
+            logging.info("  ./runTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
             sys.exit()
     logging.error("Your JSON Config File found in path!!!")
     sys.exit()
@@ -799,15 +799,15 @@ except FileNotFoundError:
 # Check whether we run over data or MC
 if not (extrargs.runMC or extrargs.runData):
     logging.error("You have to specify either runMC or runData !")
-    logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
-    logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
     sys.exit()
     
 # Transcation management for Data and MC
 if extrargs.runMC and extrargs.runData:
     logging.error("runData and runMC cannot be configured at the same time ! Choose one")
-    logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
-    logging.info("Example For MC : python3 IRunTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
     sys.exit()
     
 runOverMC = False

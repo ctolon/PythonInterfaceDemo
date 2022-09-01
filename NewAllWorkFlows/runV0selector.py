@@ -16,21 +16,18 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
 
 import json
 import sys
 import logging
 import logging.config
+import logging
 from logging.handlers import RotatingFileHandler
 from logging import handlers
 from ast import parse
 import os
 import argparse
-import re
-import urllib.request
-from urllib.request import Request, urlopen
-import ssl
 
 """
 argcomplete - Bash tab completion for argparse
@@ -133,7 +130,7 @@ class ChoicesCompleterList(object):
 
     def __call__(self, **kwargs):
         return self.choices
-        
+    
 ###################################
 # Interface Predefined Selections #
 ###################################
@@ -197,6 +194,8 @@ pidParameters = [
     "pid-al"
 ]
 
+eventMuonSelections = ["0", "1", "2"]
+
 collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
 
 booleanSelections = ["true", "false"]
@@ -213,71 +212,13 @@ debugLevelSelectionsList = []
 for k, v in debugLevelSelections.items():
     debugLevelSelectionsList.append(k)
 
-eventMuonSelections = ["0", "1", "2"]
-
-clist = []  # control list for type control
-allValuesCfg = []  # counter for provided args
-allCuts = []  # all analysis cuts
+clist = []
 
 # Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
 O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
 QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
 O2_ROOT = os.environ.get("O2_ROOT")
 O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
-
-threeSelectedList = []
-
-################################
-# Download DQ Libs From Github #
-################################
-
-# It works on for only master branch
-
-# header for github download
-headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-}
-
-urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
-urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
-
- 
-# Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-# This condition solves performance issues    
-if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
-    print("[INFO] Some Libs are Missing. They will download.")
-    
-    # Dummy SSL Adder
-    context = ssl._create_unverified_context()  # prevent ssl problems
-    request = urllib.request.urlopen(urlCutsLibrary, context=context)
-    
-    # HTTP Request
-    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
-    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
-    requestEventMixing  = Request(urlEventMixing , headers=headers)
-    
-    # Get Files With Http Requests
-    htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
-    htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
-    htmlEventMixing = urlopen(requestEventMixing, context=context).read()
-     
-    # Save Disk to temp DQ libs  
-    with open('tempCutsLibrary.h', 'wb') as f:
-         f.write(htmlCutsLibrary)
-    with open('tempMCSignalsLibrary.h', 'wb') as f:
-         f.write(htmlMCSignalsLibrary)
-    with open('tempMixingLibrary.h', 'wb') as f:
-        f.write(htmlEventMixing)
-
-# Read Cuts, Signals, Mixing vars from downloaded files    
-with open('tempCutsLibrary.h') as f:
-    for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
-        for i in stringIfSearch:
-            getAnalysisCuts = re.findall('"([^"]*)"', i)
-            allCuts = allCuts + getAnalysisCuts
-
 
 ###################
 # Main Parameters #
@@ -315,7 +256,26 @@ groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FI
 
 # multiplicity-table
 groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
-groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+# v0-selector
+groupV0Selector = parser.add_argument_group(title='Data processor options: v0-selector')
+groupV0Selector.add_argument('--d_bz', help="bz field", action="store", type=str)
+groupV0Selector.add_argument('--v0cospa', help="v0cospa", action="store", type=str)
+groupV0Selector.add_argument('--dcav0dau', help="DCA V0 Daughters", action="store", type=str)
+groupV0Selector.add_argument('--v0Rmin', help="v0Rmin", action="store", type=str)
+groupV0Selector.add_argument('--v0Rmax', help="v0Rmax", action="store", type=str)
+groupV0Selector.add_argument('--dcamin', help="dcamin", action="store", type=str)
+groupV0Selector.add_argument('--dcamax', help="dcamax", action="store", type=str)
+groupV0Selector.add_argument('--mincrossedrows', help="Min crossed rows", action="store", type=str)
+groupV0Selector.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", type=str)
+
+# centrality-table
+groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
+groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
+
+for key,value in centralityTableSelections.items():
+    groupCentralityTable.add_argument(key, help=value, action='none')
 
 # tof-pid, tof-pid-full
 groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
@@ -330,37 +290,13 @@ groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the 
 groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
 groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
-# DQ Flow Task Selections
-groupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
-groupAnalysisQvector.add_argument('--cfgTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
-groupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
-groupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
-groupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
-groupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
-
-groupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-groupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
-
-
-# centrality-table
-groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
-groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)')
-
-for key,value in centralityTableSelections.items():
-    groupEst.add_argument(key, help=value, action='none')
-
 # pid
 groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
 groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
     groupPID.add_argument(key, help=value, action = 'none')
-
+    
 # helper lister commands
 groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
 groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
@@ -385,7 +321,7 @@ for key,value in configuredCommands.items():
         if (type(value) == type("string") or type(value) == type(clist)) and len(value) == 0:
             forgetParams.append(key)
 if len(forgetParams) > 0: 
-    logging.error("Your forget assign a value to for this parameters: ", forgetParams)
+    print("[ERROR] Your forget assign a value to for this parameters: ", forgetParams)
     sys.exit()
     
 # Debug Settings
@@ -406,36 +342,13 @@ if extrargs.logFile and extrargs.debug:
     ch.setFormatter(format)
     log.addHandler(ch)
     
-    loggerFile = "DQFlow.log"
+    loggerFile = "v0Selector.log"
     if os.path.isfile(loggerFile) == True:
         os.remove(loggerFile)
     
     fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode='w')
     fh.setFormatter(format)
     log.addHandler(fh)
-
-###################
-# HELPER MESSAGES #
-###################
-if extrargs.cutLister:
-    counter = 0
-    print("Analysis Cut Options :")
-    print("====================")
-    temp = ''  
-    for i in allCuts:
-        if len(temp) == 0:
-            temp = temp + i
-        else:
-            temp = temp + "," + i
-        counter = counter + 1
-        if counter == 3:
-            temp = stringToList(temp)
-            threeSelectedList.append(temp)
-            temp = ''
-            counter = 0
-    for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_)) 
-    sys.exit()
 
 ######################
 # PREFIX ADDING PART #
@@ -446,11 +359,6 @@ if extrargs.pid != None:
     prefix_pid = "pid-"
     extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
     
-# add prefix for extrargs.est for centrality table
-if extrargs.est != None:
-    prefix_est = "est"
-    extrargs.est = [prefix_est + sub for sub in extrargs.est]
-    
 # add prefix for extrargs.FT0 for tof-event-time
 if extrargs.FT0 != None:
     prefix_process = "process"
@@ -460,12 +368,13 @@ if extrargs.FT0 != None:
 
 commonDeps = [
     "o2-analysis-timestamp",
+    "o2-analysis-weak-decay-indices",
     "o2-analysis-event-selection",
     "o2-analysis-multiplicity-table",
-    "o2-analysis-centrality-table",
     "o2-analysis-trackselection",
     "o2-analysis-trackextension",
     "o2-analysis-pid-tof-base",
+    "o2-analysis-pid-tof",
     "o2-analysis-pid-tof-full",
     "o2-analysis-pid-tof-beta",
     "o2-analysis-pid-tpc-full"
@@ -474,7 +383,7 @@ commonDeps = [
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
   logging.error("Invalid syntax! The command line should look like this:")
-  logging.info("  ./IRunDQFlow.py <yourConfig.json> --param value ...")
+  logging.info("  ./runV0selector.py <yourConfig.json> --param value ...")
   sys.exit()
 
 # Load the configuration file provided as the first parameter
@@ -486,20 +395,20 @@ try:
             config = json.load(configFile)
     else:
         logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-        logging.info("  ./IRunDQFlow.py <yourConfig.json> <-runData|-runMC> --param value ...")
+        logging.info("  ./runV0selector.py<yourConfig.json> <-runData|-runMC> --param value ...")
         sys.exit()
         
 except FileNotFoundError:
     isConfigJson = sys.argv[1].endswith('.json')
     if isConfigJson == False:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-            logging.info(" ./IRunDQFlow.py <yourConfig.json> --param value ...")
+            logging.info(" ./runV0selector.py <yourConfig.json> --param value ...")
             sys.exit()
     logging.error("Your JSON Config File found in path!!!")
     sys.exit()
 
-taskNameInConfig = "analysis-qvector"
-taskNameInCommandLine = "o2-analysis-dq-flow"
+taskNameInConfig = "v0-selector"
+taskNameInCommandLine = "o2-analysis-dq-v0-selector"
 
 if not taskNameInConfig in config:
   logging.error("%s Task to be run not found in the configuration file!", taskNameInConfig)
@@ -527,58 +436,12 @@ for key, value in config.items():
             # aod
             if value =='aod-file' and extrargs.aod:
                 config[key][value] = extrargs.aod
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
-                                                                                                     
-            # analysis-qvector selections      
-            if value == 'cfgTrackCuts' and extrargs.cfgTrackCuts:
-                if type(extrargs.cfgTrackCuts) == type(clist):
-                    extrargs.cfgTrackCuts = listToString(extrargs.cfgTrackCuts) 
-                if extrargs.onlySelect == 'false':
-                    actualConfig = config[key][value]
-                    extrargs.cfgTrackCuts = actualConfig + ',' + extrargs.cfgTrackCuts 
-                config[key][value] = extrargs.cfgTrackCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgTrackCuts)
-            if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
-                if type(extrargs.cfgMuonCuts) == type(clist):
-                    extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
-                if extrargs.onlySelect == 'false':
-                    actualConfig = config[key][value]
-                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
-                config[key][value] = extrargs.cfgMuonCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts) 
-            if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
-                if type(extrargs.cfgEventCuts) == type(clist):
-                    extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
-                if extrargs.onlySelect == 'false':
-                    actualConfig = config[key][value]
-                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
-                config[key][value] = extrargs.cfgEventCuts
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts) 
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)            
+            # QA Options  
             if value == 'cfgWithQA' and extrargs.cfgWithQA:
-                config[key][value] = extrargs.cfgWithQA  
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)
-            if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
-                config[key][value] = extrargs.cfgCutPtMin
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
-            if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
-                config[key][value] = extrargs.cfgCutPtMax
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMax)
-            if value =='cfgCutEta' and extrargs.cfgCutEta:
-                config[key][value] = extrargs.cfgCutEta
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutEta)
-            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
-                config[key][value] = extrargs.cfgEtaLimit
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEtaLimit)
-            if value =='cfgNPow' and extrargs.cfgNPow:
-                config[key][value] = extrargs.cfgNPow
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNPow)
-            if value =='cfgEfficiency' and extrargs.cfgEfficiency:
-                config[key][value] = extrargs.cfgEfficiency
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEfficiency)
-            if value =='cfgAcceptance' and extrargs.cfgAcceptance:
-                config[key][value] = extrargs.cfgAcceptance
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)
-                                                      
+                config[key][value] = extrargs.cfgWithQA
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
+                  
             # PID Selections
             if  (value in pidParameters) and extrargs.pid:
                 if value in extrargs.pid:
@@ -588,20 +451,9 @@ for key, value in config.items():
                 elif extrargs.onlySelect == "true":
                     value2 = "-1"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)
-                    
-            # centrality table
-            if (value in centralityTableParameters) and extrargs.est:
-                if value in extrargs.est:
-                    value2 = "1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)   
-                elif extrargs.onlySelect == "true":
-                    value2 = "-1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)    
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
             
-            # event-selection-task
+            # event-selection
             if value == 'syst' and extrargs.syst:
                 config[key][value] = extrargs.syst
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
@@ -610,7 +462,47 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
             if value == 'customDeltaBC' and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC) 
+                
+            # v0-selector
+            if value =='d_bz' and extrargs.d_bz:
+                config[key][value] = extrargs.d_bz
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.d_bz)  
+            if value == 'v0cospa' and extrargs.v0cospa:
+                config[key][value] = extrargs.v0cospa
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.v0cospa)  
+            if value == 'dcav0dau' and extrargs.dcav0dau:
+                config[key][value] = extrargs.dcav0dau
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.dcav0dau)                  
+            if value =='v0Rmin' and extrargs.v0Rmin:
+                config[key][value] = extrargs.v0Rmin
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.v0Rmin)                  
+            if value == 'v0Rmax' and extrargs.v0Rmax:
+                config[key][value] = extrargs.v0Rmax
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.v0Rmax)                  
+            if value == 'dcamin' and extrargs.dcamin:
+                config[key][value] = extrargs.dcamin
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.dcamin)                  
+            if value == 'dcamax' and extrargs.dcamax:
+                config[key][value] = extrargs.dcamax
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.dcamax)                  
+            if value =='mincrossedrows' and extrargs.mincrossedrows:
+                config[key][value] = extrargs.mincrossedrows
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.mincrossedrows)                  
+            if value == 'maxchi2tpc' and extrargs.maxchi2tpc:
+                config[key][value] = extrargs.maxchi2tpc
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.maxchi2tpc)                  
+                
+            # centrality-table
+            if (value in centralityTableParameters) and extrargs.est:
+                if value in extrargs.est:
+                    value2 = "1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)   
+                elif extrargs.onlySelect == "true":
+                    value2 = "-1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2) 
                 
             # multiplicity-table
             if value == "doVertexZeq" and extrargs.isVertexZeq:
@@ -656,9 +548,9 @@ for key, value in config.items():
                 elif value != extrargs.FT0:
                     value2 = "false"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)   
-                                                      
-# AOD File Checker
+                    logging.debug(" - [%s] %s : %s",key,value,value2)     
+      
+# AOD File Checker                                                    
 if extrargs.aod != None:
     myAod =  extrargs.aod
     textAodList = myAod.startswith("@")
@@ -679,7 +571,7 @@ if extrargs.aod != None:
             logging.error("%s File not found in path!!!", myAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)                  
+            logging.info("%s has valid File Format and Path, File Found", myAod)                   
     else:
         logging.error("%s Wrong formatted File, check your file!!!", myAod)
         sys.exit()     
@@ -696,15 +588,16 @@ which is produced by either the o2-analysis-trackextension task (Run 2) or o2-an
 The quantities contained in this table can also be directly used in the analysis.
 """
 if config["bc-selection-task"]["processRun3"] == "true":
-    commonDeps.remove("o2-analysis-trackextension")     
-    logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
-
+    commonDeps.remove("o2-analysis-trackextension") 
+    logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")   
+        
 ###########################
 # End Interface Processes #
 ###########################
 
 # Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfigDQFlow.json"
+updatedConfigFileName = "tempConfigV0Selector.json"
+
 with open(updatedConfigFileName,'w') as outputFile:
   json.dump(config, outputFile ,indent=2)
 
