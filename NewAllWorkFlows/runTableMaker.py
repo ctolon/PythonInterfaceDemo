@@ -216,7 +216,8 @@ v0SelectorParameters = [
     "v0RMin",
     "v0Rmax",
     "dcamin",
-    "dcamax,mincrossedrows",
+    "dcamax",
+    "mincrossedrows",
     "maxchi2tpc"
 ]
 
