@@ -1,6 +1,6 @@
 # User Python Based Interface
 
-@tableofcontents
+\tableofcontents
 
 This project includes python based user interface development for PWG-DQ Workflows based on nightly-20220823. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
