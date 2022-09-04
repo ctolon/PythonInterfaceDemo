@@ -142,32 +142,50 @@ pip install argcomplete
 or 
 
 ```ruby
-`pip3 install argcomplete` 
+pip3 install argcomplete 
 ```
 
 (depends on symbolic link of python. It is recommended to install with both options)
 
 ```ruby
-`activate-global-python-argcomplete`
+activate-global-python-argcomplete
 ```
 
 ### O2 Installation
 
 Install and update your bash shell with this command:
 
-`brew install bash`
+```ruby
+brew install bash
+```
 
 Then check your shell with this command:
 
-`echo $SHEL`
+```ruby
+echo $SHEL
+```
 
 If your shell isn't bash (The default shell for macOS is zsh, not bash. Most likely your shell type is zsh), you need change your bash with this commands:
 
-`exec bash` (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
+```ruby
+exec bash
+```
+
+(It just changes the type of terminal you are working in, the system's main shell settings are preserved)
 
 or
 
-`sudo chsh -s /bin/bash <username>` or  `sudo chsh -s /bin/bash` (Converts all system shell settings to bash)
+```ruby
+sudo chsh -s /bin/bash <username> 
+```
+
+or  
+
+```ruby
+sudo chsh -s /bin/bash
+```
+
+(Converts all system shell settings to bash)
 
 After then, Check the version of the running copy of bash with `echo $BASH_VERSION`. It must be greater than 4.2.
 
@@ -179,19 +197,35 @@ For in O2
 
 Firstly, activate your Alienv e.g.
 
-`alienv enter O2Physics/latest-master-o2`
+```ruby
+alienv enter O2Physics/latest-master-o2
+```
 
 Then install the package:
 
-`pip install argcomplete` or `pip3 install argcomplete` (depends on symbolic link of python. It is recommended to install with both options)
+```ruby
+pip install argcomplete 
+```
+
+or 
+
+```ruby
+pip3 install argcomplete
+```
+
+(depends on symbolic link of python. It is recommended to install with both options)
 
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
-`cd ~/NewAllWorkFlows`
+```ruby
+cd ~/NewAllWorkFlows
+```
 
 And then, source your argcomplete script for autocomplete:
 
-`source argcomplete.sh`
+```ruby
+source argcomplete.sh
+```
 
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 

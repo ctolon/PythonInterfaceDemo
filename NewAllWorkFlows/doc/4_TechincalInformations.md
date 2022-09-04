@@ -410,18 +410,24 @@ For example, when the file is logged, you should see a result like this when you
 
 * For TableMaker Process Function
   * If the value related to the process function is not defined in the tablemakerMC, the message that it is not defined is printed on the screen. This situation is handled automatically in the CLI and no error is thrown 
-    * \code{.py}
+    * ```ruby
       print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!") 
-      \endcode
+      ```
 
-    * \code{.sh}
-      # Example for MC Run3. commands are python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC 
+    * Example for MC Run3 commands are:
+       
+      ```ruby
+      python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC
+      ``` 
+
+      ```ruby
       [WARNING] processBarrelOnlyWithEventFilter is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!
-      \endcode
+      ``` 
+
 * Other Loggers based on parameters, MC and Data
   * If parameters in not valid for Orginal JSON, it will give a log message. You can check Avaible Loggers in below
 
-    * \code{.py}
+    * ```ruby
         # Parameter Checking 
         if key in V0Parameters and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
@@ -470,12 +476,12 @@ For example, when the file is logged, you should see a result like this when you
         elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
                 print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
                 sys.exit()
-        \endcode
+        ```
 
   * For Centrality Table task
-    * Centrality task only available for PbPb system selection so if we select pp over PbPb, It will give LOG messages for this issue. Message : ```Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!```
+    * Centrality task only available for PbPb system selection so if we select pp over PbPb, It will give LOG messages for this issue. Message : `Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!`
   
-      * \code{.py} 
+      * ```ruby 
           if len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
               # delete centrality-table configurations for data. If it's MC don't delete from JSON
               # Firstly try for Data then if not data it gives warning message for MC
@@ -505,7 +511,7 @@ For example, when the file is logged, you should see a result like this when you
                               except:
                                   logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                                   sys.exit()
-          \endcode
+          ```
 ## Features for runTableReader
 
 ### Automated Things In runTableReader
@@ -563,7 +569,7 @@ If --onlySelect is false, you will run in JSON additional interface mode. the va
 
 For example, let's say we're working on a tableMaker:
 
-    ```ruby
+  ```ruby
     "table-maker": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
@@ -591,7 +597,7 @@ For example, let's say we're working on a tableMaker:
         "processMuonOnlyWithFilter": "false",
         "processOnlyBCs": "true"
     },
-    ```
+  ```
 
 As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
 
@@ -600,7 +606,7 @@ python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Da
 ```
 P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
 
-    ```ruby
+  ```ruby
     "table-maker": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
@@ -628,7 +634,7 @@ P.S. Since onlySelect is true (you don't need to add it to your workflow when co
         "processMuonOnlyWithFilter": "false",
         "processOnlyBCs": "true"
     },
-    ```
+  ```
 
 As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are set to true, while all other process functions in the tableMaker are set to false.
 
@@ -640,7 +646,7 @@ python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Da
 
 Then our output would be:
 
-    ```ruby
+  ```ruby
     "table-maker": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
@@ -668,7 +674,7 @@ Then our output would be:
         "processMuonOnlyWithFilter": "false",
         "processOnlyBCs": "true"
     },
-    ```
+  ```
 
 As you can see, the old process values ​​Full and FullWithCov remained true, in addition, the BarrelOnlyWithCent process function was set to true. OnlyBCs was already true and remains true.
 
@@ -676,7 +682,7 @@ This is the case for the `--analysis`, `--process`, `--pid` and `--est` paramete
 
 A similar situation applies to Analysis Cut configurations and MC Signal configurations. Suppose there is a configuration like this in it (for tableReader):
 
-    ```ruby
+  ```ruby
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts2",
         "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
@@ -684,7 +690,7 @@ A similar situation applies to Analysis Cut configurations and MC Signal configu
         "processSkimmed": "true",
         "processDummy": "false"
     },
-    ```
+  ```
 
 Here we will configure the track cuts:
 
@@ -694,7 +700,7 @@ python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root 
 
 The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
 
-    ```ruby
+  ```ruby
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiPID1,jpsiPID2",
         "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
@@ -702,7 +708,7 @@ The JSON is in overrider mode as the default is onlySelect true and the equivale
         "processSkimmed": "true",
         "processDummy": "false"
     },
-    ```
+  ```
 
 As we can see, the old cut values ​​were deleted, the new cut values ​​were taken from the CLI.
 
@@ -714,7 +720,7 @@ python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root 
 
 Then the JSON is in additional mode and the equivalent of this configuration is:
 
-    ```ruby
+  ```ruby
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts2,jpsiPID1,jpsiPID2",
         "cfgTrackMCSignals": "eFromJpsi,eFromLMeeLF",
@@ -722,7 +728,7 @@ Then the JSON is in additional mode and the equivalent of this configuration is:
         "processSkimmed": "true",
         "processDummy": "false"
     },
-    ```
+  ```
 
 As we can see, our old track cut value has been preserved and extra new ones have been added.
 
