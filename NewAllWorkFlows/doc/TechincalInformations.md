@@ -17,6 +17,13 @@
   - [Some Things You Should Be Careful For Using and Development](#some-things-you-should-be-careful-for-using-and-development)
   - [Some Notes Before The Instructions](#some-notes-before-the-instructions)
   - [Interface Modes: JSON Overrider and JSON Additional](#interface-modes-json-overrider-and-json-additional)
+  - [O2-DQ Framework Workflows](#o2-dq-framework-workflows)
+    - [DQ Data Model](#dq-data-model)
+    - [DQ Skimmed Data Model](#dq-skimmed-data-model)
+    - [TableMaker Workflow](#tablemaker-workflow)
+    - [TableMakerMC Workflow](#tablemakermc-workflow)
+    - [TableReader Workflow](#tablereader-workflow)
+    - [DQEfficiency WorkfFlow](#dqefficiency-workfflow)
 <!--te-->
 
 ## Helper Command Functionality
@@ -747,3 +754,47 @@ This is the main reason why Interface works in these two modes. If you already h
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
 
 [← Go back to Instructions For Instructions for TAB Autocomplete](InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](InstructionsForPythonScripts.md)
+
+## O2-DQ Framework Workflows
+
+### DQ Data Model
+Simplified graph of the data model involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/DQDataModel.png" width="100%" alt="DQ Data Model">
+</div>
+
+### DQ Skimmed Data Model
+Simplified graph of the skimmed data model involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/DQSkimmedDataModel.png" width="100%" alt="DQ Skimmed Data Model">
+</div>
+
+### TableMaker Workflow
+Simplified graph of the TableMaker workflow involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/TableMakerWorkflow.png" width="100%" alt="TableMaker Workflow">
+</div>
+
+### TableMakerMC Workflow
+Simplified graph of the TableMakerMC workflow involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/TableMakerMCWorkflow.png" width="100%" alt="TableMakerMC Workflow">
+</div>
+
+### TableReader Workflow
+Simplified graph of the TableReader workflow involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/TableReaderWorkflow.png" width="100%" alt="TableReader Workflow">
+</div>
+
+### DQEfficiency WorkfFlow
+Simplified graph of the DQEfficiency workflow involved in a single DQ analysis is shown in the following picture.
+
+<div align="center">
+<img src="images/DQEff.png" width="100%" alt="DQEfficiency WorkfFlow">
+</div>
