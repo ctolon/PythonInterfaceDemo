@@ -1958,7 +1958,7 @@ python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 runDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
+python3 runDQFlow.py Configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
