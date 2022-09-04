@@ -3,7 +3,7 @@
 This folder contains python based user interface development for PWG-DQ Workflows based on nightly-20220823. You can follow the instructions and you can find tutorials in table of contents. (For prerequisites, Installation guide for argcomplete and Some Informations good to know)
 
 ## Contact
-Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows)
+Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
 Cevat Batuhan Tolon (Author Of Interface)
 
