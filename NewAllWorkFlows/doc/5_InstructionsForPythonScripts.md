@@ -1,24 +1,6 @@
 # Instructions For Python Scripts
 
-<!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
-<!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
-<!--ts-->
-- [Instructions For Python Scripts](#instructions-for-python-scripts)
-- [Instructions for DownloadLibs.py](#instructions-for-downloadlibspy)
-  - [Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github](#download-cutslibrary-mcsignallibrary-mixinglibrary-from-github)
-  - [Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine](#get-cutslibrary-mcsignallibrary-mixinglibrary-from-local-machine)
-  - [Available configs in DownloadLibs.py Interface](#available-configs-in-downloadlibspy-interface)
-- [Instructions for runTableMaker.py](#instructions-for-runtablemakerpy)
-  - [Available configs in runTableMaker Interface](#available-configs-in-runtablemaker-interface)
-- [Instructions for runTableReader.py](#instructions-for-runtablereaderpy)
-  - [Available configs in runTableReader Interface](#available-configs-in-runtablereader-interface)
-- [Instructions for runDQEfficiency.py](#instructions-for-rundqefficiencypy)
-  - [Available configs in runDQEfficiency Interface](#available-configs-in-rundqefficiency-interface)
-- [Instructions for runFilterPP.py](#instructions-for-runfilterpppy)
-  - [Available configs in runFilterPP Interface](#available-configs-in-runfilterpp-interface)
-- [Instructions for runDQFlow.py](#instructions-for-rundqflowpy)
-  - [Available configs in runDQFlow Interface](#available-configs-in-rundqflow-interface)
-<!--te-->
+@tableofcontents
 
 # Instructions for DownloadLibs.py
 
@@ -72,7 +54,7 @@ Arg | Opt | Local/Online | nargs | ex. usage
 --- | --- | --- | --- | --- | 
 `-h` | No Param | `Online and Local` | 0 | `python3 DownloadLibs.py -h`
 `--version` | all | `Online` | 1 |  `python3 DownloadLibs.py --version  20220619`
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  |  `Online and Local` | 1 |  `python3 DownloadLibs.py --debug INFO`
+`--debug` |<p> `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br> </p> |  `Online and Local` | 1 |  `python3 DownloadLibs.py --debug INFO`
 `--local` | No Param |  `Local` | 1 |  `python3 DownloadLibs.py --local`
 `--localPath` | all |  `Local` | 1 |  `python3 DownloadLibs.py --local --localPath alice-software`
 
@@ -84,7 +66,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--version` | Integer | Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619 | master | str |
 `--debug` | string | Online and Local: execute with debug options" | `INFO` | str.upper
 `--local` | No Param |Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option | - | *
-`--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software | `alice` | str
+`--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/user/alice-software | `alice` | str
 
 
 # Instructions for runTableMaker.py
@@ -140,27 +122,27 @@ Arg | Opt | Task | nargs |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--aod-memory-rate-limit` | all | `internal-dpl-aod-reader` | 1 |
-`--onlySelect` | `true`</br> `false`</br>  | Special Option | 1 |
-`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
-`--process` | `Full` </br> `FullTiny`</br>  `FullWithCov`</br>  `FullWithCent`</br>  `BarrelOnlyWithV0Bits`</br>  `BarrelOnlyWithEventFilter`</br> `BarrelOnlyWithQvector` </br>  `BarrelOnlyWithCent`</br>  `BarrelOnlyWithCov`</br>  `BarrelOnly`</br>  `MuonOnlyWithCent`</br>  `MuonOnlyWithCov`</br>  `MuonOnly`</br>  `MuonOnlyWithFilter`</br> `MuonOnlyWithQvector` </br>  `OnlyBCs`</br>  | `table-maker` | * |
-`--run` | `2`</br> `3`</br> | Special Option | 1 |
-`-runData` | No Param | `event-selection-task`</br> Special Option | 0 |
-`-runMC` |  No Param | `event-selection-task`</br> Special Option | 0 |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
-`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
+`--onlySelect` | `true`<br> `false`<br>  | Special Option | 1 |
+`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
+`--process` | `Full` <br> `FullTiny`<br>  `FullWithCov`<br>  `FullWithCent`<br>  `BarrelOnlyWithV0Bits`<br>  `BarrelOnlyWithEventFilter`<br> `BarrelOnlyWithQvector` <br>  `BarrelOnlyWithCent`<br>  `BarrelOnlyWithCov`<br>  `BarrelOnly`<br>  `MuonOnlyWithCent`<br>  `MuonOnlyWithCov`<br>  `MuonOnly`<br>  `MuonOnlyWithFilter`<br> `MuonOnlyWithQvector` <br>  `OnlyBCs`<br>  | `table-maker` | * |
+`--run` | `2`<br> `3`<br> | Special Option | 1 |
+`-runData` | No Param | `event-selection-task`<br> Special Option | 0 |
+`-runMC` |  No Param | `event-selection-task`<br> Special Option | 0 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`<br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`<br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`<br> Special Option | 0 |
+`--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
-`--isCovariance` | `true`</br> `false`</br> | `track-propagation` | 1 |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
+`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--isCovariance` | `true`<br> `false`<br> | `track-propagation` | 1 |
+`--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
+`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
+`--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--isBarrelSelectionTiny` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task` | 1 |
-`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
-`--cfgWithQA` | `true`</br> `false`</br> | `d-q-barrel-track-selection-task`</br> `d-q-event-selection-task`</br> `d-q-event-selection-task`</br> `d-q-filter-p-p-task`</br>`analysis-qvector`  | 1 |
+`--isBarrelSelectionTiny` | `true`<br> `false`<br> | `d-q-barrel-track-selection-task` | 1 |
+`--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | * |
+`--cfgWithQA` | `true`<br> `false`<br> | `d-q-barrel-track-selection-task`<br> `d-q-event-selection-task`<br> `d-q-event-selection-task`<br> `d-q-filter-p-p-task`<br>`analysis-qvector`  | 1 |
 `--d_bz` | all | `v0-selector` | 1 |
 `--v0cospa` | all | `v0-selector` | 1 |
 `--dcav0dau` | all | `v0-selector` | 1 |
@@ -170,15 +152,15 @@ Arg | Opt | Task | nargs |
 `--dcamax` | all | `v0-selector` |  1|
 `--mincrossedrows` | all | `v0-selector` | 1 |
 `--maxchi2tpc` | all | `v0-selector` | 1 |
-`--cfgCutPtMin` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgCutPtMax ` | all  | `analysis-qvector`</br> | 1 |
+`--cfgCutPtMin` | all  | `analysis-qvector`<br>  | 1 |
+`--cfgCutPtMax ` | all  | `analysis-qvector`<br> | 1 |
 `--cfgCutEta ` | all  | `analysis-qvector` | 1 |
-`--cfgEtaLimit` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgNPow` | all  | `analysis-qvector`</br> | 1 |
+`--cfgEtaLimit` | all  | `analysis-qvector`<br>  | 1 |
+`--cfgNPow` | all  | `analysis-qvector`<br> | 1 |
 `--cfgEfficiency` | all  | `analysis-qvector` | 1 |
-`--cfgAcceptance` | all  | `analysis-qvector`</br>  | 1 |
-`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--isFilterPPTiny` | `true`</br>  `false`</br> | `d-q-filter-p-p-task` | 1 |
+`--cfgAcceptance` | all  | `analysis-qvector`<br>  | 1 |
+`--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
+`--isFilterPPTiny` | `true`<br>  `false`<br> | `d-q-filter-p-p-task` | 1 |
 `--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgEventCuts` | `allCuts` | `table-maker` | * |
@@ -187,14 +169,14 @@ Arg | Opt | Task | nargs |
 `--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
 `--cfgBarrelLowPt` | all | `table-maker` | 1 |
 `--cfgMuonLowPt` | all | `table-maker` | 1 |
-`--cfgNoQA` | `true`</br> `false`</br> | `table-maker` | 1 |
-`--cfgDetailedQA` | `true`</br> `false`</br> | `table-maker` | 1 |
+`--cfgNoQA` | `true`<br> `false`<br> | `table-maker` | 1 |
+`--cfgDetailedQA` | `true`<br> `false`<br> | `table-maker` | 1 |
 `--cfgMinTpcSignal` | all | `table-maker` | 1 |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | `allSignals` | `table-maker` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--MCSignalsLister` | No Param | `allSignals` | 0 |
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `runTableMaker.py`
@@ -204,7 +186,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your aod file with path  |  | str |
 `--aod-memory-rate-limit` | String | Rate limit AOD processing based on memory |  |  str
-`--onlySelect` | Boolean | An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation)"| `false` | str.lower |
+`--onlySelect` | Boolean | An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation) | `false` | str.lower |
 `--autoDummy` | Boolean | Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa) | `true` | str.lower |
 `--process` | String | process selection for skimmed data model in tablemaker |  | str |
 `--run` | Integer | Data run option for ALICE 2/3 |  | str
@@ -289,21 +271,21 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
+`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`eventMixing`</br>`eventMixingVn`</br> `sameEventPairing`</br> `dileptonHadron`  | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-event-mixing`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-hadron`  | * |
-`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>`VnJpsiToEE`</br>`VnJpsiToMuMu`</br>`ElectronMuon`</br> `All`  | `analysis-same-event-pairing` | * |
-`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
-`--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection`  | 1 |
-`--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`</br> | * |
-`--cfgEventCuts` | `allCuts`  | `analysis-event-selection`</br>  | * |
-`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
+`--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`eventMixing`<br>`eventMixingVn`<br> `sameEventPairing`<br> `dileptonHadron`  | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-event-mixing`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-hadron`  | * |
+`--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>`VnJpsiToEE`<br>`VnJpsiToMuMu`<br>`ElectronMuon`<br> `All`  | `analysis-same-event-pairing` | * |
+`--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
+`--cfgQA` |`true` <br> `false`  | `analysis-event-selection`<br> `analysis-track-selection`<br> `analysis-muon-selection`  | 1 |
+`--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`<br> | * |
+`--cfgEventCuts` | `allCuts`  | `analysis-event-selection`<br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`<br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
-`--cfgLeptonCuts` | `true`</br> `false`</br> | `analysis-dilepton-hadron` | * |
+`--cfgLeptonCuts` | `true`<br> `false`<br> | `analysis-dilepton-hadron` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--mixingLister` | No Param | `allMixing` | 0 |
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `runTableReader.py`
@@ -356,27 +338,27 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
+`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`</br>`trackSelection`</br>`muonSelection`</br>`sameEventPairing`</br>`dileptonTrackDimuonMuonSelection`</br> `dileptonTrackDielectronKaonSelection`</br> | `analysis-event-selection`</br>`analysis-track-selection`</br>`analysis-muon-selection`</br>`analysis-same-event-pairing`</br>`analysis-dilepton-track` | * |
-`--process` | `JpsiToEE`</br>`JpsiToMuMu`</br>`JpsiToMuMuVertexing`</br>| `analysis-same-event-pairing` | * |
-`--cfgQA` |`true` </br> `false`  | `analysis-event-selection`</br> `analysis-track-selection`</br> `analysis-muon-selection` | 1 |
-`--cfgEventCuts` | `allCuts` | `analysis-event-selection`</br>  | * |
-`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`</br> | * |
+`--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`sameEventPairing`<br>`dileptonTrackDimuonMuonSelection`<br> `dileptonTrackDielectronKaonSelection`<br> | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-track` | * |
+`--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>| `analysis-same-event-pairing` | * |
+`--cfgQA` |`true` <br> `false`  | `analysis-event-selection`<br> `analysis-track-selection`<br> `analysis-muon-selection` | 1 |
+`--cfgEventCuts` | `allCuts` | `analysis-event-selection`<br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-track-selection`<br> | * |
 `--cfgTrackMCSignals` | `allMCSignals` | `analysis-track-selection` | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgMuonMCSignals` | `allMCSignals` | `analysis-muon-selection` | * |
 `--cfgBarrelMCRecSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
 `--cfgBarrelMCGenSignals` | `allMCSignals` | `analysis-same-event-pairing` | * |
-`--cfgFlatTables` | `true` </br> `false` | `analysis-same-event-pairing` | 1 | 
+`--cfgFlatTables` | `true` <br> `false` | `analysis-same-event-pairing` | 1 | 
 `--cfgLeptonCuts` | `allCuts` | `analysis-dilepton-track` | * | 
-`--cfgFillCandidateTable` | `true` </br> `false` | `analysis-dilepton-track` | 1 | 
+`--cfgFillCandidateTable` | `true` <br> `false` | `analysis-dilepton-track` | 1 | 
 `--cfgBarrelDileptonMCRecSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
 `--MCSignalsLister` | No Param | `allSignals` |  0 |
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
 * Details parameters for `runDQEfficiency.py`
@@ -446,28 +428,28 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`</br> `false`</br>  | Special Option | 1 |
-`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| `d-q-barrel-track-selection`</br>`d-q-event-selection-task`</br>`d-q-muons-selection`| * |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
-`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
+`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
+`--process` | `barrelTrackSelection`<br>`eventSelection`<br>`muonSelection`<br>`barrelTrackSelectionTiny`<br>`filterPPSelectionTiny`| `d-q-barrel-track-selection`<br>`d-q-event-selection-task`<br>`d-q-muons-selection`| * |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`<br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`<br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`<br> Special Option | 0 |
+`--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
-`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
+`--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
+`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
-`--cfgWithQA` |`true` </br> `false`  | dq task selection</br> | 1 |
-`--cfgEventCuts` | `allCuts` | `d-q-event-selection-task`</br>  | * |
-`--cfgBarrelTrackCuts` | `allCuts` | `d-q-barrel-track-selection`</br> | * |
+`--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
+`--cfgWithQA` |`true` <br> `false`  | dq task selection<br> | 1 |
+`--cfgEventCuts` | `allCuts` | `d-q-event-selection-task`<br>  | * |
+`--cfgBarrelTrackCuts` | `allCuts` | `d-q-barrel-track-selection`<br> | * |
 `--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
 `--cutLister` | No Param | `allCuts` | 0 |
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
 
@@ -478,7 +460,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your aod file with path  |  | str |
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
-`--process` | `barrelTrackSelection`</br>`eventSelection`</br>`muonSelection`</br>`barrelTrackSelectionTiny`</br>`filterPPSelectionTiny`| dq task selection| * |
+`--process` | `barrelTrackSelection`<br>`eventSelection`<br>`muonSelection`<br>`barrelTrackSelectionTiny`<br>`filterPPSelectionTiny`| dq task selection| * | str
 `--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
 `--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
 `--add_track_prop` | No Param | Conversion from o2track to o2track_iu  |  | -
@@ -543,32 +525,32 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`</br> Special Option | 0 |
-`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`</br> Special Option | 0 |
-`--add_track_prop` | No Param | `o2-analysis-track-propagation`</br> Special Option | 0 |
-`--syst` | `pp`</br> `PbPb`</br> `pPb`</br> `Pbp`</br> `XeXe`</br> | `event-selection-task` | 1 |
-`--muonSelection` | `0`</br> `1`</br> `2` | `event-selection-task` | 1 |
+`--add_mc_conv` | No Param  | `o2-analysis-mc-converter`<br> Special Option | 0 |
+`--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`<br> Special Option | 0 |
+`--add_track_prop` | No Param | `o2-analysis-track-propagation`<br> Special Option | 0 |
+`--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
+`--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--pid` | `el`</br> `mu`</br> `pi`</br> `ka`</br> `pr`</br> `de`</br> `tr`</br> `he`</br> `al`</br> | `tof-pid tpc-pid` | * |
-`--est` | `Run2V0M`</br> `Run2SPDtks`</br> `Run2SPDcls`</br> `Run2CL0`</br> `Run2CL1`</br> `FV0A`</br> `FT0M`</br> `FDDM`</br> `NTPV`</br>| `centrality-table` | | *
-`--isVertexZeq` | `true`</br> `false`</br>  | `multiplicity-table` | 1 |
-`--isWSlice` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`</br> `false`</br> | `tof-pid-full tof-pid` | 1 |
+`--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
+`--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | | *
+`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
+`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
-`--FT0` | `FT0`</br> `NOFT0`</br>`OnlyFT0`</br> `Run2` | `tof-event-time` | 1 |
-`--cfgWithQA` |`true` </br> `false`  | `analysis-qvector`</br> | 1 |
-`--cfgEventCuts` | `allCuts` | `analysis-qvector`</br>  | * |
-`--cfgTrackCuts` | `allCuts` | `analysis-qvector`</br> | * |
+`--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
+`--cfgWithQA` |`true` <br> `false`  | `analysis-qvector`<br> | 1 |
+`--cfgEventCuts` | `allCuts` | `analysis-qvector`<br>  | * |
+`--cfgTrackCuts` | `allCuts` | `analysis-qvector`<br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-qvector` | * |
-`--cfgCutPtMin` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgCutPtMax ` | all  | `analysis-qvector`</br> | 1 |
+`--cfgCutPtMin` | all  | `analysis-qvector`<br>  | 1 |
+`--cfgCutPtMax ` | all  | `analysis-qvector`<br> | 1 |
 `--cfgCutEta ` | all  | `analysis-qvector` | 1 |
-`--cfgEtaLimit` | all  | `analysis-qvector`</br>  | 1 |
-`--cfgNPow` | all  | `analysis-qvector`</br> | 1 |
+`--cfgEtaLimit` | all  | `analysis-qvector`<br>  | 1 |
+`--cfgNPow` | all  | `analysis-qvector`<br> | 1 |
 `--cfgEfficiency` | all  | `analysis-qvector` | 1 |
-`--cfgAcceptance` | all  | `analysis-qvector`</br>  | 1 |
+`--cfgAcceptance` | all  | `analysis-qvector`<br>  | 1 |
 `--cutLister` | No Param | all  |  |
-`--debug` | `NOTSET`</br> `DEBUG`</br>`INFO`</br>`WARNING` </br> `ERROR` </br>`CRITICAL` </br>  | all  | 1 |
+`--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
 
@@ -607,4 +589,4 @@ Arg | Ref Type| Desc | Default | Real Type
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
-[← Go back to Instructions For Techincal Informations](TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](Tutorials.md)
+[← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](6_Tutorials.md)

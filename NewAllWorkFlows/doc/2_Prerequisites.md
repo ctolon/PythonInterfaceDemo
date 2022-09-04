@@ -1,30 +1,22 @@
 # Prerequisites!!!
-<!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
-<!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
-<!--ts-->
-- [Prerequisites!!!](#prerequisites)
-  - [Cloning repository](#cloning-repository)
-  - [argcomplete - Bash tab completion for argparse](#argcomplete---bash-tab-completion-for-argparse)
-  - [Instalation Guide For argcomplete](#instalation-guide-for-argcomplete)
-    - [Prerequisites Before Installation argcomplete Package For Linux Based Systems and LXPLUS](#prerequisites-before-installation-argcomplete-package-for-linux-based-systems-and-lxplus)
-    - [Local Instalation (Not Need For O2)](#local-instalation-not-need-for-o2)
-    - [O2 Installation](#o2-installation)
-    - [Prerequisites Before Installation argcomplete Package For MacOS Based Systems](#prerequisites-before-installation-argcomplete-package-for-macos-based-systems)
-    - [Local Instalation (Not Need For O2)](#local-instalation-not-need-for-o2-1)
-    - [O2 Installation](#o2-installation-1)
-<!--te-->
+
+@tableofcontents
 
 ## Cloning repository
 
 Clone Repository in your workspace:
 
-`git clone https://github.com/ctolon/PythonInterfaceDemo.git`
+\code{.sh}
+git clone https://github.com/ctolon/PythonInterfaceDemo.git
+\endcode
 
 Then go NewAllWorkFlows folder with `cd` commands
 
 Since the scripts are still in development, it is recommended to update daily regularly with the following command:
 
-`git pull --rebase`
+\code{.sh}
+git pull --rebase
+\endcode
 
 ## argcomplete - Bash tab completion for argparse
 
@@ -51,23 +43,27 @@ https://kislyuk.github.io/argcomplete/index.html#
 
 ### Prerequisites Before Installation argcomplete Package For Linux Based Systems and LXPLUS
 
-Global completion requires bash support for complete -D, which was introduced in bash 4.2. Older Linux systems, you will need to update bash to use this feature. Check the shell type with `echo $SHEL`. If it's bash, Check the version of the running copy of bash with `echo $BASH_VERSION`. If your bash version older than 4.2 you need the update your bash:
+Global completion requires bash support for complete -D, which was introduced in bash 4.2. Older Linux systems, you will need to update bash to use this feature. Check the shell type with `echo $SHEL` . If it's bash, Check the version of the running copy of bash with `echo $BASH_VERSION`. If your bash version older than 4.2 you need the update your bash:
 
 Update Bash on CentOS/Redhat/Fedora Linux:
 
-`yum update bash`
+\code{.sh}
+yum update bash
+\endcode
 
 Update Bash in Ubuntu / Debian / Linux Mint:
 
-`apt-get install --only-upgrade bash`
+\code{.sh}
+apt-get install --only-upgrade bash
+\endcode
 
 Also you need check your shell type with `echo $SHEL`. if your shell isn't bash you need change your shell with (if your shell type is bash you don't need to use these commands):
 
-`exec bash` (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
+\code{.sh} exec bash \endcode (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
 
 or
 
-`sudo chsh -s /bin/bash <username>` or  `sudo chsh -s /bin/bash` (Converts all system shell settings to bash)
+\code{.sh} sudo chsh -s /bin/bash <username> \endcode  or \code{.sh} sudo chsh -s /bin/bash \endcode  (Converts all system shell settings to bash)
 
 IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
 
@@ -78,8 +74,10 @@ IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though y
 
 For Local İnstallation (If you have virtual env, disable it first)
 
-`pip install argcomplete`
-`activate-global-python-argcomplete`
+\code{.sh}
+pip install argcomplete
+activate-global-python-argcomplete
+\endcode
 
 ### O2 Installation
 
@@ -87,19 +85,28 @@ For in O2
 
 Firstly, activate your Alienv e.g.
 
-`alienv enter O2Physics/latest-master-o2`
+\code{.sh}
+alienv enter O2Physics/latest-master-o2
+\endcode
 
 Then install the package:
 
-`pip install argcomplete`
+\code{.sh}
+pip install argcomplete
+\endcode
 
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
-`cd ~/NewAllWorkFlows`
+\code{.sh}
+cd ~/NewAllWorkFlows
+\endcode
+
 
 And then, source your argcomplete script for autocomplete:
 
-`source argcomplete.sh`
+\code{.sh}
+source argcomplete.sh
+\endcode
 
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
@@ -160,4 +167,4 @@ And then, source your argcomplete script for autocomplete:
 
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
-[← Go back to Python Scripts And JSON Configs ](ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](InstructionsforTABAutocomplete.md)
+[← Go back to Python Scripts And JSON Configs ](1_ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](3_InstructionsforTABAutocomplete.md)

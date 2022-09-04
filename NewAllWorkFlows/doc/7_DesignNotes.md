@@ -1,16 +1,6 @@
 # Design Notes
 
-<!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
-<!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
-<!--ts-->
-- [Design Notes](#design-notes)
-  - [TODO List For Python Workflows](#todo-list-for-python-workflows)
-  - [Feedbacks, Suggestions and User Acceptance Test List](#feedbacks-suggestions-and-user-acceptance-test-list)
-  - [Updates](#updates)
-
-
-<!--te-->
-
+@tableofcontents
 
 ## TODO List For Python Workflows
 * `Finished` We need more meaningful explanations for argument explanations (helping comments).
@@ -77,4 +67,4 @@ If you have problem about running the scripts or you have some suggestions for i
 * `Aug 26-29, 2022` Writer Config json files updated for reduced dileptons in dq skimmed data, dqFlow task integrated to tableReader and tableMaker, transaction management added for eventMixing Selections in tableReader, reader json creator functionality integrated to tableMaker, vertexZeq options manualy coverted to 0 for run 3 options otherwise process will crash, v0Selector added in pythonized workflows, Now interface has two mode : Overrider and additional, tutorials added to readme 
 * `Aug 30, 2022`  o2-analysis-trackextension is not valid option for run3, details added in code, so we have transacation management for this issue, it fixed now (this issue reported by Liuyao Zhang).
 
-[← Go back to Instructions For Tutorials](Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md)
+[← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md)

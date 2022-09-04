@@ -1,34 +1,6 @@
 # Tutorial Part
-<!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
-<!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
-<!--ts-->
-- [Tutorial Part](#tutorial-part)
-  - [Download Datas For Tutorials](#download-datas-for-tutorials)
-  - [Workflows In Tutorials](#workflows-in-tutorials)
-  - [Skimmed Datas In Tutorials](#skimmed-datas-in-tutorials)
-  - [Pre-Made JSON configuration Files In Tutorials](#pre-made-json-configuration-files-in-tutorials)
-  - [MC Part](#mc-part)
-    - [Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)](#run-tablemakermc-on-lhc21i3d2-jpsi-to-mumu-pp-run3simulation)
-    - [Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)](#run-dqefficiency-on-mc-lhc21i3d2-pp-run3simulation)
-    - [Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)](#run-tablemakermc-on-lhc21i3b-prompt-jpsi-to-dilectron-pp-run3simulation)
-    - [Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)](#run-dqefficiency-on-mc-lhc21i3b-pp-run3simulation)
-    - [Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)](#run-tablemakermc-on-lhc21i3f2-non-prompt-jpsi-to-dilectron-pp-run3simulation)
-    - [Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)](#run-dqefficiency-on-lhc21i3f2-lhc21i3f2-pp-run3simulation)
-  - [Data Part](#data-part)
-    - [tableMaker on LHC15o (LHC15o PbPb Run2Data)](#tablemaker-on-lhc15o-lhc15o-pbpb-run2data)
-    - [Run tableReader on LHC15o (LHC15o PbPb Run2Data)](#run-tablereader-on-lhc15o-lhc15o-pbpb-run2data)
-    - [Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)](#run-tablemaker-on-lhc15o-with-generic-flow-analysis-lhc15o-pbpb-run2data)
-    - [Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)](#run-tablereader-on-lhc15o-with-generic-flow-analysis-lhc15o-pbpb-run2data)
-    - [Run dqFlow on LHC15o (LHC15o PbPb Run2Data)](#run-dqflow-on-lhc15o-lhc15o-pbpb-run2data)
-    - [Run v0Selector on LHC15o (LHC15o PbPb Run2Data)](#run-v0selector-on-lhc15o-lhc15o-pbpb-run2data)
-    - [Run tableMaker on LHC22c (LHC22c pp Run3Data)](#run-tablemaker-on-lhc22c-lhc22c-pp-run3data)
-    - [Run tableReader on Data (LHC22c pp Run3Data)](#run-tablereader-on-data-lhc22c-pp-run3data)
-    - [Run filterPP on fwdprompt(fwdprompt pp Run3Data)](#run-filterpp-on-fwdpromptfwdprompt-pp-run3data)
-  - [Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ](#special-part--dilepton-analysis-for-non-standart-existing-workflows-in-dq)
-    - [MC : Dilepton Track Analysis (On Bc Simulation)](#mc--dilepton-track-analysis-on-bc-simulation)
-    - [Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)](#data--dilepton-hadron-analysis-on-pbpb-data-lhc15o)
 
-<!--te-->
+@tableofcontents
 
 Firstly, clone repository in your workspace
 
@@ -100,19 +72,19 @@ Workflow | Dataset | Skimmed | Process | Type | Col Syst
 --- | --- | --- | --- | --- | --- |
 `tableMakerMC` | `LHC21i3d2` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
 `dqEfficiency` | `LHC21i3d2` | `Yes`  | `JpsiToMuMu` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
-`tableMakerMC` | `LHC21i3b` | `No` | `BarrelOnly`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `pp`
-`dqEfficiency` | `LHC21i3b` | `Yes` | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−  | `pp`
-`tableMakerMC` | `LHC21i3f2` | `No` | `BarrelOnly`<br>`OnlyBCs` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
-`dqEfficiency` | `LHC21i3f2` | `Yes` | `JpsiToEE` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−  | `pp`
+`tableMakerMC` | `LHC21i3b` | `No` | `BarrelOnly`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>−</sup> | `pp`
+`dqEfficiency` | `LHC21i3b` | `Yes` | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
+`tableMakerMC` | `LHC21i3f2` | `No` | `BarrelOnly`<br>`OnlyBCs` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
+`dqEfficiency` | `LHC21i3f2` | `Yes` | `JpsiToEE` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
 
 * For Data:
 
 Workflow | Dataset | Skimmed | Process | Selection | Col Syst
 --- | --- | --- | --- | --- | --- |
-`tableMaker` | `LHC15o` | `No` | `BarrelOnlyWithCent`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableReader`  | `LHC15o` | `Yes`  | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableMaker` | `LHC15o` | `No` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
-`tableReader` | `LHC15o` | `Yes`  | `VnJpsiToEE` | J/ψ → e<sup>+</sup> e<sup>− | `PbPb`
+`tableMaker` | `LHC15o` | `No` | `BarrelOnlyWithCent`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>−</sup> | `PbPb`
+`tableReader`  | `LHC15o` | `Yes`  | `JpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−</sup> | `PbPb`
+`tableMaker` | `LHC15o` | `No` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs` | J/ψ → e<sup>+</sup> e<sup>−</sup> | `PbPb`
+`tableReader` | `LHC15o` | `Yes`  | `VnJpsiToEE` | J/ψ → e<sup>+</sup> e<sup>−</sup> | `PbPb`
 `dqFlow` | `LHC15o` | `No` | - | - | `PbPb`
 `v0Selector` | `LHC15o` | `No`  | - | - | `PbPb`
 `tableMaker` | `LHC22c` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
@@ -381,4 +353,4 @@ Third Command To Run:
 python3 runTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
-[← Go back to Instructions For Python Scripts](InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Design Notes →](DesignNotes.md)
+[← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Design Notes →](7_DesignNotes.md)

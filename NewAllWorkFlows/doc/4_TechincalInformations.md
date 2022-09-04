@@ -1,30 +1,6 @@
 # Technical Informations
 
-<!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
-<!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
-<!--ts-->
-- [Technical Informations](#technical-informations)
-  - [Helper Command Functionality](#helper-command-functionality)
-    - [One Minimal Bug on Error Message](#one-minimal-bug-on-error-message)
-  - [Debug and Logging Options for O2DQWorkflows and DownloadLibs.py](#debug-and-logging-options-for-o2dqworkflows-and-downloadlibspy)
-  - [Features for runTableMaker](#features-for-runtablemaker)
-    - [Automated Things In runTableMaker](#automated-things-in-runtablemaker)
-    - [Logger Things In runTableMaker](#logger-things-in-runtablemaker)
-  - [Features for runTableReader](#features-for-runtablereader)
-    - [Automated Things In runTableReader](#automated-things-in-runtablereader)
-  - [Features for runDQEfficiency](#features-for-rundqefficiency)
-    - [Automated Things In runDQEfficiency](#automated-things-in-rundqefficiency)
-  - [Some Things You Should Be Careful For Using and Development](#some-things-you-should-be-careful-for-using-and-development)
-  - [Some Notes Before The Instructions](#some-notes-before-the-instructions)
-  - [Interface Modes: JSON Overrider and JSON Additional](#interface-modes-json-overrider-and-json-additional)
-  - [O2-DQ Framework Workflows](#o2-dq-framework-workflows)
-    - [DQ Data Model](#dq-data-model)
-    - [DQ Skimmed Data Model](#dq-skimmed-data-model)
-    - [TableMaker Workflow](#tablemaker-workflow)
-    - [TableMakerMC Workflow](#tablemakermc-workflow)
-    - [TableReader Workflow](#tablereader-workflow)
-    - [DQEfficiency WorkfFlow](#dqefficiency-workfflow)
-<!--te-->
+@tableofcontents
 
 ## Helper Command Functionality
 
@@ -434,17 +410,18 @@ For example, when the file is logged, you should see a result like this when you
 
 * For TableMaker Process Function
   * If the value related to the process function is not defined in the tablemakerMC, the message that it is not defined is printed on the screen. This situation is handled automatically in the CLI and no error is thrown 
-    * ```python
+    * \code{.py}
       print("[WARNING]", j ,"is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!") 
-      ```
-    * ```bash
+      \endcode
+
+    * \code{.sh}
       # Example for MC Run3. commands are python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC 
       [WARNING] processBarrelOnlyWithEventFilter is Not valid Configurable Option for TableMaker/TableMakerMC regarding to Orginal JSON Config File!!!
-      ``` 
+      \endcode
 * Other Loggers based on parameters, MC and Data
   * If parameters in not valid for Orginal JSON, it will give a log message. You can check Avaible Loggers in below
 
-    * ```python 
+    * \code{.py}
         # Parameter Checking 
         if key in V0Parameters and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
@@ -493,10 +470,12 @@ For example, when the file is logged, you should see a result like this when you
         elif os.path.isfile((config["internal-dpl-aod-reader"]["aod-file"])) == False:
                 print("[ERROR]",config["internal-dpl-aod-reader"]["aod-file"],"File not found in path!!!")
                 sys.exit()
-        ```
+        \endcode
+
   * For Centrality Table task
     * Centrality task only available for PbPb system selection so if we select pp over PbPb, It will give LOG messages for this issue. Message : ```Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!```
-      * ```python 
+  
+      * \code{.py} 
           if len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
               # delete centrality-table configurations for data. If it's MC don't delete from JSON
               # Firstly try for Data then if not data it gives warning message for MC
@@ -526,7 +505,7 @@ For example, when the file is logged, you should see a result like this when you
                               except:
                                   logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                                   sys.exit()
-          ```
+          \endcode
 ## Features for runTableReader
 
 ### Automated Things In runTableReader
@@ -753,48 +732,4 @@ This is the main reason why Interface works in these two modes. If you already h
 
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
 
-[← Go back to Instructions For Instructions for TAB Autocomplete](InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](InstructionsForPythonScripts.md)
-
-## O2-DQ Framework Workflows
-
-### DQ Data Model
-Simplified graph of the data model involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/DQDataModel.png" width="100%" alt="DQ Data Model">
-</div>
-
-### DQ Skimmed Data Model
-Simplified graph of the skimmed data model involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/DQSkimmedDataModel.png" width="100%" alt="DQ Skimmed Data Model">
-</div>
-
-### TableMaker Workflow
-Simplified graph of the TableMaker workflow involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/TableMakerWorkflow.png" width="100%" alt="TableMaker Workflow">
-</div>
-
-### TableMakerMC Workflow
-Simplified graph of the TableMakerMC workflow involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/TableMakerMCWorkflow.png" width="100%" alt="TableMakerMC Workflow">
-</div>
-
-### TableReader Workflow
-Simplified graph of the TableReader workflow involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/TableReaderWorkflow.png" width="100%" alt="TableReader Workflow">
-</div>
-
-### DQEfficiency WorkfFlow
-Simplified graph of the DQEfficiency workflow involved in a single DQ analysis is shown in the following picture.
-
-<div align="center">
-<img src="images/DQEff.png" width="100%" alt="DQEfficiency WorkfFlow">
-</div>
+[← Go back to Instructions For Instructions for TAB Autocomplete](3_InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](5_InstructionsForPythonScripts.md)
