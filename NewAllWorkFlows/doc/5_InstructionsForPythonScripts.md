@@ -238,7 +238,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
 `--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
 `--cfgMCsignals` | String | Space separated list of MC signals |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
@@ -306,7 +306,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ| 0 |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
 `--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
@@ -382,7 +382,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
 `--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
 `--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
@@ -479,7 +479,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgMuonsCuts` | String | Space separated list of ADDITIONAL muon track cuts  |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ|  |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
@@ -532,7 +532,7 @@ Arg | Opt | Task | nargs |
 `--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
 `--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
-`--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | | *
+`--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | *
 `--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
@@ -585,7 +585,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgNPow` | Integer | Power of weights for Q vector  |  | str
 `--cfgEfficiency` | String | CCDB path to efficiency object  |  | str
 `--cfgAcceptance` | String | CCDB path to acceptance object  |  | str
-`--cutLister` | No Param | all  |  | -
+`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | - -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 

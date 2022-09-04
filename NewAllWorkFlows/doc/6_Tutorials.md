@@ -227,7 +227,7 @@ python3 runDQEfficiency.py Configs/configAnalysisMC.json --aod reducedAod.root -
 
 ## Data Part
 
-### tableMaker on LHC15o (LHC15o PbPb Run2Data)
+### Run tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 
