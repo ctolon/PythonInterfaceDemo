@@ -140,7 +140,7 @@ class ChoicesCompleterList(object):
 # Interface Predefined Selections #
 ###################################
    
-tablemakerProcessAllSelections = {
+tableMakerProcessSelections = {
     "Full": "Build full DQ skimmed data model, w/o centrality",
     "FullTiny": "Build full DQ skimmed data model tiny",
     "FullWithCov": "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
@@ -158,9 +158,9 @@ tablemakerProcessAllSelections = {
     "MuonOnlyWithQvector": "Build muon-only DQ skimmed data model, w/ q vector",
     "OnlyBCs": "Analyze the BCs to store sampled lumi"
 }
-tablemakerProcessAllSelectionsList = []
-for k, v in tablemakerProcessAllSelections.items():
-    tablemakerProcessAllSelectionsList.append(k)
+tableMakerProcessSelectionsList = []
+for k, v in tableMakerProcessSelections.items():
+    tableMakerProcessSelectionsList.append(k)
 
 tablemakerProcessAllParameters = [
     "processFull",
@@ -270,19 +270,21 @@ for k, v in debugLevelSelections.items():
 
 eventMuonSelections = ["0", "1", "2"]
 
-noDeleteNeedForCent = True
-processLeftAfterCentDelete = True
+# Centrality Filter for pp systems in tableMaker
+isNoDeleteNeedForCent = True
+isProcessFuncLeftAfterCentDelete = True
 
+# For MC/Data Process func Filtering in tableMaker
 isValidProcessFunc = True
 
 threeSelectedList = []
 
 clist = []  # control list for type control
 allValuesCfg = []  # counter for provided args
-allCuts = []  # all analysis cuts
+allAnalysisCuts = []  # all analysis cuts
 allMCSignals = []  # all MC Signals
 allPairCuts = []  # only pair cuts
-nAddedAllCutsList = []  # e.g. muonQualityCuts:2
+nAddedallAnalysisCutsList = []  # e.g. muonQualityCuts:2
 nAddedPairCutsList = []  # e.g paircutMass:3
 selsWithOneColon = []  # track/muon cut:paircut:n
 allSels = []  # track/muon cut::n
@@ -303,14 +305,14 @@ O2_ROOT = os.environ.get("O2_ROOT")
 O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 
 # Predefined values for DQ Logger messages
-DQ_BARREL_SELECTED = False
-DQ_BARRELTINY_SELECTED = False
-DQ_MUON_SELECTED = False
-DQ_EVENT_SELECTED = False
-DQ_FULL_SELECTED = False
-DQ_FILTERPP_SELECTED = False
-DQ_FILTERPPTINY_SELECTED = False
-DQ_QVECTOR_SELECTED = False
+isDQBarrelSelected = False
+isDQBarrelTinySelected = False
+isDQMuonSelected = False
+isDQEventSelected = True
+isDQFullSelected = False
+isFilterPPSelected = False
+isFilterPPTinySelected = False
+isQVectorSelected = False
 
 
 ################################
@@ -324,77 +326,77 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
 }
 
-urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
-urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+URL_CUTS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h"
+URL_MCSIGNALS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h"
+URL_MIXING_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h"
 
  
 # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
 # This condition solves performance issues    
-if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
     print("[INFO] Some Libs are Missing. They will download.")
     
     # Dummy SSL Adder
     context = ssl._create_unverified_context()  # prevent ssl problems
-    request = urllib.request.urlopen(urlCutsLibrary, context=context)
+    request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
     
     # HTTP Request
-    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
-    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
-    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers=headers)
+    requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers=headers)
+    requestMixingLibrary  = Request(URL_MIXING_LIBRARY , headers=headers)
     
     # Get Files With Http Requests
     htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
     htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
-    htmlEventMixing = urlopen(requestEventMixing, context=context).read()
+    htmlMixingLibrary = urlopen(requestMixingLibrary, context=context).read()
      
     # Save Disk to temp DQ libs  
-    with open('tempCutsLibrary.h', 'wb') as f:
+    with open("tempCutsLibrary.h", "wb") as f:
          f.write(htmlCutsLibrary)
-    with open('tempMCSignalsLibrary.h', 'wb') as f:
+    with open("tempMCSignalsLibrary.h", "wb") as f:
          f.write(htmlMCSignalsLibrary)
-    with open('tempMixingLibrary.h', 'wb') as f:
-        f.write(htmlEventMixing)
+    with open("tempMixingLibrary.h", "wb") as f:
+        f.write(htmlMixingLibrary)
 
 # Read Cuts, Signals, Mixing vars from downloaded files
-with open('tempMCSignalsLibrary.h') as f:
+with open("tempMCSignalsLibrary.h") as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x] 
         for i in stringIfSearch:
             getSignals = re.findall('"([^"]*)"', i)
             allMCSignals = allMCSignals + getSignals
             
-with open('tempCutsLibrary.h') as f:
+with open("tempCutsLibrary.h") as f:
     for line in f:
         stringIfSearch = [x for x in f if 'if' in x]  # get lines only includes if string
         for i in stringIfSearch:
             getAnalysisCuts = re.findall('"([^"]*)"', i)  # get in double quotes string value with regex exp.
             getPairCuts = [y for y in getAnalysisCuts         # get pair cuts
-                        if 'pair' in y] 
+                        if "pair" in y] 
             if getPairCuts: # if pair cut list is not empty
                 allPairCuts = allPairCuts + getPairCuts # Get Only pair cuts from CutsLibrary.h
                 namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
-            allCuts = allCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
-            nameSpacedAllCuts = [x + oneColon for x in allCuts] # cut:
-            nameSpacedAllCutsTwoDots = [x + doubleColon for x in allCuts]  # cut::
+            allAnalysisCuts = allAnalysisCuts + getAnalysisCuts # Get all Cuts from CutsLibrary.h
+            nameSpacedallAnalysisCuts = [x + oneColon for x in allAnalysisCuts] # cut:
+            nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in allAnalysisCuts]  # cut::
 
  
 # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
 for k in range (1,10):
-    nAddedAllCuts = [x + str(k) for x in nameSpacedAllCutsTwoDots]
-    nAddedAllCutsList = nAddedAllCutsList + nAddedAllCuts
+    nAddedallAnalysisCuts = [x + str(k) for x in nameSpacedallAnalysisCutsTwoDots]
+    nAddedallAnalysisCutsList = nAddedallAnalysisCutsList + nAddedallAnalysisCuts
     nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
     nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
     
 # Style 1 <track-cut>:[<pair-cut>]:<n>:
 for i in nAddedPairCutsList:
-    Style1 = [x + i for x in nameSpacedAllCuts]
+    Style1 = [x + i for x in nameSpacedallAnalysisCuts]
     selsWithOneColon = selsWithOneColon + Style1
       
-# Style 2 <track-cut>:<n> --> nAddedAllCutsList
+# Style 2 <track-cut>:<n> --> nAddedallAnalysisCutsList
 
 # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-allSels = selsWithOneColon + nAddedAllCutsList
+allSels = selsWithOneColon + nAddedallAnalysisCutsList
 
     
 ###################
@@ -403,146 +405,146 @@ allSels = selsWithOneColon + nAddedAllCutsList
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    description='Arguments to pass')
-parser.register('action', 'none', NoAction)
-parser.register('action', 'store_choice', ChoicesAction)
-groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
-groupCoreSelections.add_argument('-runData', help="Run over data", action="store_true")
-groupCoreSelections.add_argument('-runMC', help="Run over MC", action="store_true")
-parser.add_argument('--run', help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
-#parser.add_argument('analysisString', metavar='text', help='my analysis string', required=False) # optional interface
-groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
+    description="Arguments to pass")
+parser.register("action", "none", NoAction)
+parser.register("action", "store_choice", ChoicesAction)
+groupCoreSelections = parser.add_argument_group(title="Core configurations that must be configured")
+groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
+groupCoreSelections.add_argument("-runData", help="Run over data", action="store_true")
+groupCoreSelections.add_argument("-runMC", help="Run over MC", action="store_true")
+parser.add_argument("--run", help="Run Number Selection (2 or 3)", action="store", type=str, choices=("2","3")).completer = ChoicesCompleter(["2","3"])
+#parser.add_argument("analysisString", metavar="text", help="my analysis string", required=False) # optional interface
+groupTaskAdders = parser.add_argument_group(title="Additional Task Adding Options")
+groupTaskAdders.add_argument("--add_mc_conv", help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders.add_argument("--add_fdd_conv", help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders.add_argument("--add_track_prop", help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ########################
 # Interface Parameters #
 ########################
 
 # aod
-groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
-groupDPLReader.add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
-groupDPLReader.add_argument('--aod-memory-rate-limit', help="Rate limit AOD processing based on memory", action="store", type=str)
+groupDPLReader = parser.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
+groupDPLReader.add_argument("--aod-memory-rate-limit", help="Rate limit AOD processing based on memory", action="store", type=str)
 
 # automation params
-groupAutomations = parser.add_argument_group(title='Automation Parameters')
-groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations = parser.add_argument_group(title="Automation Parameters")
+groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # table-maker
-groupTableMakerConfigs = parser.add_argument_group(title='Data processor options: table-maker/table-maker-m-c')
-groupTableMakerConfigs.add_argument('--cfgEventCuts', help="Space separated list of event cuts", nargs='*', action="store", type=str, metavar='CFGEVENTCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgBarrelTrackCuts', help=" Space separated list of barrel track cuts", nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts in table-maker", action="store", nargs='*', type=str, metavar='CFGMUONCUTS', choices=allCuts).completer = ChoicesCompleterList(allCuts)
-groupTableMakerConfigs.add_argument('--cfgBarrelLowPt', help="Low pt cut for tracks in the barrel", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgMuonLowPt', help="Low pt cut for muons", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgNoQA', help="If true, no QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupTableMakerConfigs.add_argument('--cfgDetailedQA', help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-#groupTableMakerConfigs.add_argument('--cfgIsRun2', help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
-groupTableMakerConfigs.add_argument('--cfgMinTpcSignal', help="Minimum TPC signal", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgMaxTpcSignal', help="Maximum TPC signal", action="store", type=str)
-groupTableMakerConfigs.add_argument('--cfgMCsignals', help="Space separated list of MC signals", action="store", nargs='*', type=str, metavar='CFGMCSIGNALS', choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+groupTableMakerConfigs = parser.add_argument_group(title="Data processor options: table-maker/table-maker-m-c")
+groupTableMakerConfigs.add_argument("--cfgEventCuts", help="Space separated list of event cuts", nargs="*", action="store", type=str, metavar="CFGEVENTCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+groupTableMakerConfigs.add_argument("--cfgBarrelTrackCuts", help=" Space separated list of barrel track cuts", nargs="*", action="store", type=str, metavar="CFGBARRELTRACKCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+groupTableMakerConfigs.add_argument("--cfgMuonCuts", help="Space separated list of muon cuts in table-maker", action="store", nargs="*", type=str, metavar="CFGMUONCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help="Low pt cut for tracks in the barrel", action="store", type=str)
+groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help="Low pt cut for muons", action="store", type=str)
+groupTableMakerConfigs.add_argument("--cfgNoQA", help="If true, no QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTableMakerConfigs.add_argument("--cfgDetailedQA", help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+#groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
+groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help="Minimum TPC signal", action="store", type=str)
+groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help="Maximum TPC signal", action="store", type=str)
+groupTableMakerConfigs.add_argument("--cfgMCsignals", help="Space separated list of MC signals", action="store", nargs="*", type=str, metavar="CFGMCSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
 # table-maker process
-groupProcessTableMaker = parser.add_argument_group(title='Data processor options: table-maker/table-maker-m-c')
-groupProcessTableMaker.add_argument('--process',help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs='*', metavar='PROCESS', choices=tablemakerProcessAllSelectionsList).completer = ChoicesCompleterList(tablemakerProcessAllSelectionsList)
-for key,value in tablemakerProcessAllSelections.items():
-    groupProcessTableMaker.add_argument(key, help=value, action='none')
+groupProcessTableMaker = parser.add_argument_group(title="Data processor options: table-maker/table-maker-m-c")
+groupProcessTableMaker.add_argument("--process",help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs="*", metavar="PROCESS", choices=tableMakerProcessSelectionsList).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
+for key,value in tableMakerProcessSelections.items():
+    groupProcessTableMaker.add_argument(key, help=value, action="none")
 
 # event-selection-task
-groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
-groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str, choices=(collisionSystemSelections)).completer = ChoicesCompleter(collisionSystemSelections)
-groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=(eventMuonSelections)).completer = ChoicesCompleter(eventMuonSelections)
-groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
+groupEventSelection = parser.add_argument_group(title="Data processor options: event-selection-task")
+groupEventSelection.add_argument("--syst", help="Collision System Selection ex. pp", action="store", type=str, choices=(collisionSystemSelections)).completer = ChoicesCompleter(collisionSystemSelections)
+groupEventSelection.add_argument("--muonSelection", help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=(eventMuonSelections)).completer = ChoicesCompleter(eventMuonSelections)
+groupEventSelection.add_argument("--customDeltaBC", help="custom BC delta for FIT-collision matching", action="store", type=str)
 
 # multiplicity-table
-groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
-groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+groupMultiplicityTable = parser.add_argument_group(title="Data processor options: multiplicity-table")
+groupMultiplicityTable.add_argument("--isVertexZeq", help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # tof-pid, tof-pid-full
-groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
-groupTofPid.add_argument('--isWSlice', help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupTofPid.add_argument('--enableTimeDependentResponse', help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid = parser.add_argument_group(title="Data processor options: tof-pid, tof-pid-full")
+groupTofPid.add_argument("--isWSlice", help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid.add_argument("--enableTimeDependentResponse", help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # track-propagation
-groupTrackPropagation = parser.add_argument_group(title='Data processor options: track-propagation')
-groupTrackPropagation.add_argument('--isCovariance', help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store",type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+groupTrackPropagation = parser.add_argument_group(title="Data processor options: track-propagation")
+groupTrackPropagation.add_argument("--isCovariance", help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store",type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # tof-pid-beta
-groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
-groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+groupTofPidBeta = parser.add_argument_group(title="Data processor options: tof-pid-beta")
+groupTofPidBeta.add_argument("--tof-expreso", help="Expected resolution for the computation of the expected beta", action="store", type=str)
 
 # tof-event-time
-groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
-groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
+groupTofEventTime = parser.add_argument_group(title="Data processor options: tof-event-time")
+groupTofEventTime.add_argument("--FT0", help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
 # d-q-track barrel-task
-groupDQTrackBarrelTask = parser.add_argument_group(title='Data processor options: d-q-track barrel-task')
-groupDQTrackBarrelTask.add_argument('--isBarrelSelectionTiny', help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default='false', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQTrackBarrelTask = parser.add_argument_group(title="Data processor options: d-q-track barrel-task")
+groupDQTrackBarrelTask.add_argument("--isBarrelSelectionTiny", help="Run barrel track selection instead of normal(process func. for barrel selection must be true)", action="store", default="false", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # d-q muons-selection
-groupDQMuonsSelection = parser.add_argument_group(title='Data processor options: d-q muons-selection')
-groupDQMuonsSelection.add_argument('--cfgMuonsCuts', help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs='*', type=str, metavar='CFGMUONSCUT', choices=allCuts).completer = ChoicesCompleterList(allCuts)
+groupDQMuonsSelection = parser.add_argument_group(title="Data processor options: d-q muons-selection")
+groupDQMuonsSelection.add_argument("--cfgMuonsCuts", help="Space separated list of ADDITIONAL muon track cuts", action="store", nargs="*", type=str, metavar="CFGMUONSCUT", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
 
 # d-q-filter-p-p-task
-groupDQFilterPP = parser.add_argument_group(title='Data processor options: d-q-filter-p-p-task')
-groupDQFilterPP.add_argument('--cfgBarrelSels', help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar='CFGBARRELSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
-groupDQFilterPP.add_argument('--cfgMuonSels', help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar='CFGMUONSELS', choices=allSels).completer = ChoicesCompleterList(allSels)
-groupDQFilterPP.add_argument('--isFilterPPTiny', help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupDQFilterPP = parser.add_argument_group(title="Data processor options: d-q-filter-p-p-task")
+groupDQFilterPP.add_argument("--cfgBarrelSels", help="Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action="store", type=str,nargs="*", metavar="CFGBARRELSELS", choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument("--cfgMuonSels", help="Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action="store", type=str,nargs="*", metavar="CFGMUONSELS", choices=allSels).completer = ChoicesCompleterList(allSels)
+groupDQFilterPP.add_argument("--isFilterPPTiny", help="Run filter tiny task instead of normal (processFilterPP must be true) ", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
-groupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
-groupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
-groupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
-groupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
-groupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
-groupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
-groupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-groupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
+groupAnalysisQvector = parser.add_argument_group(title="Data processor options: analysis-qvector")
+groupAnalysisQvector.add_argument("--cfgCutPtMin", help="Minimal pT for tracks", action="store", type=str, metavar="CFGCUTPTMIN")
+groupAnalysisQvector.add_argument("--cfgCutPtMax", help="Maximal pT for tracks", action="store", type=str, metavar="CFGCUTPTMAX")
+groupAnalysisQvector.add_argument("--cfgCutEta", help="Eta range for tracks", action="store", type=str, metavar="CFGCUTETA")
+groupAnalysisQvector.add_argument("--cfgEtaLimit", help="Eta gap separation, only if using subEvents", action="store", type=str, metavar="CFGETALIMIT")
+groupAnalysisQvector.add_argument("--cfgNPow", help="Power of weights for Q vector", action="store", type=str, metavar="CFGNPOW")
+groupAnalysisQvector.add_argument("--cfgEfficiency", help="CCDB path to efficiency object", action="store", type=str)
+groupAnalysisQvector.add_argument("--cfgAcceptance", help="CCDB path to acceptance object", action="store", type=str)
 
 # centrality-table
-groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupCentralityTable = parser.add_argument_group(title="Data processor options: centrality-table")
+groupCentralityTable.add_argument("--est", help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar="EST", choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
 
 for key,value in centralityTableSelections.items():
-    groupCentralityTable.add_argument(key, help=value, action='none')
+    groupCentralityTable.add_argument(key, help=value, action="none")
 
 #all d-q tasks and selections
-groupQASelections = parser.add_argument_group(title='Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, analysis-qvector')
-groupQASelections.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupQASelections = parser.add_argument_group(title="Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, analysis-qvector")
+groupQASelections.add_argument("--cfgWithQA", help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # v0-selector
-groupV0Selector = parser.add_argument_group(title='Data processor options: v0-selector')
-groupV0Selector.add_argument('--d_bz', help="bz field", action="store", type=str)
-groupV0Selector.add_argument('--v0cospa', help="v0cospa", action="store", type=str)
-groupV0Selector.add_argument('--dcav0dau', help="DCA V0 Daughters", action="store", type=str)
-groupV0Selector.add_argument('--v0Rmin', help="v0Rmin", action="store", type=str)
-groupV0Selector.add_argument('--v0Rmax', help="v0Rmax", action="store", type=str)
-groupV0Selector.add_argument('--dcamin', help="dcamin", action="store", type=str)
-groupV0Selector.add_argument('--dcamax', help="dcamax", action="store", type=str)
-groupV0Selector.add_argument('--mincrossedrows', help="Min crossed rows", action="store", type=str)
-groupV0Selector.add_argument('--maxchi2tpc', help="max chi2/NclsTPC", action="store", type=str)
+groupV0Selector = parser.add_argument_group(title="Data processor options: v0-selector")
+groupV0Selector.add_argument("--d_bz", help="bz field", action="store", type=str)
+groupV0Selector.add_argument("--v0cospa", help="v0cospa", action="store", type=str)
+groupV0Selector.add_argument("--dcav0dau", help="DCA V0 Daughters", action="store", type=str)
+groupV0Selector.add_argument("--v0Rmin", help="v0Rmin", action="store", type=str)
+groupV0Selector.add_argument("--v0Rmax", help="v0Rmax", action="store", type=str)
+groupV0Selector.add_argument("--dcamin", help="dcamin", action="store", type=str)
+groupV0Selector.add_argument("--dcamax", help="dcamax", action="store", type=str)
+groupV0Selector.add_argument("--mincrossedrows", help="Min crossed rows", action="store", type=str)
+groupV0Selector.add_argument("--maxchi2tpc", help="max chi2/NclsTPC", action="store", type=str)
 
 # pid
-groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
+groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
-    groupPID.add_argument(key, help=value, action = 'none')
+    groupPID.add_argument(key, help=value, action = "none")
 
 # helper lister commands
-groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
-groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-groupAdditionalHelperCommands.add_argument('--MCSignalsLister', help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
+groupAdditionalHelperCommands = parser.add_argument_group(title="Additional Helper Command Options")
+groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
-groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
-groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
+groupAdditionalHelperCommands.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
+groupDebug= parser.add_argument_group(title="Choice List for debug Parameters")
 
 for key,value in debugLevelSelections.items():
-    groupDebug.add_argument(key, help=value, action='none')
+    groupDebug.add_argument(key, help=value, action="none")
 
 argcomplete.autocomplete(parser, always_complete_options=False)
 extrargs = parser.parse_args()
@@ -560,15 +562,15 @@ if len(forgetParams) > 0:
     sys.exit()
     
 # Debug Settings
-if extrargs.debug and extrargs.logFile == False:
+if extrargs.debug and (not extrargs.logFile):
     DEBUG_SELECTION = extrargs.debug
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
-    logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
+        raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
+    logging.basicConfig(format="[%(levelname)s] %(message)s", level=DEBUG_SELECTION)
     
 if extrargs.logFile and extrargs.debug:
-    log = logging.getLogger('')
+    log = logging.getLogger("")
     level = logging.getLevelName(extrargs.debug)
     log.setLevel(level)
     format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
@@ -578,10 +580,10 @@ if extrargs.logFile and extrargs.debug:
     log.addHandler(ch)
     
     loggerFile = "tableMaker.log"
-    if os.path.isfile(loggerFile) == True:
+    if os.path.isfile(loggerFile):
         os.remove(loggerFile)
     
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode='w')
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode="w")
     fh.setFormatter(format)
     log.addHandler(fh)
 
@@ -594,8 +596,8 @@ if extrargs.cutLister and extrargs.MCSignalsLister:
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    temp = ''  
-    for i in allCuts:
+    temp = ""  
+    for i in allAnalysisCuts:
         if len(temp) == 0:
             temp = temp + i
         else:
@@ -604,15 +606,15 @@ if extrargs.cutLister and extrargs.MCSignalsLister:
         if counter == 3:
             temp = stringToList(temp)
             threeSelectedList.append(temp)
-            temp = ''
+            temp = ""
             counter = 0
     for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_)) 
+        print("{:<40s} {:<40s} {:<40s}".format(*list_)) 
         
     counter = 0
     print("MC Signals :")
     print("====================")
-    temp = ''
+    temp = ""
     threeSelectedList.clear()  
     for i in allMCSignals:
         if len(temp) == 0:
@@ -623,18 +625,18 @@ if extrargs.cutLister and extrargs.MCSignalsLister:
         if counter == 3:
             temp = stringToList(temp)
             threeSelectedList.append(temp)
-            temp = ''
+            temp = ""
             counter = 0
     for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_))  
+        print("{:<40s} {:<40s} {:<40s}".format(*list_))  
     sys.exit()
     
 if extrargs.cutLister:
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    temp = ''  
-    for i in allCuts:
+    temp = ""  
+    for i in allAnalysisCuts:
         if len(temp) == 0:
             temp = temp + i
         else:
@@ -643,17 +645,17 @@ if extrargs.cutLister:
         if counter == 3:
             temp = stringToList(temp)
             threeSelectedList.append(temp)
-            temp = ''
+            temp = ""
             counter = 0
     for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_))      
+        print("{:<40s} {:<40s} {:<40s}".format(*list_))      
     sys.exit()
     
 if extrargs.MCSignalsLister:
     counter = 0
     print("MC Signals :")
     print("====================")
-    temp = ''  
+    temp = ""  
     for i in allMCSignals:
         if len(temp) == 0:
             temp = temp + i
@@ -663,10 +665,10 @@ if extrargs.MCSignalsLister:
         if counter == 3:
             temp = stringToList(temp)
             threeSelectedList.append(temp)
-            temp = ''
+            temp = ""
             counter = 0
     for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_))     
+        print("{:<40s} {:<40s} {:<40s}".format(*list_))     
     sys.exit()
 
 ######################
@@ -789,8 +791,8 @@ try:
         sys.exit()
         
 except FileNotFoundError:
-    isConfigJson = sys.argv[1].endswith('.json')
-    if isConfigJson == False:
+    isConfigJson = sys.argv[1].endswith(".json")
+    if not isConfigJson:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
             logging.info("  ./runTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
             sys.exit()
@@ -800,15 +802,15 @@ except FileNotFoundError:
 # Check whether we run over data or MC
 if not (extrargs.runMC or extrargs.runData):
     logging.error("You have to specify either runMC or runData !")
-    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
-    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --param value ...")
     sys.exit()
     
 # Transcation management for Data and MC
 if extrargs.runMC and extrargs.runData:
     logging.error("runData and runMC cannot be configured at the same time ! Choose one")
-    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --run <2|3> --param value ...")
-    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --run <2|3> --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runMC --param value ...")
+    logging.info("Example For MC : python3 runTableMaker.py <yourConfig.json> -runData --param value ...")
     sys.exit()
     
 runOverMC = False
@@ -820,14 +822,14 @@ logging.info("runOverMC : %s ",runOverMC)
 # Optional Interface
 """
 if extrargs.analysisString != "":
-  args = [line.split(':') for line in extrargs.analysisString.split(',') if line]
+  args = [line.split(":") for line in extrargs.analysisString.split(",") if line]
   for arg in args:
     config[arg[0]][arg[1]] = arg[2]
 """
 
 taskNameInConfig = "table-maker"
 taskNameInCommandLine = "o2-analysis-dq-table-maker"
-if runOverMC == True:
+if runOverMC:
   taskNameInConfig = "table-maker-m-c"
   taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
   
@@ -870,13 +872,18 @@ for key, value in config.items():
         for value, value2 in value.items():
                        
             # aod
-            if value =='aod-file' and extrargs.aod:
+            if value =="aod-file" and extrargs.aod:
                 config[key][value] = extrargs.aod
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                 
             # table-maker/table-maker-m-c process selections
             if (value in tablemakerProcessAllParameters) and extrargs.process:
                 if value in extrargs.process:
+                    
+                    # processOnlyBCs have to always be true
+                    if "processOnlyBCs" not in extrargs.process:
+                        extrargs.process.append("processOnlyBCs")
+                        logging.warning("You forget to add OnlyBCs value in --process parameter! It will automaticaly added.")
                     value2 = "true"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)
@@ -889,7 +896,10 @@ for key, value in config.items():
                     fullSearch = [s for s in extrargs.process if "Full" in s]
                     barrelSearch = [s for s in extrargs.process if "Barrel" in s]
                     muonSearch = [s for s in extrargs.process if "Muon" in s]
-                    bcsSearch = [s for s in extrargs.process if "BCs" in s]
+                    #bcsSearch = [s for s in extrargs.process if "BCs" in s]
+                    
+                    # check extrargs is contain Cov for transcation management --> add track prop task      
+                    covSearch = [s for s in extrargs.process if "Cov" in s]
                     
                     # check extrargs is contain Cent for transcation management Centrality Filter
                     centSearch = [s for s in extrargs.process if "Cent" in s]
@@ -898,12 +908,12 @@ for key, value in config.items():
                     filterSearch = [s for s in extrargs.process if "Filter" in s]   
                     
                     # check extrargs is contain Qvector for automatize dqFlow task
-                    qvectorSearch = [s for s in extrargs.process if "Qvector" in s] 
+                    qVectorSearch = [s for s in extrargs.process if "Qvector" in s] 
                                                          
                     # Automatization for Activate or Disable d-q barrel, muon and event tasks regarding to process func. in tablemaker
                     if len(fullSearch) > 0 and extrargs.runData:
                         config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
-                        DQ_FULL_SELECTED = True
+                        isDQFullSelected = True
                         #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
                         
                         if extrargs.isBarrelSelectionTiny == "false":
@@ -914,31 +924,27 @@ for key, value in config.items():
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            DQ_BARRELTINY_SELECTED = True
+                            isDQBarrelTinySelected = True
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
 
                         config["d-q-muons-selection"]["processSelection"] = "true"
-                        DQ_MUON_SELECTED  = True
+                        isDQMuonSelected  = True
                         #logging.debug(" - [d-q-muons-selection] processSelection : true")
-
-                        config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                        DQ_EVENT_SELECTED = True
-                        #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
                                    
                     if len(barrelSearch) > 0 and extrargs.runData:
                         if extrargs.isBarrelSelectionTiny == "false":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "true"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            DQ_BARREL_SELECTED = True
-                            DQ_BARRELTINY_SELECTED = False
+                            isDQBarrelSelected = True
+                            isDQBarrelTinySelected = False
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
                         if extrargs.isBarrelSelectionTiny == "true":
                             config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
                             config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = extrargs.isBarrelSelectionTiny
-                            DQ_BARREL_SELECTED = False
-                            DQ_BARRELTINY_SELECTED = True
+                            isDQBarrelSelected = False
+                            isDQBarrelTinySelected = True
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
                             #logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
    
@@ -951,51 +957,49 @@ for key, value in config.items():
                     if len(muonSearch) > 0 and extrargs.runData:
                         config["d-q-muons-selection"]["processSelection"] = "true"
                         #logging.debug(" - [d-q-muons-selection] processSelection : true")
-                        DQ_MUON_SELECTED  = True
+                        isDQMuonSelected  = True
                     if len(muonSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-muons-selection"]["processSelection"] = "false"
                         #logging.debug(" - [d-q-muons-selection] processSelection : false")
                             
-                    if len(bcsSearch) > 0 and extrargs.runData:
+                    # processEventSelection have to always be true        
+                    if extrargs.runData:
                         config["d-q-event-selection-task"]["processEventSelection"] = "true"
-                        DQ_EVENT_SELECTED = True
+                        isDQEventSelected = True
                         #logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
-                    if len(bcsSearch) == 0 and len(fullSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
-                        config["d-q-event-selection-task"]["processEventSelection"] = "false"
-                        #logging.debug(" - [d-q-event-selection-task] processEventSelection : false")
-                           
+            
                     # Automatization for Activate or Disable d-q filter-p-p
                     if len(filterSearch) > 0 and extrargs.runData:
                         config["d-q-filter-p-p-task"]["processFilterPP"] ="true"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] ="false"
-                        DQ_FILTERPP_SELECTED = True
-                        DQ_FILTERPPTINY_SELECTED = False                     
+                        isFilterPPSelected = True
+                        isFilterPPTinySelected = False                     
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
-                        if extrargs.isFilterPPTiny == 'true':
+                        if extrargs.isFilterPPTiny == "true":
                             config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                             config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
-                            DQ_FILTERPP_SELECTED = False
-                            DQ_FILTERPPTINY_SELECTED = True  
+                            isFilterPPSelected = False
+                            isFilterPPTinySelected = True  
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
                             #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                                  
                     if len(filterSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
                         config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                        DQ_FILTERPP_SELECTED = False
-                        DQ_FILTERPPTINY_SELECTED = False 
+                        isFilterPPSelected = False
+                        isFilterPPTinySelected = False 
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")
                         #logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
                         
                     # Automatization for Activate or Disable analysis-qvector
-                    if len(qvectorSearch) > 0 and extrargs.runData:
+                    if len(qVectorSearch) > 0 and extrargs.runData:
                         config["analysis-qvector"]["processQvector"] ="true"
-                        DQ_QVECTOR_SELECTED = True
+                        isQVectorSelected = True
 
-                    if len(qvectorSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
+                    if len(qVectorSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
                         config["analysis-qvector"]["processQvector"] ="false"
-                        DQ_QVECTOR_SELECTED = False
+                        isQVectorSelected = False
                                                                         
                 elif extrargs.onlySelect == "true":
                     value2 = "false"
@@ -1003,12 +1007,12 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)
                                                      
             # filterPP Selections        
-            if value == 'cfgBarrelSels' and extrargs.cfgBarrelSels:
+            if value == "cfgBarrelSels" and extrargs.cfgBarrelSels:
                 if type(extrargs.cfgBarrelSels) == type(clist):
                     extrargs.cfgBarrelSels = listToString(extrargs.cfgBarrelSels) 
                 config[key][value] = extrargs.cfgBarrelSels
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelSels)
-            if value == 'cfgMuonSels' and extrargs.cfgMuonSels:
+            if value == "cfgMuonSels" and extrargs.cfgMuonSels:
                 if type(extrargs.cfgMuonSels) == type(clist):
                     extrargs.cfgMuonSels = listToString(extrargs.cfgMuonSels) 
                 config[key][value] = extrargs.cfgMuonSels
@@ -1016,33 +1020,33 @@ for key, value in config.items():
                                     
             # Run 2/3 and MC/DATA Selections for automations            
             if extrargs.run == "2":
-                if value == 'isRun3':
+                if value == "isRun3":
                     config[key][value] = "false"
                     logging.debug(" - [%s] %s : false",key,value)
-                if value == 'processRun3':
+                if value == "processRun3":
                     config[key][value] = "false"
                     logging.debug(" - [%s] %s : false",key,value)
-                if value == 'processRun2':
+                if value == "processRun2":
                     config[key][value] = "true"
                     logging.debug(" - [%s] %s : true",key,value)
                     
             if extrargs.run == "3":
-                if value == 'isRun3':
+                if value == "isRun3":
                     config[key][value] = "true"
                     logging.debug(" - [%s] %s : true",key,value)
-                if value == 'processRun3':
+                if value == "processRun3":
                     config[key][value] = "true"
                     logging.debug(" - [%s] %s : true",key,value)
-                if value == 'processRun2':
+                if value == "processRun2":
                     config[key][value] = "false"
                     logging.debug(" - [%s] %s : false",key,value)
             
-            if extrargs.run == '2' and extrargs.runMC:
-                if value == 'isRun2MC':
+            if extrargs.run == "2" and extrargs.runMC:
+                if value == "isRun2MC":
                     config[key][value] = "true"
                     logging.debug(" - [%s] %s : true",key,value)
-            if extrargs.run != '2' and extrargs.runData:
-                if value == 'isRun2MC':
+            if extrargs.run != "2" and extrargs.runData:
+                if value == "isRun2MC":
                     config[key][value] = "false"
                     logging.debug(" - [%s] %s : false",key,value)
                                             
@@ -1065,54 +1069,54 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)
                     
             # analysis-qvector selections    
-            if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
+            if value =="cfgCutPtMin" and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
-            if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
+            if value =="cfgCutPtMax" and extrargs.cfgCutPtMax:
                 config[key][value] = extrargs.cfgCutPtMax
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMax)
-            if value =='cfgCutEta' and extrargs.cfgCutEta:
+            if value =="cfgCutEta" and extrargs.cfgCutEta:
                 config[key][value] = extrargs.cfgCutEta
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutEta)
-            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
+            if value =="cfgEtaLimit" and extrargs.cfgEtaLimit:
                 config[key][value] = extrargs.cfgEtaLimit
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEtaLimit)
-            if value =='cfgNPow' and extrargs.cfgNPow:
+            if value =="cfgNPow" and extrargs.cfgNPow:
                 config[key][value] = extrargs.cfgNPow
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNPow)
-            if value =='cfgEfficiency' and extrargs.cfgEfficiency:
+            if value =="cfgEfficiency" and extrargs.cfgEfficiency:
                 config[key][value] = extrargs.cfgEfficiency
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEfficiency)
-            if value =='cfgAcceptance' and extrargs.cfgAcceptance:
+            if value =="cfgAcceptance" and extrargs.cfgAcceptance:
                 config[key][value] = extrargs.cfgAcceptance
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)  
                     
             # v0-selector
-            if value =='d_bz' and extrargs.d_bz:
+            if value =="d_bz" and extrargs.d_bz:
                 config[key][value] = extrargs.d_bz
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.d_bz)  
-            if value == 'v0cospa' and extrargs.v0cospa:
+            if value == "v0cospa" and extrargs.v0cospa:
                 config[key][value] = extrargs.v0cospa
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.v0cospa)  
-            if value == 'dcav0dau' and extrargs.dcav0dau:
+            if value == "dcav0dau" and extrargs.dcav0dau:
                 config[key][value] = extrargs.dcav0dau
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.dcav0dau)                  
-            if value =='v0Rmin' and extrargs.v0Rmin:
+            if value =="v0Rmin" and extrargs.v0Rmin:
                 config[key][value] = extrargs.v0Rmin
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.v0Rmin)                  
-            if value == 'v0Rmax' and extrargs.v0Rmax:
+            if value == "v0Rmax" and extrargs.v0Rmax:
                 config[key][value] = extrargs.v0Rmax
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.v0Rmax)                  
-            if value == 'dcamin' and extrargs.dcamin:
+            if value == "dcamin" and extrargs.dcamin:
                 config[key][value] = extrargs.dcamin
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.dcamin)                  
-            if value == 'dcamax' and extrargs.dcamax:
+            if value == "dcamax" and extrargs.dcamax:
                 config[key][value] = extrargs.dcamax
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.dcamax)                  
-            if value =='mincrossedrows' and extrargs.mincrossedrows:
+            if value =="mincrossedrows" and extrargs.mincrossedrows:
                 config[key][value] = extrargs.mincrossedrows
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.mincrossedrows)                  
-            if value == 'maxchi2tpc' and extrargs.maxchi2tpc:
+            if value == "maxchi2tpc" and extrargs.maxchi2tpc:
                 config[key][value] = extrargs.maxchi2tpc
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.maxchi2tpc)                  
                 
@@ -1128,78 +1132,78 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
                     
             # table-maker/table-maker-m-c cfg selections
-            if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
+            if value == "cfgEventCuts" and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
+                    extrargs.cfgEventCuts = actualConfig + "," + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts)  
-            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
+            if value == "cfgBarrelTrackCuts" and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts)
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgBarrelTrackCuts = actualConfig + ',' + extrargs.cfgBarrelTrackCuts 
+                    extrargs.cfgBarrelTrackCuts = actualConfig + "," + extrargs.cfgBarrelTrackCuts 
                 config[key][value] = extrargs.cfgBarrelTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelTrackCuts)  
-            if value =='cfgMuonCuts' and extrargs.cfgMuonCuts:
+            if value =="cfgMuonCuts" and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
+                    extrargs.cfgMuonCuts = actualConfig + "," + extrargs.cfgMuonCuts               
                 config[key][value] = extrargs.cfgMuonCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts)  
-            if value == 'cfgBarrelLowPt' and extrargs.cfgBarrelLowPt:
+            if value == "cfgBarrelLowPt" and extrargs.cfgBarrelLowPt:
                 config[key][value] = extrargs.cfgBarrelLowPt
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelLowPt)  
-            if value == 'cfgMuonLowPt' and extrargs.cfgMuonLowPt:
+            if value == "cfgMuonLowPt" and extrargs.cfgMuonLowPt:
                 config[key][value] = extrargs.cfgMuonLowPt
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonLowPt)  
-            if value =='cfgNoQA' and extrargs.cfgNoQA:
+            if value =="cfgNoQA" and extrargs.cfgNoQA:
                 config[key][value] = extrargs.cfgNoQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNoQA)  
-            if value == 'cfgDetailedQA' and extrargs.cfgDetailedQA:
+            if value == "cfgDetailedQA" and extrargs.cfgDetailedQA:
                 config[key][value] = extrargs.cfgDetailedQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgDetailedQA)  
-            if value == 'cfgIsRun2' and extrargs.run == "2":
+            if value == "cfgIsRun2" and extrargs.run == "2":
                 config[key][value] = "true"
                 logging.debug(" - %s %s : true",key,value)  
-            if value =='cfgMinTpcSignal' and extrargs.cfgMinTpcSignal:
+            if value =="cfgMinTpcSignal" and extrargs.cfgMinTpcSignal:
                 config[key][value] = extrargs.cfgMinTpcSignal
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMinTpcSignal)  
-            if value == 'cfgMaxTpcSignal' and extrargs.cfgMaxTpcSignal:
+            if value == "cfgMaxTpcSignal" and extrargs.cfgMaxTpcSignal:
                 config[key][value] = extrargs.cfgMaxTpcSignal
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMaxTpcSignal)  
-            if value == 'cfgMCsignals' and extrargs.cfgMCsignals:
+            if value == "cfgMCsignals" and extrargs.cfgMCsignals:
                 if type(extrargs.cfgMCsignals) == type(clist):
                     extrargs.cfgMCsignals = listToString(extrargs.cfgMCsignals)
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgMCsignals = actualConfig + ',' + extrargs.cfgMCsignals                     
+                    extrargs.cfgMCsignals = actualConfig + "," + extrargs.cfgMCsignals                     
                 config[key][value] = extrargs.cfgMCsignals
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMCsignals)  
                 
             #d-q-muons-selection
-            if value =='cfgMuonsCuts' and extrargs.cfgMuonsCuts:
+            if value =="cfgMuonsCuts" and extrargs.cfgMuonsCuts:
                 if type(extrargs.cfgMuonsCuts) == type(clist):
                     extrargs.cfgMuonsCuts = listToString(extrargs.cfgMuonsCuts)
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgMuonsCuts = actualConfig + ',' + extrargs.cfgMuonsCuts                  
+                    extrargs.cfgMuonsCuts = actualConfig + "," + extrargs.cfgMuonsCuts                  
                 config[key][value] = extrargs.cfgMuonsCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonsCuts) 
 
             # event-selection-task
-            if value == 'syst' and extrargs.syst:
+            if value == "syst" and extrargs.syst:
                 config[key][value] = extrargs.syst
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
-            if value =='muonSelection' and extrargs.muonSelection:
+            if value =="muonSelection" and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
-            if value == 'customDeltaBC' and extrargs.customDeltaBC:
+            if value == "customDeltaBC" and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)  
              
@@ -1234,12 +1238,12 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.enableTimeDependentResponse)
                      
             # tof-pid-beta
-            if value == 'tof-expreso' and extrargs.tof_expreso:
+            if value == "tof-expreso" and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
                 
             # tof-event-time
-            if  (value in ft0Parameters) and extrargs.FT0 and key == 'tof-event-time':
+            if  (value in ft0Parameters) and extrargs.FT0 and key == "tof-event-time":
                 if value  == extrargs.FT0:
                     value2 = "true"
                     config[key][value] = value2
@@ -1250,30 +1254,30 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)  
                                              
             # all d-q tasks and selections
-            if (value == 'cfgWithQA' or value == 'cfgQA') and extrargs.cfgWithQA:
+            if (value == "cfgWithQA" or value == "cfgQA") and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                                   
             # track-propagation
             if extrargs.isCovariance:
-                if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'false' :
+                if (value =="processStandard" or value == "processCovariance") and extrargs.isCovariance == "false" :
                     config[key]["processStandard"] = "true"
                     config[key]["processCovariance"] = "false"
                     logging.debug(" - [%s] processStandart : true",key)
                     logging.debug(" - [%s] processCovariance : false",key) 
-                if (value =='processStandard' or value == 'processCovariance') and extrargs.isCovariance == 'true' :
+                if (value =="processStandard" or value == "processCovariance") and extrargs.isCovariance == "true" :
                     config[key]["processStandard"] = "false"
                     config[key]["processCovariance"] = "true"
                     logging.debug(" - [%s] processStandart : false",key)
                     logging.debug(" - [%s] processCovariance : true",key) 
                                     
             # dummy automizer
-            if value == 'processDummy' and extrargs.autoDummy and extrargs.runData:
+            if value == "processDummy" and extrargs.autoDummy and extrargs.runData:
                 
                 if config["d-q-barrel-track-selection-task"]["processSelection"] == "true" or config["d-q-barrel-track-selection-task"]["processSelectionTiny"] == "true":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "false"
                     #logging.debug("d-q-barrel-track-selection-task:processDummy:false") 
-                if config["d-q-barrel-track-selection-task"]["processSelection"] == 'false' and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
+                if config["d-q-barrel-track-selection-task"]["processSelection"] == "false" and config["d-q-barrel-track-selection-task"]["processSelectionTiny"]  == "false":
                     config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
                     #logging.debug("d-q-barrel-track-selection-task:processDummy:true") 
                     
@@ -1305,47 +1309,47 @@ for key, value in config.items():
                     
 # LOGGER MESSAGES FOR DQ SELECTIONS
 
-if extrargs.runData:
+if extrargs.runData and extrargs.process:
 
-    if DQ_FULL_SELECTED == True:
+    if isDQFullSelected:
         logging.debug(" - [d-q-event-selection-task] processEventSelection : true")
         
-        if DQ_BARREL_SELECTED == True:
+        if isDQBarrelSelected:
             logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
             logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")
-        if DQ_BARRELTINY_SELECTED == True:
+        if isDQBarrelTinySelected:
             logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
             logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")
             
         logging.debug(" - [d-q-muons-selection] processSelection : true")
 
-    if DQ_EVENT_SELECTED == True and DQ_FULL_SELECTED == False:
+    if isDQEventSelected and (not isDQFullSelected):
         logging.debug(" - [d-q-event-selection-task] processEventSelection : true") 
-    if DQ_EVENT_SELECTED == False and DQ_FULL_SELECTED == False:
+    if (not isDQEventSelected) and (not isDQFullSelected):
         logging.debug(" - [d-q-event-selection-task] processEventSelection : false")                        
-    if DQ_BARREL_SELECTED == True and DQ_FULL_SELECTED == False:           
+    if isDQBarrelSelected and (not isDQFullSelected):           
         logging.debug(" - [d-q-barrel-track-selection-task] processSelection : true")
-    if DQ_BARREL_SELECTED == False and DQ_FULL_SELECTED == False:           
+    if (not isDQBarrelSelected) and (not isDQFullSelected):           
         logging.debug(" - [d-q-barrel-track-selection-task] processSelection : false")                 
-    if DQ_BARRELTINY_SELECTED == True and DQ_FULL_SELECTED == False:
+    if isDQBarrelTinySelected and (not isDQFullSelected):
         logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : true")
-    if DQ_BARRELTINY_SELECTED == False and DQ_FULL_SELECTED == False:
+    if (not isDQBarrelTinySelected) and (not isDQFullSelected):
         logging.debug(" - [d-q-barrel-track-selection-task] processSelectionTiny : false")                    
-    if DQ_MUON_SELECTED  == True and DQ_FULL_SELECTED == False:
+    if isDQMuonSelected and (not isDQFullSelected):
         logging.debug(" - [d-q-muons-selection] processSelection : true")
-    if DQ_MUON_SELECTED  == False and DQ_FULL_SELECTED == False:
+    if (not isDQMuonSelected) and (not isDQFullSelected):
         logging.debug(" - [d-q-muons-selection] processSelection : false")         
-    if DQ_FILTERPP_SELECTED == True:
+    if isFilterPPSelected:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : true")
-    if DQ_FILTERPP_SELECTED == False:
+    if not isFilterPPSelected:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPP : false")                  
-    if DQ_FILTERPPTINY_SELECTED == True:
+    if isFilterPPTinySelected:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : true")
-    if DQ_FILTERPPTINY_SELECTED == False:
+    if not isFilterPPTinySelected:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
-    if DQ_QVECTOR_SELECTED == True:
+    if isQVectorSelected:
         logging.debug(" - [analysis-qvector] processQvector : true") 
-    if DQ_QVECTOR_SELECTED == False:
+    if not isQVectorSelected:
         logging.debug(" - [analysis-qvector] processQvector : false") 
 
 
@@ -1371,7 +1375,7 @@ try:
             if j in tableMakerProcessSearch:
                 validProcessListAfterDataMCFilter.append(j)
     
-    if isValidProcessFunc == False:
+    if not isValidProcessFunc:
         logging.info("Valid processes are after MC/Data Filter: %s",validProcessListAfterDataMCFilter)
 
 except:
@@ -1384,24 +1388,24 @@ for key,value in configuredCommands.items():
             listToString(value)
         if key in v0SelectorParameters and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. V0 Selector parameters only valid for Data, not MC. It will fixed by CLI", key)
-        if key == 'cfgWithQA' and extrargs.runMC:
+        if key == "cfgWithQA" and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
-        if key == 'est' and extrargs.runMC:
+        if key == "est" and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. Centrality Table parameters only valid for Data, not MC. It will fixed by CLI", key)
-        if key =='isFilterPPTiny' and extrargs.runMC:
+        if key =="isFilterPPTiny" and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. Filter PP Tiny parameter only valid for Data Run3, not MC and Run2. It will fixed by CLI", key)
-        if key == 'cfgMuonSels' and extrargs.runMC:
+        if key == "cfgMuonSels" and extrargs.runMC:
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
-        if key == 'cfgBarrelSels' and (extrargs.runMC or extrargs.run == '2'):
+        if key == "cfgBarrelSels" and (extrargs.runMC or extrargs.run == "2"):
             logging.warning("--%s Not Valid Parameter. This parameter only valid for Data, not MC. It will fixed by CLI", key)
-        if key == 'cfgMCsignals' and extrargs.runData:
+        if key == "cfgMCsignals" and extrargs.runData:
             logging.warning("--%s Not Valid Parameter. This parameter only valid for MC, not Data. It will fixed by CLI", key)
                                          
 # Centrality table delete for pp processes
-if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
-    # delete centrality-table configurations for data. If it's MC don't delete from JSON
+if extrargs.process and len(centSearch) != 0 and (extrargs.syst == "pp" or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
+    # delete centrality-table configurations for data. If it"s MC don't delete from JSON
     # Firstly try for Data then if not data it gives warning message for MC
-    noDeleteNeedForCent = False
+    isNoDeleteNeedForCent = False
     try:
         logging.warning("JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
         #del(config["centrality-table"])
@@ -1417,13 +1421,13 @@ if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extr
                 # Centrality process should be false
                 if extrargs.runMC:
                     try:       
-                        config["table-maker-m-c"][paramValueTableMaker] = 'false'
+                        config["table-maker-m-c"][paramValueTableMaker] = "false"
                     except:
                         logging.error("JSON config does not include table-maker-m-c, It's for Data. Misconfiguration JSON File!!!")
                         sys.exit()
                 if extrargs.runData:
                     try:       
-                        config["table-maker"][paramValueTableMaker] = 'false'
+                        config["table-maker"][paramValueTableMaker] = "false"
                     except:
                         logging.error("JSON config does not include table-maker, It's for MC. Misconfiguration JSON File!!!")
                         sys.exit()
@@ -1431,29 +1435,29 @@ if extrargs.process and len(centSearch) != 0 and (extrargs.syst == 'pp' or (extr
         logging.warning("No process function provided so no need delete related to centrality-table dependency")
          
     # After deleting centrality we need to check if we have process function
-    processLeftAfterCentDelete = True
+    isProcessFuncLeftAfterCentDelete = True
     leftProcessAfterDeleteCent =[] 
     if extrargs.runData:
         for deletedParamTableMaker in config["table-maker"]:
             if "process" not in deletedParamTableMaker: 
                 continue
-            elif config["table-maker"].get(deletedParamTableMaker) == 'true':
-                processLeftAfterCentDelete = True
+            elif config["table-maker"].get(deletedParamTableMaker) == "true":
+                isProcessFuncLeftAfterCentDelete = True
                 leftProcessAfterDeleteCent.append(deletedParamTableMaker)
 
     if extrargs.runMC:
         for deletedParamTableMaker in config["table-maker-m-c"]:
             if "process" not in deletedParamTableMaker: 
                 continue
-            elif config["table-maker-m-c"].get(deletedParamTableMaker) == 'true':
-                processLeftAfterCentDelete = True
+            elif config["table-maker-m-c"].get(deletedParamTableMaker) == "true":
+                isProcessFuncLeftAfterCentDelete = True
                 leftProcessAfterDeleteCent.append(deletedParamTableMaker)
 
 # logging Message for Centrality
-if noDeleteNeedForCent == False: 
+if not isNoDeleteNeedForCent: 
     logging.info("After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: %s",leftProcessAfterDeleteCent)
  
-if processLeftAfterCentDelete == False and noDeleteNeedForCent == False:
+if not (isProcessFuncLeftAfterCentDelete and isNoDeleteNeedForCent):
     logging.error("After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
     sys.exit()    
     
@@ -1464,15 +1468,13 @@ if processLeftAfterCentDelete == False and noDeleteNeedForCent == False:
 
 for key,value in configuredCommands.items():
     if(value != None):
-        #if type(value) == type(clist):
-            #listToString(value)
-        if key == 'cfgMuonsCuts':
+        if key == "cfgMuonsCuts":
             muonCutList.append(value)
-        if key == 'cfgBarrelTrackCuts':
+        if key == "cfgBarrelTrackCuts":
             barrelTrackCutList.append(value)
-        if key == 'cfgBarrelSels':
+        if key == "cfgBarrelSels":
             barrelSelsList.append(value)
-        if key == 'cfgMuonSels':
+        if key == "cfgMuonSels":
             muonSelsList.append(value)
 
 ##############################
@@ -1509,7 +1511,7 @@ if extrargs.cfgMuonSels:
             print("====================================================================================================================")
             logging.error("--cfgMuonSels <value>: %s not in --cfgMuonsCuts %s ",i, muonCut)
             logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
-            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
+            logging.info("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
             sys.exit()
                             
     for i in muonCut:    
@@ -1519,7 +1521,7 @@ if extrargs.cfgMuonSels:
             print("====================================================================================================================")
             logging.error("--cfgMuonsCut <value>: %s not in --cfgMuonSels %s ",i,muonSelsListAfterSplit)
             logging.info("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.") 
-            print("For example, if cfgMuonCuts is muonLowPt,muonHighPt, then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
+            logging.info("For example, if cfgMuonCuts is muonLowPt,muonHighPt,muonLowPt then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")  
             sys.exit()
             
 ################################
@@ -1556,7 +1558,7 @@ if extrargs.cfgBarrelSels:
             print("====================================================================================================================")
             logging.error("--cfgBarrelTrackCuts <value>: %s not in --cfgBarrelSels %s",i,barrelTrackCut)
             logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.")  
-            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1") 
+            logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1") 
             sys.exit()
                             
     for i in barrelTrackCut:    
@@ -1566,33 +1568,33 @@ if extrargs.cfgBarrelSels:
             print("====================================================================================================================")
             logging.error("--cfgBarrelTrackCuts <value>: %s not in --cfgBarrelSels %s",i,barrelSelsListAfterSplit)
             logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
-            print("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2, then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
+            logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
             sys.exit()
             
 # AOD File Checker 
 if extrargs.aod != None:
-    myAod =  extrargs.aod
-    textAodList = myAod.startswith("@")
-    aodRootFile = myAod.endswith(".root")
-    textControl = myAod.endswith("txt") or myAod.endswith("text") 
-    if textAodList == True and textControl == True:
-        myAod = myAod.replace("@","")
-        logging.info("You provided AO2D list as text file : %s",myAod)
-        if os.path.isfile(myAod) == False:
-            logging.error("%s File not found in path!!!", myAod)
+    argProvidedAod =  extrargs.aod
+    textAodList = argProvidedAod.startswith("@")
+    endsWithRoot = argProvidedAod.endswith(".root")
+    endsWithTxt = argProvidedAod.endswith("txt") or argProvidedAod.endswith("text") 
+    if textAodList and endsWithTxt:
+        argProvidedAod = argProvidedAod.replace("@","")
+        logging.info("You provided AO2D list as text file : %s",argProvidedAod)
+        if not os.path.isfile(argProvidedAod):
+            logging.error("%s File not found in path!!!", argProvidedAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
+            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
          
-    elif aodRootFile == True:
-        logging.info("You provided single AO2D as root file  : %s",myAod)
-        if os.path.isfile(myAod) == False:
-            logging.error("%s File not found in path!!!", myAod)
+    elif endsWithRoot:
+        logging.info("You provided single AO2D as root file  : %s",argProvidedAod)
+        if not os.path.isfile(argProvidedAod):
+            logging.error("%s File not found in path!!!", argProvidedAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)                
+            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)                
     else:
-        logging.error("%s Wrong formatted File, check your file!!!", myAod)
+        logging.error("%s Wrong formatted File, check your file!!!", argProvidedAod)
         sys.exit()     
         
 #####################
@@ -1618,7 +1620,7 @@ if config["bc-selection-task"]["processRun3"] == "true":
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableMaker.json"
     
-with open(updatedConfigFileName,'w') as outputFile:
+with open(updatedConfigFileName,"w") as outputFile:
   json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run  
@@ -1641,7 +1643,7 @@ tablesToProduce = {}
 for table in commonTables:
   tablesToProduce[table] = 1
 
-if runOverMC == True:
+if runOverMC:
   tablesToProduce["ReducedMCEvents"] = 1
   tablesToProduce["ReducedMCEventLabels"] = 1
   
@@ -1656,16 +1658,16 @@ for processFunc in specificDeps.keys():
       for table in barrelCommonTables:
         logging.info("%s", table)      
         tablesToProduce[table] = 1
-      if runOverMC == True:
+      if runOverMC:
         tablesToProduce["ReducedTracksBarrelLabels"] = 1
     if "processFull" in processFunc or "processMuon" in processFunc:
       logging.info("common muon tables==========")      
       for table in muonCommonTables:
         logging.info("%s", table)
         tablesToProduce[table] = 1
-      if runOverMC == True:
+      if runOverMC:
         tablesToProduce["ReducedMuonsLabels"] = 1  
-    if runOverMC == True:
+    if runOverMC:
       tablesToProduce["ReducedMCTracks"] = 1
     logging.info("specific tables==========")      
     for table in specificTables[processFunc]:
@@ -1696,12 +1698,12 @@ for table in tablesToProduce.keys():
   iTable += 1
   
 writerConfigFileName = "aodWriterTempConfig.json"
-with open(writerConfigFileName,'w') as writerConfigFile:
+with open(writerConfigFileName,"w") as writerConfigFile:
   json.dump(writerConfig, writerConfigFile, indent=2)
   
   
 readerConfigFileName = "aodReaderTempConfig.json"
-with open(readerConfigFileName,'w') as readerConfigFile:
+with open(readerConfigFileName,"w") as readerConfigFile:
   json.dump(readerConfig, readerConfigFile, indent=2)
   
 logging.info("aodWriterTempConfig==========")  
@@ -1726,7 +1728,7 @@ if extrargs.add_fdd_conv:
     commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-fdd-converter added your workflow")
 
-if extrargs.add_track_prop:
+if extrargs.add_track_prop or len(covSearch) > 0:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-track-propagation added your workflow")
 

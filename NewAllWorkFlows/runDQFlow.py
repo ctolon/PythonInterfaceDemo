@@ -217,7 +217,7 @@ eventMuonSelections = ["0", "1", "2"]
 
 clist = []  # control list for type control
 allValuesCfg = []  # counter for provided args
-allCuts = []  # all analysis cuts
+allAnalysisCuts = []  # all analysis cuts
 
 # Get system variables in alienv. In alienv we don't have cuts and signal library!!! We need discuss this thing
 O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
@@ -238,45 +238,45 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
 }
 
-urlCutsLibrary = 'https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h'
-urlMCSignalsLibrary ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h'
-urlEventMixing ='https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h'
+URL_CUTS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/CutsLibrary.h"
+URL_MCSIGNALS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MCSignalLibrary.h"
+URL_MIXING_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/master/PWGDQ/Core/MixingLibrary.h"
 
  
 # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
 # This condition solves performance issues    
-if (os.path.isfile('tempCutsLibrary.h') == False) or (os.path.isfile('tempMCSignalsLibrary.h') == False) or (os.path.isfile('tempMixingLibrary.h')) == False:
+if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
     print("[INFO] Some Libs are Missing. They will download.")
     
     # Dummy SSL Adder
     context = ssl._create_unverified_context()  # prevent ssl problems
-    request = urllib.request.urlopen(urlCutsLibrary, context=context)
+    request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
     
     # HTTP Request
-    requestCutsLibrary = Request(urlCutsLibrary, headers=headers)
-    requestMCSignalsLibrary = Request(urlMCSignalsLibrary, headers=headers)
-    requestEventMixing  = Request(urlEventMixing , headers=headers)
+    requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers=headers)
+    requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers=headers)
+    requestMixingLibrary  = Request(URL_MIXING_LIBRARY , headers=headers)
     
     # Get Files With Http Requests
     htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
     htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
-    htmlEventMixing = urlopen(requestEventMixing, context=context).read()
+    htmlMixingLibrary = urlopen(requestMixingLibrary, context=context).read()
      
     # Save Disk to temp DQ libs  
-    with open('tempCutsLibrary.h', 'wb') as f:
+    with open("tempCutsLibrary.h", "wb") as f:
          f.write(htmlCutsLibrary)
-    with open('tempMCSignalsLibrary.h', 'wb') as f:
+    with open("tempMCSignalsLibrary.h", "wb") as f:
          f.write(htmlMCSignalsLibrary)
-    with open('tempMixingLibrary.h', 'wb') as f:
-        f.write(htmlEventMixing)
+    with open("tempMixingLibrary.h", "wb") as f:
+        f.write(htmlMixingLibrary)
 
 # Read Cuts, Signals, Mixing vars from downloaded files    
-with open('tempCutsLibrary.h') as f:
+with open("tempCutsLibrary.h") as f:
     for line in f:
-        stringIfSearch = [x for x in f if 'if' in x] 
+        stringIfSearch = [x for x in f if "if" in x] 
         for i in stringIfSearch:
             getAnalysisCuts = re.findall('"([^"]*)"', i)
-            allCuts = allCuts + getAnalysisCuts
+            allAnalysisCuts = allAnalysisCuts + getAnalysisCuts
 
 
 ###################
@@ -285,93 +285,93 @@ with open('tempCutsLibrary.h') as f:
     
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    description='Arguments to pass')
-groupCoreSelections = parser.add_argument_group(title='Core configurations that must be configured')
-groupCoreSelections.add_argument('cfgFileName', metavar='Config.json', default='config.json', help='config JSON file name')
-parser.register('action', 'none', NoAction)
-parser.register('action', 'store_choice', ChoicesAction)
-groupTaskAdders = parser.add_argument_group(title='Additional Task Adding Options')
-groupTaskAdders.add_argument('--add_mc_conv', help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
-groupTaskAdders.add_argument('--add_fdd_conv', help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
-groupTaskAdders.add_argument('--add_track_prop', help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
+    description="Arguments to pass")
+groupCoreSelections = parser.add_argument_group(title="Core configurations that must be configured")
+groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
+parser.register("action", "none", NoAction)
+parser.register("action", "store_choice", ChoicesAction)
+groupTaskAdders = parser.add_argument_group(title="Additional Task Adding Options")
+groupTaskAdders.add_argument("--add_mc_conv", help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
+groupTaskAdders.add_argument("--add_fdd_conv", help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
+groupTaskAdders.add_argument("--add_track_prop", help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
 
 ##################
 # Interface Part #
 ##################
 
 # aod
-groupDPLReader = parser.add_argument_group(title='Data processor options: internal-dpl-aod-reader')
-groupDPLReader .add_argument('--aod', help="Add your AOD File with path", action="store", type=str)
+groupDPLReader = parser.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+groupDPLReader .add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
 
-groupAutomations = parser.add_argument_group(title='Automation Parameters')
-groupAutomations.add_argument('--autoDummy', help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default='true', type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupAutomations.add_argument('--onlySelect', help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations = parser.add_argument_group(title="Automation Parameters")
+groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 # event-selection-task
-groupEventSelection = parser.add_argument_group(title='Data processor options: event-selection-task')
-groupEventSelection.add_argument('--syst', help="Collision System Selection ex. pp", action="store", type=str, choices=collisionSystemSelections).completer = ChoicesCompleter(collisionSystemSelections)
-groupEventSelection.add_argument('--muonSelection', help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
-groupEventSelection.add_argument('--customDeltaBC', help="custom BC delta for FIT-collision matching", action="store", type=str)
+groupEventSelection = parser.add_argument_group(title="Data processor options: event-selection-task")
+groupEventSelection.add_argument("--syst", help="Collision System Selection ex. pp", action="store", type=str, choices=collisionSystemSelections).completer = ChoicesCompleter(collisionSystemSelections)
+groupEventSelection.add_argument("--muonSelection", help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=eventMuonSelections).completer = ChoicesCompleter(eventMuonSelections)
+groupEventSelection.add_argument("--customDeltaBC", help="custom BC delta for FIT-collision matching", action="store", type=str)
 
 # multiplicity-table
-groupMultiplicityTable = parser.add_argument_group(title='Data processor options: multiplicity-table')
-groupMultiplicityTable.add_argument('--isVertexZeq', help="if true: do vertex Z eq mult table", action="store", type=str, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+groupMultiplicityTable = parser.add_argument_group(title="Data processor options: multiplicity-table")
+groupMultiplicityTable.add_argument("--isVertexZeq", help="if true: do vertex Z eq mult table", action="store", type=str, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # tof-pid, tof-pid-full
-groupTofPid = parser.add_argument_group(title='Data processor options: tof-pid, tof-pid-full')
-groupTofPid.add_argument('--isWSlice', help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupTofPid.add_argument('--enableTimeDependentResponse', help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid = parser.add_argument_group(title="Data processor options: tof-pid, tof-pid-full")
+groupTofPid.add_argument("--isWSlice", help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupTofPid.add_argument("--enableTimeDependentResponse", help="Flag to use the collision timestamp to fetch the PID Response", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
 
 #tof-pid-beta
-groupTofPidBeta = parser.add_argument_group(title='Data processor options: tof-pid-beta')
-groupTofPidBeta.add_argument('--tof-expreso', help="Expected resolution for the computation of the expected beta", action="store", type=str)
+groupTofPidBeta = parser.add_argument_group(title="Data processor options: tof-pid-beta")
+groupTofPidBeta.add_argument("--tof-expreso", help="Expected resolution for the computation of the expected beta", action="store", type=str)
 
 # tof-event-time
-groupTofEventTime = parser.add_argument_group(title='Data processor options: tof-event-time')
-groupTofEventTime.add_argument('--FT0', help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
+groupTofEventTime = parser.add_argument_group(title="Data processor options: tof-event-time")
+groupTofEventTime.add_argument("--FT0", help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
 # DQ Flow Task Selections
-groupAnalysisQvector = parser.add_argument_group(title='Data processor options: analysis-qvector')
-groupAnalysisQvector.add_argument('--cfgBarrelTrackCuts', help="Space separated list of barrel track cuts", choices=allCuts,nargs='*', action="store", type=str, metavar='CFGBARRELTRACKCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgMuonCuts', help="Space separated list of muon cuts", action="store", choices=allCuts, nargs='*', type=str, metavar='CFGMUONCUTS').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgEventCuts', help="Space separated list of event cuts", choices=allCuts, nargs='*', action="store", type=str, metavar='CFGEVENTCUT').completer = ChoicesCompleterList(allCuts)
-groupAnalysisQvector.add_argument('--cfgWithQA', help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-groupAnalysisQvector.add_argument('--cfgCutPtMin', help="Minimal pT for tracks", action="store", type=str, metavar='CFGCUTPTMIN')
-groupAnalysisQvector.add_argument('--cfgCutPtMax', help="Maximal pT for tracks", action="store", type=str, metavar='CFGCUTPTMAX')
-groupAnalysisQvector.add_argument('--cfgCutEta', help="Eta range for tracks", action="store", type=str, metavar='CFGCUTETA')
-groupAnalysisQvector.add_argument('--cfgEtaLimit', help="Eta gap separation, only if using subEvents", action="store", type=str, metavar='CFGETALIMIT')
-groupAnalysisQvector.add_argument('--cfgNPow', help="Power of weights for Q vector", action="store", type=str, metavar='CFGNPOW')
+groupAnalysisQvector = parser.add_argument_group(title="Data processor options: analysis-qvector")
+groupAnalysisQvector.add_argument("--cfgBarrelTrackCuts", help="Space separated list of barrel track cuts", choices=allAnalysisCuts,nargs="*", action="store", type=str, metavar="CFGBARRELTRACKCUTS").completer = ChoicesCompleterList(allAnalysisCuts)
+groupAnalysisQvector.add_argument("--cfgMuonCuts", help="Space separated list of muon cuts", action="store", choices=allAnalysisCuts, nargs="*", type=str, metavar="CFGMUONCUTS").completer = ChoicesCompleterList(allAnalysisCuts)
+groupAnalysisQvector.add_argument("--cfgEventCuts", help="Space separated list of event cuts", choices=allAnalysisCuts, nargs="*", action="store", type=str, metavar="CFGEVENTCUT").completer = ChoicesCompleterList(allAnalysisCuts)
+groupAnalysisQvector.add_argument("--cfgWithQA", help="If true, fill QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+groupAnalysisQvector.add_argument("--cfgCutPtMin", help="Minimal pT for tracks", action="store", type=str, metavar="CFGCUTPTMIN")
+groupAnalysisQvector.add_argument("--cfgCutPtMax", help="Maximal pT for tracks", action="store", type=str, metavar="CFGCUTPTMAX")
+groupAnalysisQvector.add_argument("--cfgCutEta", help="Eta range for tracks", action="store", type=str, metavar="CFGCUTETA")
+groupAnalysisQvector.add_argument("--cfgEtaLimit", help="Eta gap separation, only if using subEvents", action="store", type=str, metavar="CFGETALIMIT")
+groupAnalysisQvector.add_argument("--cfgNPow", help="Power of weights for Q vector", action="store", type=str, metavar="CFGNPOW")
 
-groupAnalysisQvector.add_argument('--cfgEfficiency', help="CCDB path to efficiency object", action="store", type=str)
-groupAnalysisQvector.add_argument('--cfgAcceptance', help="CCDB path to acceptance object", action="store", type=str)
+groupAnalysisQvector.add_argument("--cfgEfficiency", help="CCDB path to efficiency object", action="store", type=str)
+groupAnalysisQvector.add_argument("--cfgAcceptance", help="CCDB path to acceptance object", action="store", type=str)
 
 
 # centrality-table
-groupCentralityTable = parser.add_argument_group(title='Data processor options: centrality-table')
-groupCentralityTable.add_argument('--est', help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar='EST', choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
-groupEst = parser.add_argument_group(title='Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)')
+groupCentralityTable = parser.add_argument_group(title="Data processor options: centrality-table")
+groupCentralityTable.add_argument("--est", help="Produces centrality percentiles parameters", action="store", nargs="*", type=str, metavar="EST", choices=centralityTableSelectionsList).completer = ChoicesCompleterList(centralityTableSelectionsList)
+groupEst = parser.add_argument_group(title="Choice List centrality-table Parameters (when a value added to parameter, value is converted from -1 to 1)")
 
 for key,value in centralityTableSelections.items():
-    groupEst.add_argument(key, help=value, action='none')
+    groupEst.add_argument(key, help=value, action="none")
 
 # pid
-groupPID = parser.add_argument_group(title='Data processor options: tof-pid, tpc-pid-full, tof-pid-full')
-groupPID.add_argument('--pid', help="Produce PID information for the <particle> mass hypothesis", action="store", nargs='*', type=str.lower, metavar='PID', choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
+groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
-    groupPID.add_argument(key, help=value, action = 'none')
+    groupPID.add_argument(key, help=value, action = "none")
 
 # helper lister commands
-groupAdditionalHelperCommands = parser.add_argument_group(title='Additional Helper Command Options')
-groupAdditionalHelperCommands.add_argument('--cutLister', help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
+groupAdditionalHelperCommands = parser.add_argument_group(title="Additional Helper Command Options")
+groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
 
 # debug options
-groupAdditionalHelperCommands.add_argument('--debug', help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
-groupAdditionalHelperCommands.add_argument('--logFile', help="Enable logger for both file and CLI", action="store_true")
-groupDebug= parser.add_argument_group(title='Choice List for debug Parameters')
+groupAdditionalHelperCommands.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
+groupAdditionalHelperCommands.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
+groupDebug= parser.add_argument_group(title="Choice List for debug Parameters")
 
 for key,value in debugLevelSelections.items():
-    groupDebug.add_argument(key, help=value, action='none')
+    groupDebug.add_argument(key, help=value, action="none")
 
 argcomplete.autocomplete(parser, always_complete_options=False)
 extrargs = parser.parse_args()
@@ -389,15 +389,15 @@ if len(forgetParams) > 0:
     sys.exit()
     
 # Debug Settings
-if extrargs.debug and extrargs.logFile == False:
+if extrargs.debug and (not extrargs.logFile):
     DEBUG_SELECTION = extrargs.debug
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % DEBUG_SELECTION)
-    logging.basicConfig(format='[%(levelname)s] %(message)s', level=DEBUG_SELECTION)
+        raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
+    logging.basicConfig(format="[%(levelname)s] %(message)s", level=DEBUG_SELECTION)
     
 if extrargs.logFile and extrargs.debug:
-    log = logging.getLogger('')
+    log = logging.getLogger("")
     level = logging.getLevelName(extrargs.debug)
     log.setLevel(level)
     format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
@@ -406,11 +406,11 @@ if extrargs.logFile and extrargs.debug:
     ch.setFormatter(format)
     log.addHandler(ch)
     
-    loggerFile = "DQFlow.log"
-    if os.path.isfile(loggerFile) == True:
+    loggerFile = "dqFlow.log"
+    if os.path.isfile(loggerFile):
         os.remove(loggerFile)
     
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode='w')
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576*5), backupCount=7, mode="w")
     fh.setFormatter(format)
     log.addHandler(fh)
 
@@ -421,8 +421,8 @@ if extrargs.cutLister:
     counter = 0
     print("Analysis Cut Options :")
     print("====================")
-    temp = ''  
-    for i in allCuts:
+    temp = ""  
+    for i in allAnalysisCuts:
         if len(temp) == 0:
             temp = temp + i
         else:
@@ -431,10 +431,10 @@ if extrargs.cutLister:
         if counter == 3:
             temp = stringToList(temp)
             threeSelectedList.append(temp)
-            temp = ''
+            temp = ""
             counter = 0
     for list_ in threeSelectedList:
-        print('{:<40s} {:<40s} {:<40s}'.format(*list_)) 
+        print("{:<40s} {:<40s} {:<40s}".format(*list_)) 
     sys.exit()
 
 ######################
@@ -490,8 +490,8 @@ try:
         sys.exit()
         
 except FileNotFoundError:
-    isConfigJson = sys.argv[1].endswith('.json')
-    if isConfigJson == False:
+    isConfigJson = sys.argv[1].endswith(".json")
+    if not isConfigJson:
             logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
             logging.info(" ./runDQFlow.py <yourConfig.json> --param value ...")
             sys.exit()
@@ -525,57 +525,57 @@ for key, value in config.items():
         for value, value2 in value.items():
                        
             # aod
-            if value =='aod-file' and extrargs.aod:
+            if value =="aod-file" and extrargs.aod:
                 config[key][value] = extrargs.aod
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.aod)
                                                                                                      
             # analysis-qvector selections      
-            if value == 'cfgBarrelTrackCuts' and extrargs.cfgBarrelTrackCuts:
+            if value == "cfgBarrelTrackCuts" and extrargs.cfgBarrelTrackCuts:
                 if type(extrargs.cfgBarrelTrackCuts) == type(clist):
                     extrargs.cfgBarrelTrackCuts = listToString(extrargs.cfgBarrelTrackCuts) 
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgBarrelTrackCuts = actualConfig + ',' + extrargs.cfgBarrelTrackCuts 
+                    extrargs.cfgBarrelTrackCuts = actualConfig + "," + extrargs.cfgBarrelTrackCuts 
                 config[key][value] = extrargs.cfgBarrelTrackCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgBarrelTrackCuts)
-            if value == 'cfgMuonCuts' and extrargs.cfgMuonCuts:
+            if value == "cfgMuonCuts" and extrargs.cfgMuonCuts:
                 if type(extrargs.cfgMuonCuts) == type(clist):
                     extrargs.cfgMuonCuts = listToString(extrargs.cfgMuonCuts)  
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgMuonCuts = actualConfig + ',' + extrargs.cfgMuonCuts               
+                    extrargs.cfgMuonCuts = actualConfig + "," + extrargs.cfgMuonCuts               
                 config[key][value] = extrargs.cfgMuonCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgMuonCuts) 
-            if value == 'cfgEventCuts' and extrargs.cfgEventCuts:
+            if value == "cfgEventCuts" and extrargs.cfgEventCuts:
                 if type(extrargs.cfgEventCuts) == type(clist):
                     extrargs.cfgEventCuts = listToString(extrargs.cfgEventCuts)
-                if extrargs.onlySelect == 'false':
+                if extrargs.onlySelect == "false":
                     actualConfig = config[key][value]
-                    extrargs.cfgEventCuts = actualConfig + ',' + extrargs.cfgEventCuts 
+                    extrargs.cfgEventCuts = actualConfig + "," + extrargs.cfgEventCuts 
                 config[key][value] = extrargs.cfgEventCuts
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEventCuts) 
-            if value == 'cfgWithQA' and extrargs.cfgWithQA:
+            if value == "cfgWithQA" and extrargs.cfgWithQA:
                 config[key][value] = extrargs.cfgWithQA  
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)
-            if value =='cfgCutPtMin' and extrargs.cfgCutPtMin:
+            if value =="cfgCutPtMin" and extrargs.cfgCutPtMin:
                 config[key][value] = extrargs.cfgCutPtMin
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMin)
-            if value =='cfgCutPtMax' and extrargs.cfgCutPtMax:
+            if value =="cfgCutPtMax" and extrargs.cfgCutPtMax:
                 config[key][value] = extrargs.cfgCutPtMax
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutPtMax)
-            if value =='cfgCutEta' and extrargs.cfgCutEta:
+            if value =="cfgCutEta" and extrargs.cfgCutEta:
                 config[key][value] = extrargs.cfgCutEta
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgCutEta)
-            if value =='cfgEtaLimit' and extrargs.cfgEtaLimit:
+            if value =="cfgEtaLimit" and extrargs.cfgEtaLimit:
                 config[key][value] = extrargs.cfgEtaLimit
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEtaLimit)
-            if value =='cfgNPow' and extrargs.cfgNPow:
+            if value =="cfgNPow" and extrargs.cfgNPow:
                 config[key][value] = extrargs.cfgNPow
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgNPow)
-            if value =='cfgEfficiency' and extrargs.cfgEfficiency:
+            if value =="cfgEfficiency" and extrargs.cfgEfficiency:
                 config[key][value] = extrargs.cfgEfficiency
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgEfficiency)
-            if value =='cfgAcceptance' and extrargs.cfgAcceptance:
+            if value =="cfgAcceptance" and extrargs.cfgAcceptance:
                 config[key][value] = extrargs.cfgAcceptance
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)
                                                       
@@ -602,13 +602,13 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,value2)    
             
             # event-selection-task
-            if value == 'syst' and extrargs.syst:
+            if value == "syst" and extrargs.syst:
                 config[key][value] = extrargs.syst
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.syst)  
-            if value =='muonSelection' and extrargs.muonSelection:
+            if value =="muonSelection" and extrargs.muonSelection:
                 config[key][value] = extrargs.muonSelection
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.muonSelection)  
-            if value == 'customDeltaBC' and extrargs.customDeltaBC:
+            if value == "customDeltaBC" and extrargs.customDeltaBC:
                 config[key][value] = extrargs.customDeltaBC
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC)
                 
@@ -643,12 +643,12 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.enableTimeDependentResponse)
                      
             # tof-pid-beta
-            if value == 'tof-expreso' and extrargs.tof_expreso:
+            if value == "tof-expreso" and extrargs.tof_expreso:
                 config[key][value] = extrargs.tof_expreso
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.tof_expreso)
                 
             # tof-event-time
-            if  (value in ft0Parameters) and extrargs.FT0 and key == 'tof-event-time':
+            if  (value in ft0Parameters) and extrargs.FT0 and key == "tof-event-time":
                 if value  == extrargs.FT0:
                     value2 = "true"
                     config[key][value] = value2
@@ -660,28 +660,28 @@ for key, value in config.items():
                                                       
 # AOD File Checker
 if extrargs.aod != None:
-    myAod =  extrargs.aod
-    textAodList = myAod.startswith("@")
-    aodRootFile = myAod.endswith(".root")
-    textControl = myAod.endswith("txt") or myAod.endswith("text") 
-    if textAodList == True and textControl == True:
-        myAod = myAod.replace("@","")
-        logging.info("You provided AO2D list as text file : %s",myAod)
-        if os.path.isfile(myAod) == False:
-            logging.error("%s File not found in path!!!", myAod)
+    argProvidedAod =  extrargs.aod
+    textAodList = argProvidedAod.startswith("@")
+    endsWithRoot = argProvidedAod.endswith(".root")
+    endsWithTxt = argProvidedAod.endswith("txt") or argProvidedAod.endswith("text") 
+    if textAodList and endsWithTxt:
+        argProvidedAod = argProvidedAod.replace("@","")
+        logging.info("You provided AO2D list as text file : %s",argProvidedAod)
+        if not os.path.isfile(argProvidedAod):
+            logging.error("%s File not found in path!!!", argProvidedAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)
+            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
          
-    elif aodRootFile == True:
-        logging.info("You provided single AO2D as root file  : %s",myAod)
-        if os.path.isfile(myAod) == False:
-            logging.error("%s File not found in path!!!", myAod)
+    elif endsWithRoot:
+        logging.info("You provided single AO2D as root file  : %s",argProvidedAod)
+        if not os.path.isfile(argProvidedAod):
+            logging.error("%s File not found in path!!!", argProvidedAod)
             sys.exit()
         else:
-            logging.info("%s has valid File Format and Path, File Found", myAod)                  
+            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)                  
     else:
-        logging.error("%s Wrong formatted File, check your file!!!", myAod)
+        logging.error("%s Wrong formatted File, check your file!!!", argProvidedAod)
         sys.exit()     
         
 #####################
@@ -705,7 +705,7 @@ if config["bc-selection-task"]["processRun3"] == "true":
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigDQFlow.json"
-with open(updatedConfigFileName,'w') as outputFile:
+with open(updatedConfigFileName,"w") as outputFile:
   json.dump(config, outputFile ,indent=2)
 
 # Check which dependencies need to be run
