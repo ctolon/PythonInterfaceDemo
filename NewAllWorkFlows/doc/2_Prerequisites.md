@@ -6,17 +6,17 @@
 
 Clone Repository in your workspace:
 
-\code{.sh}
+```ruby
 git clone https://github.com/ctolon/PythonInterfaceDemo.git
-\endcode
+```
 
 Then go NewAllWorkFlows folder with `cd` commands
 
 Since the scripts are still in development, it is recommended to update daily regularly with the following command:
 
-\code{.sh}
+```ruby
 git pull --rebase
-\endcode
+```
 
 ## argcomplete - Bash tab completion for argparse
 
@@ -47,23 +47,37 @@ Global completion requires bash support for complete -D, which was introduced in
 
 Update Bash on CentOS/Redhat/Fedora Linux:
 
-\code{.sh}
+```ruby
 yum update bash
-\endcode
+```
 
 Update Bash in Ubuntu / Debian / Linux Mint:
 
-\code{.sh}
+```ruby
 apt-get install --only-upgrade bash
-\endcode
+```
 
 Also you need check your shell type with `echo $SHEL`. if your shell isn't bash you need change your shell with (if your shell type is bash you don't need to use these commands):
 
-\code{.sh} exec bash \endcode (It just changes the type of terminal you are working in, the system's main shell settings are preserved)
+```ruby
+exec bash
+```
+
+(It just changes the type of terminal you are working in, the system's main shell settings are preserved)
 
 or
 
-\code{.sh} sudo chsh -s /bin/bash <username> \endcode  or \code{.sh} sudo chsh -s /bin/bash \endcode  (Converts all system shell settings to bash)
+```ruby
+sudo chsh -s /bin/bash <username> 
+```
+
+or 
+
+```ruby
+ sudo chsh -s /bin/bash
+```
+
+(Converts all system shell settings to bash)
 
 IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
 
@@ -74,10 +88,10 @@ IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though y
 
 For Local İnstallation (If you have virtual env, disable it first)
 
-\code{.sh}
+```ruby
 pip install argcomplete
 activate-global-python-argcomplete
-\endcode
+```
 
 ### O2 Installation
 
@@ -85,28 +99,28 @@ For in O2
 
 Firstly, activate your Alienv e.g.
 
-\code{.sh}
+```ruby
 alienv enter O2Physics/latest-master-o2
-\endcode
+```
 
 Then install the package:
 
-\code{.sh}
+```ruby
 pip install argcomplete
-\endcode
+```
 
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
-\code{.sh}
+```ruby
 cd ~/NewAllWorkFlows
-\endcode
+```
 
 
 And then, source your argcomplete script for autocomplete:
 
-\code{.sh}
+```ruby
 source argcomplete.sh
-\endcode
+```
 
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
@@ -116,12 +130,26 @@ Global completion requires bash support for complete -D, which was introduced in
 
 ### Local Instalation (Not Need For O2)
 
-`brew install bash`
-
+```ruby
+brew install bash
+```
 For Local İnstallation (If you have virtual env, disable it first)
 
-`pip install argcomplete` or `pip3 install argcomplete` (depends on symbolic link of python. It is recommended to install with both options)
+```ruby
+pip install argcomplete 
+```
+
+or 
+
+```ruby
+`pip3 install argcomplete` 
+```
+
+(depends on symbolic link of python. It is recommended to install with both options)
+
+```ruby
 `activate-global-python-argcomplete`
+```
 
 ### O2 Installation
 
