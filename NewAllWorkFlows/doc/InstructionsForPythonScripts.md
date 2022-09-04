@@ -1,6 +1,9 @@
+# Instructions For Python Scripts
+
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
 <!--ts-->
+- [Instructions For Python Scripts](#instructions-for-python-scripts)
 - [Instructions for DownloadLibs.py](#instructions-for-downloadlibspy)
   - [Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github](#download-cutslibrary-mcsignallibrary-mixinglibrary-from-github)
   - [Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine](#get-cutslibrary-mcsignallibrary-mixinglibrary-from-local-machine)
@@ -16,8 +19,6 @@
 - [Instructions for runDQFlow.py](#instructions-for-rundqflowpy)
   - [Available configs in runDQFlow Interface](#available-configs-in-rundqflow-interface)
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](Tutorials.md)
 
 # Instructions for DownloadLibs.py
 
@@ -605,3 +606,5 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cutLister` | No Param | all  |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
+
+[← Go back to Instructions For Techincal Informations](TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](Tutorials.md)

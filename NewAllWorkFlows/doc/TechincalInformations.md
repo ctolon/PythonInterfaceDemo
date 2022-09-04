@@ -1,4 +1,4 @@
-
+# Technical Informations
 
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
@@ -18,11 +18,6 @@
   - [Some Notes Before The Instructions](#some-notes-before-the-instructions)
   - [Interface Modes: JSON Overrider and JSON Additional](#interface-modes-json-overrider-and-json-additional)
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](InstructionsForPythonScripts.md)
-
-
-# Technical Informations
 
 ## Helper Command Functionality
 
@@ -750,3 +745,5 @@ This is the same for all analysis cuts, MC Signals, barrel and muon sels in filt
 This is the main reason why Interface works in these two modes. If you already have a JSON configuration file prepared for a specific data for analysis, it makes sense to use JSON additional mode if you just want to add some values. Because you will want to preserve the old values.
 
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
+
+[← Go back to Instructions For Instructions for TAB Autocomplete](InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](InstructionsForPythonScripts.md)

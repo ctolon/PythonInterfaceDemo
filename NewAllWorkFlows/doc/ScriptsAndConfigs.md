@@ -1,12 +1,12 @@
+# Python Scripts And JSON Configs
 
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
 <!--ts-->
-   - [Main Scripts](#Main-Python-Scripts)
-   - [Config Files](#Config-Files)
+- [Python Scripts And JSON Configs](#python-scripts-and-json-configs)
+  - [Main Python Scripts](#main-python-scripts)
+  - [Config Files](#config-files)
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](Prerequisites.md)
 
 ## Main Python Scripts
 
@@ -69,3 +69,5 @@ Main File | Data Model | Description
 --- | --- | ---
 [`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | For Data
 [`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceDemo/blob/main/NewAllWorkFlows/Configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | For MC
+
+[↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](Prerequisites.md)

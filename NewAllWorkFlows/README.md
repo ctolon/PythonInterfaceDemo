@@ -2,6 +2,11 @@
 
 This folder contains python based user interface development for PWG-DQ Workflows based on nightly-20220823. You can follow the instructions and you can find tutorials in table of contents. (For prerequisites, Installation guide for argcomplete and Some Informations good to know)
 
+## Contact
+Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows)
+
+Cevat Batuhan Tolon (Author Of Interface)
+
 ## Table Of Contents
 - [Python Scripts And JSON Configs](doc/ScriptsAndConfigs.md)
   - [Main Python Scripts](doc/ScriptsAndConfigs.md#main-python-scripts)
@@ -70,6 +75,7 @@ This folder contains python based user interface development for PWG-DQ Workflow
   - [Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ](doc/Tutorials.md#special-part--dilepton-analysis-for-non-standart-existing-workflows-in-dq)
     - [MC : Dilepton Track Analysis (On Bc Simulation)](doc/Tutorials.md#mc--dilepton-track-analysis-on-bc-simulation)
     - [Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)](doc/Tutorials.md#data--dilepton-hadron-analysis-on-pbpb-data-lhc15o)
-- [TODO List For Python Workflows](doc/DesignNotes.md#todo-list-for-python-workflows)
-- [Feedbacks, Suggestions and User Acceptance Test List](doc/DesignNotes.md#feedbacks-suggestions-and-user-acceptance-test-list)
 - [Design Notes](doc/DesignNotes.md#design-notes)
+  - [TODO List For Python Workflows](doc/DesignNotes.md#todo-list-for-python-workflows)
+  - [Feedbacks, Suggestions and User Acceptance Test List](doc/DesignNotes.md#feedbacks-suggestions-and-user-acceptance-test-list)
+  - [Updates](doc/DesignNotes.md#design-notes)

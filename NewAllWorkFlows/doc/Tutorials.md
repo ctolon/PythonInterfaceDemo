@@ -1,3 +1,4 @@
+# Tutorial Part
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
 <!--ts-->
@@ -28,10 +29,6 @@
     - [Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)](#data--dilepton-hadron-analysis-on-pbpb-data-lhc15o)
 
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Design Notes →](DesignNotes.md)
-
-# Tutorial Part
 
 Firstly, clone repository in your workspace
 
@@ -383,3 +380,5 @@ Third Command To Run:
 ```ruby
 python3 runTableReader.py Configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
+
+[← Go back to Instructions For Python Scripts](InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Design Notes →](DesignNotes.md)

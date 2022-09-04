@@ -1,3 +1,4 @@
+# Prerequisites!!!
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
 <!--ts-->
@@ -12,12 +13,6 @@
     - [Local Instalation (Not Need For O2)](#local-instalation-not-need-for-o2-1)
     - [O2 Installation](#o2-installation-1)
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](InstructionsforTABAutocomplete.md)
-
-
-
-# Prerequisites!!!
 
 ## Cloning repository
 
@@ -164,3 +159,5 @@ And then, source your argcomplete script for autocomplete:
 `source argcomplete.sh`
 
 VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
+
+[← Go back to Python Scripts And JSON Configs ](ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](InstructionsforTABAutocomplete.md)

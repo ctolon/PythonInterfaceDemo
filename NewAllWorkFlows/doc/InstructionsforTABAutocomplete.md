@@ -1,12 +1,9 @@
+# Instructions for TAB Autocomplete
 <!--TOC generated with https://github.com/ekalinin/github-markdown-toc-->
 <!--./gh-md-toc --no-backup --hide-footer --indent 3  /path/to/README.md-->
 <!--ts-->
 - [Instructions for TAB Autocomplete](#instructions-for-tab-autocomplete)
 <!--te-->
-
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Techincal Informations →](TechincalInformations.md)
-
-# Instructions for TAB Autocomplete
 
 Before proceeding to this stage, you should make sure that you activate the O2 environment with alienv, then install the argcomplete package with `pip install argcomplete` and `pip3 install argcomplete` in O2, and then source the autocomplete bash script with `source argcomplete.sh`
 
@@ -153,3 +150,5 @@ list of metavar parameters:
 * `--MCSignalsLister` (this parameter only for tableMakerMC and dqEfficiency interface)
 * `--cutLister`
 * `--mixingLister` (this parameter only for tableReader interface)
+
+[← Go back to Prerequisites](Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Techincal Informations →](TechincalInformations.md)
