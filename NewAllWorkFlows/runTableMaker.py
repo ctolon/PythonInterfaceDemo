@@ -314,6 +314,15 @@ isFilterPPSelected = False
 isFilterPPTinySelected = False
 isQVectorSelected = False
 
+# Predefined Search Lists
+fullSearch = []
+barrelSearch = []
+muonSearch = []
+#bcsSearch = []      
+covSearch = []
+centSearch = []
+filterSearch = []   
+qVectorSearch = [] 
 
 ################################
 # Download DQ Libs From Github #
@@ -816,8 +825,10 @@ if extrargs.runMC and extrargs.runData:
 runOverMC = False
 if (extrargs.runMC):
     runOverMC = True
-
-logging.info("runOverMC : %s ",runOverMC)
+    logging.info("runOverMC : %s, Reduced Tables will be produced for MC",runOverMC)
+else:
+    logging.info("runOverMC : %s, Reduced Tables will be produced for Data",runOverMC)
+    
 
 # Optional Interface
 """
@@ -1002,9 +1013,13 @@ for key, value in config.items():
                         isQVectorSelected = False
                                                                         
                 elif extrargs.onlySelect == "true":
-                    value2 = "false"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)
+                    if value == "processOnlyBCs":
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)                     
+                    else:
+                        value2 = "false"
+                        config[key][value] = value2
+                        logging.debug(" - [%s] %s : %s",key,value,value2)
                                                      
             # filterPP Selections        
             if value == "cfgBarrelSels" and extrargs.cfgBarrelSels:
