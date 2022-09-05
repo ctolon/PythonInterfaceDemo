@@ -2,7 +2,7 @@
 
 \tableofcontents
 
-[![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterface.github.io/docs/html/)
+[![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://ctolon.github.io/docs/html/)
 
 This project includes python based user interface development for PWG-DQ Workflows based on nightly-20220823. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
