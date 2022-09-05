@@ -275,6 +275,7 @@ Arg | Opt | Task | nargs |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`eventMixing`<br>`eventMixingVn`<br> `sameEventPairing`<br> `dileptonHadron`  | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-event-mixing`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-hadron`  | * |
+`--mixing` | `Barrel`<br>`Muon`<br>`BarrelMuon`<br>`BarrelVn`<br>`MuonVn` | `analysis-same-event-pairing` | * |
 `--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>`VnJpsiToEE`<br>`VnJpsiToMuMu`<br>`ElectronMuon`<br> `All`  | `analysis-same-event-pairing` | * |
 `--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
 `--cfgQA` |`true` <br> `false`  | `analysis-event-selection`<br> `analysis-track-selection`<br> `analysis-muon-selection`  | 1 |
@@ -298,6 +299,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEvent.json` | str
 `--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
+`--mixing` | String | Skimmed process selections for Event Mixing manually | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
 `--isMixingEvent` | String | Event Mixing Activate or Disable Option | - | str.lower |
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str

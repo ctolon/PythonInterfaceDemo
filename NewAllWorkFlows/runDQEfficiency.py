@@ -176,10 +176,10 @@ debugLevelSelectionsList = []
 for k, v in debugLevelSelections.items():
     debugLevelSelectionsList.append(k)
 
-isAnalysisEventSelected = False
-isAnalysisTrackSelected = False
-isAnalysisMuonSelected = False
-isAnalysisSameEventPairingSelected = False
+isAnalysisEventSelected = True
+isAnalysisTrackSelected = True
+isAnalysisMuonSelected = True
+isAnalysisSameEventPairingSelected = True
 
 clist = []  # control list for type control
 allValuesCfg = []  # counter for provided args
@@ -349,7 +349,18 @@ for key,value in configuredCommands.items():
 if len(forgetParams) > 0: 
     logging.error("Your forget assign a value to for this parameters: ", forgetParams)
     sys.exit()
-
+    
+# Get Some cfg values provided from --param
+for keyCfg,valueCfg in configuredCommands.items():
+    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
+        if keyCfg == "analysis":
+            if type(valueCfg) == type("string"):
+                valueCfg = stringToList(valueCfg)
+            analysisCfg = valueCfg
+        if keyCfg == "process":
+            if type(valueCfg) == type("string"):
+                valueCfg = stringToList(valueCfg)
+            processCfg = stringToList(valueCfg)
 
 # Debug Settings
 if extrargs.debug and (not extrargs.logFile):
@@ -520,68 +531,59 @@ for key, value in config.items():
                 
             # analysis-skimmed-selections
             if value =="processSkimmed" and extrargs.analysis:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
                             
-                            if key == "analysis-event-selection":
-                                if "eventSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisEventSelected = True
-                                if "eventSelection" not in valueCfg:
-                                    logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI")
-                                    config[key][value] = "true" 
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                   
-                            if key == "analysis-track-selection":                  
-                                if "trackSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisTrackSelected = True
-                                if "trackSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                                        
-                            if key == "analysis-muon-selection":
-                                if "muonSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisMuonSelected = True
-                                if "muonSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)   
-                                                            
-                            if "sameEventPairing" in valueCfg:
-                                isAnalysisSameEventPairingSelected = True
-                            if "sameEventPairing" not in valueCfg:
-                                isAnalysisSameEventPairingSelected = False
+                if key == "analysis-event-selection":
+                    if "eventSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisEventSelected = True
+                    if "eventSelection" not in analysisCfg:
+                        logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI")
+                        config[key][value] = "true" 
+                        logging.debug(" - [%s] %s : true",key,value)
+                        
+                if key == "analysis-track-selection":                  
+                    if "trackSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisTrackSelected = True
+                    if "trackSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                                            
+                if key == "analysis-muon-selection":
+                    if "muonSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisMuonSelected = True
+                    if "muonSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)   
+                                                
+                if "sameEventPairing" in analysisCfg:
+                    isAnalysisSameEventPairingSelected = True
+                if "sameEventPairing" not in analysisCfg:
+                    isAnalysisSameEventPairingSelected = False
                                     
             if value =="processDimuonMuonSkimmed" and extrargs.analysis:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-dilepton-track":
-                                if "dileptonTrackDimuonMuonSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "dileptonTrackDimuonMuonSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false" 
-                                    logging.debug(" - [%s] %s : false",key,value)
+
+                if key == "analysis-dilepton-track":
+                    if "dileptonTrackDimuonMuonSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if "dileptonTrackDimuonMuonSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false" 
+                        logging.debug(" - [%s] %s : false",key,value)
                                     
             if value =="processDielectronKaonSkimmed" and extrargs.analysis:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Cleaning None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
                             
-                            if key == "analysis-dilepton-track":
-                                if "dileptonTrackDielectronKaonSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "dileptonTrackDielectronKaonSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false" 
-                                    logging.debug(" - [%s] %s : false",key,value)
+                if key == "analysis-dilepton-track":
+                    if "dileptonTrackDielectronKaonSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if "dileptonTrackDielectronKaonSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false" 
+                        logging.debug(" - [%s] %s : false",key,value)
                                                                            
             # QA selections  
             if value =="cfgQA" and extrargs.cfgQA:
@@ -636,46 +638,43 @@ for key, value in config.items():
                 
             # analysis-same-event-pairing
             if key == "analysis-same-event-pairing" and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if keyCfg == "process": # Select process keys
-                        if(valueCfg != None): # Skipped None types, because can"t iterate in None type
 
-                            if not isAnalysisSameEventPairingSelected:
-                                logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                isAnalysisSameEventPairingSelected = True
-                    
-                            if "JpsiToEE" in valueCfg and value == "processJpsiToEESkimmed":
-                                if isAnalysisTrackSelected:
-                                    config[key]["processJpsiToEESkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisTrackSelected:
-                                    logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToEE" not in valueCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == "true":
-                                    config[key]["processJpsiToEESkimmed"] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                    
-                            if "JpsiToMuMu" in valueCfg and value == "processJpsiToMuMuSkimmed":
-                                if isAnalysisMuonSelected:
-                                    config[key]["processJpsiToMuMuSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisMuonSelected:
-                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToMuMu" not in valueCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processJpsiToMuMuSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
-   
-                            if "JpsiToMuMuVertexing" in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
-                                if isAnalysisMuonSelected:
-                                    config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisMuonSelected:
-                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToMuMuVertexing" not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
+                if not isAnalysisSameEventPairingSelected:
+                    logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
+                    isAnalysisSameEventPairingSelected = True
+        
+                if "JpsiToEE" in processCfg and value == "processJpsiToEESkimmed":
+                    if isAnalysisTrackSelected:
+                        config[key]["processJpsiToEESkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisTrackSelected:
+                        logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToEE" not in processCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == "true":
+                        config[key]["processJpsiToEESkimmed"] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                        
+                if "JpsiToMuMu" in processCfg and value == "processJpsiToMuMuSkimmed":
+                    if isAnalysisMuonSelected:
+                        config[key]["processJpsiToMuMuSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisMuonSelected:
+                        logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToMuMu" not in processCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processJpsiToMuMuSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
+
+                if "JpsiToMuMuVertexing" in processCfg and value == "processJpsiToMuMuVertexingSkimmed":
+                    if isAnalysisMuonSelected:
+                        config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisMuonSelected:
+                        logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToMuMuVertexing" not in processCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
                                 
             if key == "analysis-same-event-pairing" and extrargs.process == None and isAnalysisSameEventPairingSelected == False and extrargs.onlySelect == "true":
                 config[key]["processJpsiToEESkimmed"] = "false"

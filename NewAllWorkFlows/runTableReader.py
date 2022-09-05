@@ -169,6 +169,17 @@ for k, v in sameEventPairingProcessSelections.items():
 
 booleanSelections = ["true", "false"]
 
+mixingSelections = {
+    "Barrel": "Run barrel-barrel mixing on skimmed tracks",
+    "Muon": "Run muon-muon mixing on skimmed muons",
+    "BarrelMuon": "Run barrel-muon mixing on skimmed tracks/muons",
+    "BarrelVn": "Run barrel-barrel vn mixing on skimmed tracks",
+    "MuonVn": "Run muon-muon vn mixing on skimmed tracks"
+}
+mixingSelectionsList = []
+for k, v in mixingSelections.items():
+    mixingSelectionsList.append(k)
+
 debugLevelSelections = {
     "NOTSET": "Set Debug Level to NOTSET",
     "DEBUG": "Set Debug Level to DEBUG",
@@ -186,11 +197,11 @@ clist = []  # control list for type control
 allAnalysisCuts = []
 allMixing = []
 
-isAnalysisEventSelected = False
-isAnalysisTrackSelected = False
-isAnalysisMuonSelected = False
-isAnalysisSameEventPairingSelected = False
-isAnalysisDileptonHadronSelected = False
+isAnalysisEventSelected = True
+isAnalysisTrackSelected = True
+isAnalysisMuonSelected = True
+isAnalysisSameEventPairingSelected = True
+isAnalysisDileptonHadronSelected = True
 
 threeSelectedList = []
 
@@ -298,6 +309,10 @@ groupProcess = parser.add_argument_group(title="Choice List for analysis-same-ev
 
 for key,value in sameEventPairingProcessSelections.items():
     groupProcess.add_argument(key, help=value, action="none")
+    
+# analysis-event-mixing
+groupAnalysisEventMixing = parser.add_argument_group(title="Data processor options: analysis-event-mixing")
+groupAnalysisEventMixing.add_argument("--mixing", help="Skimmed process selections for Event Mixing manually", nargs='*', action="store", type=str, choices=mixingSelectionsList).completer = ChoicesCompleterList(mixingSelectionsList)
 
 # cfg for QA
 groupQASelections = parser.add_argument_group(title="Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing")
@@ -348,6 +363,22 @@ if len(forgetParams) > 0:
     logging.error("Your forget assign a value to for this parameters: %s", forgetParams)
     sys.exit()
     
+# Get Some cfg values provided from --param
+for keyCfg,valueCfg in configuredCommands.items():
+    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
+        if keyCfg == "analysis":
+            if type(valueCfg) == type("string"):
+                valueCfg = stringToList(valueCfg)
+            analysisCfg = valueCfg
+        if keyCfg == "mixing":
+            if type(valueCfg) == type("string"):
+                valueCfg = stringToList(valueCfg)
+            mixingCfg = valueCfg
+        if keyCfg == "process":
+            if type(valueCfg) == type("string"):
+                valueCfg = stringToList(valueCfg)
+            processCfg = stringToList(valueCfg)
+
 # Debug Settings
 if extrargs.debug and (not extrargs.logFile):
     DEBUG_SELECTION = extrargs.debug
@@ -518,131 +549,211 @@ for key, value in config.items():
                 
             # analysis-event-selection, analysis-track-selection, analysis-muon-selection, analysis-same-event-pairing
             if value =="processSkimmed" and extrargs.analysis:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-selection":
-                                if "eventSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisEventSelected = True
-                                if "eventSelection" not in valueCfg:
-                                    logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI")
-                                    config[key][value] = "true" 
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                   
-                            if key == "analysis-track-selection":                  
-                                if "trackSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisTrackSelected = True
-                                if "trackSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                                        
-                            if key == "analysis-muon-selection":
-                                if "muonSelection" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                    isAnalysisMuonSelected = True
-                                if "muonSelection" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)                                                                               
-                            if key == "analysis-dilepton-hadron":
-                                if "dileptonHadron" in valueCfg:
-                                    config[key][value] = "true"
-                                    isAnalysisDileptonHadronSelected = True
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "dileptonHadron" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                                                       
-                            if "sameEventPairing" in valueCfg:
-                                isAnalysisSameEventPairingSelected = True
-                            if "sameEventPairing" not in valueCfg:
-                                isAnalysisSameEventPairingSelected = False
+          
+                if key == "analysis-event-selection":
+                    if "eventSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisEventSelected = True
+                    if "eventSelection" not in analysisCfg:
+                        logging.warning("YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI")
+                        config[key][value] = "true" 
+                        logging.debug(" - [%s] %s : true",key,value)
+                        
+                if key == "analysis-track-selection":                  
+                    if "trackSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisTrackSelected = True
+                    if "trackSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                                            
+                if key == "analysis-muon-selection":
+                    if "muonSelection" in analysisCfg:
+                        config[key][value] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                        isAnalysisMuonSelected = True
+                    if "muonSelection" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)                                                                               
+                if key == "analysis-dilepton-hadron":
+                    if "dileptonHadron" in analysisCfg:
+                        config[key][value] = "true"
+                        isAnalysisDileptonHadronSelected = True
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if "dileptonHadron" not in analysisCfg and extrargs.onlySelect == "true":
+                        config[key][value] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                                                            
+                if "sameEventPairing" in analysisCfg:
+                    isAnalysisSameEventPairingSelected = True
+                if "sameEventPairing" not in analysisCfg:
+                    isAnalysisSameEventPairingSelected = False
                                     
-            # Analysis-event-mixing
-            if value == "processBarrelSkimmed" and extrargs.analysis:                        
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-mixing":                             
-                                if "trackSelection" in valueCfg and "eventMixing" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "eventMixing" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                if "eventMixing" in valueCfg and ("trackSelection" not in valueCfg and "muonSelection" not in valueCfg):
-                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
-                                    sys.exit()
-                                                                        
-            if value == "processMuonSkimmed" and extrargs.analysis:                        
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-mixing":                                       
-                                if "muonSelection" in valueCfg and "eventMixing" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "eventMixing" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                if "eventMixing" in valueCfg and ("trackSelection" not in valueCfg and "muonSelection" not in valueCfg):
-                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
-                                    sys.exit()
-                                                                        
-            if value == "processBarrelMuonSkimmed" and extrargs.analysis:                        
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-mixing":                                                             
-                                if "trackSelection" in valueCfg and "muonSelection" in valueCfg and "eventMixing" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "eventMixing" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                if "eventMixing" in valueCfg and ("trackSelection" not in valueCfg and "muonSelection" not in valueCfg):
-                                    logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
-                                    sys.exit()
-                                    
-            if value == "processBarrelVnSkimmed" and extrargs.analysis:                        
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-mixing":                             
-                                if "trackSelection" in valueCfg and "eventMixingVn" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "eventMixingVn" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                if "eventMixingVn" in valueCfg and ("trackSelection" not in valueCfg and "muonSelection" not in valueCfg):
-                                    logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
-                                    sys.exit()
-                                                                        
-            if value == "processMuonVnSkimmed" and extrargs.analysis:                        
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if(valueCfg != None): # Skipped None types, because can"t iterate in None type
-                        if keyCfg == "analysis": #  Only Select key for analysis
-                            
-                            if key == "analysis-event-mixing":                                        
-                                if "muonSelection" in valueCfg and "eventMixingVn" in valueCfg:
-                                    config[key][value] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if "eventMixingVn" not in valueCfg and extrargs.onlySelect == "true":
-                                    config[key][value] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                if "eventMixingVn" in valueCfg and ("trackSelection" not in valueCfg and "muonSelection" not in valueCfg):
-                                    logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
-                                    sys.exit()
+            # Analysis-event-mixing with automation
+            if extrargs.mixing == None:
+                if value == "processBarrelSkimmed" and extrargs.analysis:                        
+          
+                    if key == "analysis-event-mixing":                             
+                        if "trackSelection" in analysisCfg and "eventMixing" in analysisCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "eventMixing" not in analysisCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processMuonSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                                       
+                        if "muonSelection" in analysisCfg and "eventMixing" in analysisCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "eventMixing" not in analysisCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processBarrelMuonSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                                                             
+                        if "trackSelection" in analysisCfg and "muonSelection" in analysisCfg and "eventMixing" in analysisCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "eventMixing" not in analysisCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                        
+                if value == "processBarrelVnSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                             
+                        if "trackSelection" in analysisCfg and "eventMixingVn" in analysisCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "eventMixingVn" not in analysisCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixingVn" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processMuonVnSkimmed" and extrargs.analysis:                        
+       
+                    if key == "analysis-event-mixing":                                        
+                        if "muonSelection" in analysisCfg and "eventMixingVn" in analysisCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "eventMixingVn" not in analysisCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixingVn" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                        
+            # Analysis-event-mixing selection manually
+            if extrargs.mixing != None:
+                if value == "processBarrelSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                             
+                        if "trackSelection" in analysisCfg and "eventMixing" in analysisCfg and "Barrel" in mixingCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "trackSelection" in analysisCfg and "Barrel" not in mixingCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" not in analysisCfg and "Barrel" in mixingCfg:
+                            logging.error("When configuring analysis-event-mixing for Barrel, you must configure eventMixing within the --analysis parameter!")
+                            sys.exit()
+                        if "Barrel" in mixingCfg and "trackSelection" not in analysisCfg:
+                            logging.error("When configuring analysis-event-mixing for Barrel, you must configure trackSelection within the --analysis parameter!")
+                            sys.exit()
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processMuonSkimmed" and extrargs.analysis:                        
+          
+                    if key == "analysis-event-mixing":                                       
+                        if "muonSelection" in analysisCfg and "eventMixing" in analysisCfg and "Muon" in mixingCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "muonSelection" in analysisCfg and "Muon" not in mixingCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" not in analysisCfg and "Muon" in mixingCfg:
+                            logging.error("When configuring analysis-event-mixing for Muon, you must configure eventMixing within the --analysis parameter!")
+                            sys.exit()
+                        if "Muon" in mixingCfg and "muonSelection" not in analysisCfg:
+                            logging.error("When configuring analysis-event-mixing for Muon, you must configure muonSelection within the --analysis parameter!")
+                            sys.exit()
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processBarrelMuonSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                                                             
+                        if "trackSelection" in analysisCfg and "muonSelection" in analysisCfg and "eventMixing" in analysisCfg and "BarrelMuon" in mixingCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "trackSelection" in analysisCfg and "muonSelection" in analysisCfg and "BarrelMuon" not in mixingCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixing" not in analysisCfg and "BarrelMuon" in mixingCfg:
+                            logging.error("When configuring analysis-event-mixing for BarrelMuon, you must configure eventMixing within the --analysis parameter!")
+                            sys.exit()
+                        if "BarrelMuon" in mixingCfg and ("muonSelection" not in analysisCfg or "trackSelection" not in analysisCfg):
+                            logging.error("When configuring analysis-event-mixing for BarrelMuon, you must configure both of muonSelection and trackSelection within the --analysis parameter!")
+                            sys.exit()                                                                            
+                        if "eventMixing" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixing, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                        
+                if value == "processBarrelVnSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                             
+                        if "trackSelection" in analysisCfg and "eventMixingVn" in analysisCfg and "BarrelVn" in mixingCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "trackSelection" in analysisCfg and "BarrelVn" not in mixingCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixingVn" not in analysisCfg and "BarrelVn" in mixingCfg:
+                            logging.error("When configuring analysis-event-mixing for BarrelVn, you must configure eventMixingVn within the --analysis parameter!")
+                            sys.exit()
+                        if "BarrelVn" in mixingCfg and "trackSelection" not in analysisCfg:
+                            logging.error("When configuring analysis-event-mixing for BarrelVn, you must configure trackSelection within the --analysis parameter!")
+                            sys.exit()
+                        if "eventMixingVn" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
+                                                                            
+                if value == "processMuonVnSkimmed" and extrargs.analysis:                        
+
+                    if key == "analysis-event-mixing":                                        
+                        if "muonSelection" in analysisCfg and "eventMixingVn" in analysisCfg and "MuonVn" in mixingCfg:
+                            config[key][value] = "true"
+                            logging.debug(" - [%s] %s : true",key,value)
+                        if "muonSelection" in analysisCfg and "MuonVn" not in mixingCfg and extrargs.onlySelect == "true":
+                            config[key][value] = "false"
+                            logging.debug(" - [%s] %s : false",key,value)
+                        if "eventMixingVn" not in analysisCfg and "MuonVn" in mixingCfg:
+                            logging.error("When configuring analysis-event-mixing for MuonVn, you must configure eventMixingVn within the --analysis parameter!")
+                            sys.exit()
+                        if "MuonVn" in mixingCfg and "muonSelection" not in analysisCfg:
+                            logging.error("When configuring analysis-event-mixing for MuonVn, you must configure muonSelection within the --analysis parameter!")
+                            sys.exit()
+                        if "eventMixingVn" in analysisCfg and ("trackSelection" not in analysisCfg and "muonSelection" not in analysisCfg):
+                            logging.error("For Configuring eventMixingVn, You have to specify either trackSelection or muonSelection in --analysis parameter!")
+                            sys.exit()
                  
             # QA selections  
             if value =="cfgQA" and extrargs.cfgQA:
@@ -699,89 +810,86 @@ for key, value in config.items():
             
             # analysis-same-event-pairing
             if key == "analysis-same-event-pairing" and extrargs.process:
-                for keyCfg,valueCfg in configuredCommands.items():
-                    if keyCfg == "process": # Select process keys
-                        if(valueCfg != None): # Skipped None types, because can"t iterate in None type
 
-                            if not isAnalysisSameEventPairingSelected:
-                                logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                                isAnalysisSameEventPairingSelected = True
-                            if "JpsiToEE" in valueCfg and value == "processJpsiToEESkimmed":
-                                if isAnalysisTrackSelected:
-                                    config[key]["processJpsiToEESkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisTrackSelected:
-                                    logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToEE" not in valueCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == "true":
-                                    config[key]["processJpsiToEESkimmed"] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                    
-                            if "JpsiToMuMu" in valueCfg and value == "processJpsiToMuMuSkimmed":
-                                if isAnalysisMuonSelected:
-                                    config[key]["processJpsiToMuMuSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisMuonSelected:
-                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToMuMu" not in valueCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processJpsiToMuMuSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
-   
-                            if "JpsiToMuMuVertexing" in valueCfg and value == "processJpsiToMuMuVertexingSkimmed":
-                                if isAnalysisMuonSelected:
-                                    config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisMuonSelected:
-                                    logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "JpsiToMuMuVertexing" not in valueCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
-                                
-                            if "VnJpsiToEE" in valueCfg and value == "processVnJpsiToEESkimmed":
-                                if isAnalysisTrackSelected:
-                                    config[key]["processVnJpsiToEESkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisTrackSelected:
-                                    logging.error("trackSelection not found in analysis for processVnJpsiToEESkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "VnJpsiToEE" not in valueCfg and value == "processVnJpsiToEESkimmed" and extrargs.onlySelect == "true":
-                                    config[key]["processVnJpsiToEESkimmed"] = "false"
-                                    logging.debug(" - [%s] %s : false",key,value)
-                                    
-                            if "VnJpsiToMuMu" in valueCfg and value == "processVnJpsiToMuMuSkimmed":
-                                if isAnalysisMuonSelected:
-                                    config[key]["processVnJpsiToMuMuSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                if not isAnalysisMuonSelected:
-                                    logging.error("muonSelection not found in analysis for processVnJpsiToMuMuSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()                                   
-                            if "VnJpsiToMuMu" not in valueCfg and value == "processVnJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processVnJpsiToMuMuSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
-                                
-                            if "ElectronMuon" in valueCfg and value == "processElectronMuonSkimmed":
-                                if isAnalysisTrackSelected and isAnalysisMuonSelected:
-                                    config[key]["processElectronMuonSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                else:
-                                    logging.error("trackSelection and muonSelection not found in analysis for processElectronMuonSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "ElectronMuon" not in valueCfg and value == "processElectronMuonSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processElectronMuonSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
-                                
-                            if "All" in valueCfg and value == "processAllSkimmed":
-                                if isAnalysisEventSelected and isAnalysisMuonSelected and isAnalysisTrackSelected:
-                                    config[key]["processAllSkimmed"] = "true"
-                                    logging.debug(" - [%s] %s : true",key,value)
-                                else:
-                                    logging.debug("eventSelection, trackSelection and muonSelection not found in analysis for processAllSkimmed -> analysis-same-event-pairing")
-                                    sys.exit()
-                            if "All" not in valueCfg and value == "processAllSkimmed" and extrargs.onlySelect == "true":
-                                config[key]["processAllSkimmed"] = "false"
-                                logging.debug(" - [%s] %s : false",key,value)
+                if not isAnalysisSameEventPairingSelected:
+                    logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
+                    isAnalysisSameEventPairingSelected = True
+                if "JpsiToEE" in processCfg and value == "processJpsiToEESkimmed":
+                    if isAnalysisTrackSelected:
+                        config[key]["processJpsiToEESkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisTrackSelected:
+                        logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToEE" not in processCfg and value == "processJpsiToEESkimmed" and extrargs.onlySelect == "true":
+                        config[key]["processJpsiToEESkimmed"] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                        
+                if "JpsiToMuMu" in processCfg and value == "processJpsiToMuMuSkimmed":
+                    if isAnalysisMuonSelected:
+                        config[key]["processJpsiToMuMuSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisMuonSelected:
+                        logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToMuMu" not in processCfg and value == "processJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processJpsiToMuMuSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
+
+                if "JpsiToMuMuVertexing" in processCfg and value == "processJpsiToMuMuVertexingSkimmed":
+                    if isAnalysisMuonSelected:
+                        config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisMuonSelected:
+                        logging.error("muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "JpsiToMuMuVertexing" not in processCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
+                    
+                if "VnJpsiToEE" in processCfg and value == "processVnJpsiToEESkimmed":
+                    if isAnalysisTrackSelected:
+                        config[key]["processVnJpsiToEESkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisTrackSelected:
+                        logging.error("trackSelection not found in analysis for processVnJpsiToEESkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "VnJpsiToEE" not in processCfg and value == "processVnJpsiToEESkimmed" and extrargs.onlySelect == "true":
+                        config[key]["processVnJpsiToEESkimmed"] = "false"
+                        logging.debug(" - [%s] %s : false",key,value)
+                        
+                if "VnJpsiToMuMu" in processCfg and value == "processVnJpsiToMuMuSkimmed":
+                    if isAnalysisMuonSelected:
+                        config[key]["processVnJpsiToMuMuSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    if not isAnalysisMuonSelected:
+                        logging.error("muonSelection not found in analysis for processVnJpsiToMuMuSkimmed -> analysis-same-event-pairing")
+                        sys.exit()                                   
+                if "VnJpsiToMuMu" not in processCfg and value == "processVnJpsiToMuMuSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processVnJpsiToMuMuSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
+                    
+                if "ElectronMuon" in processCfg and value == "processElectronMuonSkimmed":
+                    if isAnalysisTrackSelected and isAnalysisMuonSelected:
+                        config[key]["processElectronMuonSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    else:
+                        logging.error("trackSelection and muonSelection not found in analysis for processElectronMuonSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "ElectronMuon" not in processCfg and value == "processElectronMuonSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processElectronMuonSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
+                    
+                if "All" in processCfg and value == "processAllSkimmed":
+                    if isAnalysisEventSelected and isAnalysisMuonSelected and isAnalysisTrackSelected:
+                        config[key]["processAllSkimmed"] = "true"
+                        logging.debug(" - [%s] %s : true",key,value)
+                    else:
+                        logging.debug("eventSelection, trackSelection and muonSelection not found in analysis for processAllSkimmed -> analysis-same-event-pairing")
+                        sys.exit()
+                if "All" not in processCfg and value == "processAllSkimmed" and extrargs.onlySelect == "true":
+                    config[key]["processAllSkimmed"] = "false"
+                    logging.debug(" - [%s] %s : false",key,value)
                                 
             if key == "analysis-same-event-pairing" and extrargs.process == None and isAnalysisSameEventPairingSelected == False and extrargs.onlySelect == "true":
                 config[key]["processJpsiToEESkimmed"] = "false"
