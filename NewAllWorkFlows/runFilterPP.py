@@ -398,7 +398,7 @@ groupQASelections = parser.add_argument_group(title="Data processor options: d-q
 groupQASelections.add_argument("--cfgWithQA", help="If true, fill QA histograms", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
 
 # pid
-groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID = parser.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
 groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
