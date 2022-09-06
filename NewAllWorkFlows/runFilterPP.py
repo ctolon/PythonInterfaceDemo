@@ -681,7 +681,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                   
             # PID Selections
-            if  (value in pidParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid and key != "tof-pid":
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2

@@ -536,7 +536,7 @@ groupV0Selector.add_argument("--mincrossedrows", help="Min crossed rows", action
 groupV0Selector.add_argument("--maxchi2tpc", help="max chi2/NclsTPC", action="store", type=str)
 
 # pid
-groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID = parser.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
 groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
@@ -1073,7 +1073,7 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : false",key,value)                          
                        
             # PID Selections
-            if  (value in pidParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid and key != "tof-pid":
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
@@ -1743,7 +1743,7 @@ if extrargs.add_fdd_conv:
     commandToRun += " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-fdd-converter added your workflow")
 
-if extrargs.add_track_prop or len(covSearch) > 0:
+if extrargs.add_track_prop:
     commandToRun += " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("o2-analysis-track-propagation added your workflow")
 

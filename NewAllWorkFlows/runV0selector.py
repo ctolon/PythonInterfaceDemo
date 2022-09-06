@@ -292,7 +292,7 @@ groupTofEventTime = parser.add_argument_group(title="Data processor options: tof
 groupTofEventTime.add_argument("--FT0", help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
 
 # pid
-groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID = parser.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
 groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
@@ -443,7 +443,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgWithQA)  
                   
             # PID Selections
-            if  (value in pidParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid and key != "tof-pid":
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2

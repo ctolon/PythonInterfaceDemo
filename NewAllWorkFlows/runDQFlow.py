@@ -355,7 +355,7 @@ for key,value in centralityTableSelections.items():
     groupEst.add_argument(key, help=value, action="none")
 
 # pid
-groupPID = parser.add_argument_group(title="Data processor options: tof-pid, tpc-pid-full, tof-pid-full")
+groupPID = parser.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
 groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
 for key,value in pidSelections.items():
@@ -580,7 +580,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgAcceptance)
                                                       
             # PID Selections
-            if  (value in pidParameters) and extrargs.pid:
+            if  (value in pidParameters) and extrargs.pid and key != "tof-pid":
                 if value in extrargs.pid:
                     value2 = "1"
                     config[key][value] = value2
