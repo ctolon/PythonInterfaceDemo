@@ -193,6 +193,13 @@ O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 
 threeSelectedList = []
 
+# List for Selected skimmed process functions for dummy automizer
+skimmedListEventSelection = []
+skimmedListTrackSelection = []
+skimmedListMuonSelection = []
+skimmedListSEP = []
+skimmedListDileptonTrack = []
+
 ################################
 # Download DQ Libs From Github #
 ################################
@@ -360,7 +367,7 @@ for keyCfg,valueCfg in configuredCommands.items():
         if keyCfg == "process":
             if type(valueCfg) == type("string"):
                 valueCfg = stringToList(valueCfg)
-            processCfg = stringToList(valueCfg)
+            processCfg = valueCfg
 
 # Debug Settings
 if extrargs.debug and (not extrargs.logFile):
@@ -675,7 +682,8 @@ for key, value in config.items():
                 if "JpsiToMuMuVertexing" not in processCfg and value == "processJpsiToMuMuVertexingSkimmed" and extrargs.onlySelect == "true":
                     config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
                     logging.debug(" - [%s] %s : false",key,value)
-                                
+                    
+            # If no process function is provided, all SEP process functions are pulled false (for JSON Overrider mode)                               
             if key == "analysis-same-event-pairing" and extrargs.process == None and isAnalysisSameEventPairingSelected == False and extrargs.onlySelect == "true":
                 config[key]["processJpsiToEESkimmed"] = "false"
                 config[key]["processJpsiToMuMuSkimmed"] = "false"
@@ -738,37 +746,66 @@ for key, value in config.items():
                     logging.debug(" - [%s] %s : %s",key,value,extrargs.cfgFillCandidateTable)
                     
             # Dummy automizer
-            if value == "processDummy" and extrargs.autoDummy:
-                
-                if config["analysis-event-selection"]["processSkimmed"] == "true":
-                    config["analysis-event-selection"]["processDummy"] = "false"
-                if config["analysis-event-selection"]["processSkimmed"] == "false":
-                    config["analysis-event-selection"]["processDummy"] = "true"
-                    
-                if config["analysis-track-selection"]["processSkimmed"] == "true":
-                    config["analysis-track-selection"]["processDummy"] = "false"
-                if config["analysis-track-selection"]["processSkimmed"] == "false":
-                    config["analysis-track-selection"]["processDummy"] = "true"
-                    
-                if config["analysis-muon-selection"]["processSkimmed"] == "true":
-                    config["analysis-muon-selection"]["processDummy"] = "false"
-                if config["analysis-muon-selection"]["processSkimmed"] == "false":
-                    config["analysis-muon-selection"]["processDummy"] = "true"
-                    
-                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "true" or config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "true":
-                    config["analysis-same-event-pairing"]["processDummy"] = "false"                    
-                if config["analysis-same-event-pairing"]["processJpsiToEESkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuSkimmed"] == "false" and config["analysis-same-event-pairing"]["processJpsiToMuMuVertexingSkimmed"] == "false":
-                    config["analysis-same-event-pairing"]["processDummy"] = "true"
-                    
-                if config["analysis-dilepton-track"]["processDimuonMuonSkimmed"] == "true":
-                    config["analysis-dilepton-track"]["processDummy"] = "false"
-                if config["analysis-dilepton-track"]["processDimuonMuonSkimmed"] == "false":
-                    config["analysis-dilepton-track"]["processDummy"] = "true"
-                    
-                if config["analysis-dilepton-track"]["processDielectronKaonSkimmed"] == "true":
-                    config["analysis-dilepton-track"]["processDummy"] = "false"
-                if config["analysis-dilepton-track"]["processDielectronKaonSkimmed"] == "false":
-                    config["analysis-dilepton-track"]["processDummy"] = "true"
+            if extrargs.autoDummy:
+                """ 
+                value.endswith("Skimmed") --> get all skimmed process functions without dummy
+                if "true" in skimmedListEventSelection ... else ... --> # if no skimmed process true, processDummy true else processDummy false
+                """
+                                 
+                if key == "analysis-event-selection": 
+                    if value.endswith("Skimmed"):
+                        if config[key][value] == "true":
+                            skimmedListEventSelection.append("true")
+                        if config[key][value] == "false":
+                            skimmedListEventSelection.append("false")               
+                    if "true" in skimmedListEventSelection:
+                        config[key]["processDummy"] = "false"
+                    else:
+                        config[key]["processDummy"] = "true" 
+                        
+                if key == "analysis-muon-selection":
+                    if value.endswith("Skimmed"):
+                        if config[key][value] == "true":
+                            skimmedListMuonSelection.append("true")
+                        if config[key][value] == "false":
+                            skimmedListMuonSelection.append("false")     
+                    if "true" in skimmedListMuonSelection:
+                        config[key]["processDummy"] = "false"
+                    else:
+                        config[key]["processDummy"] = "true"
+                        
+                if key == "analysis-track-selection":
+                    if value.endswith("Skimmed"):
+                        if config[key][value] == "true":
+                            skimmedListTrackSelection.append("true")
+                        if config[key][value] == "false":
+                            skimmedListTrackSelection.append("false")        
+                    if "true" in skimmedListTrackSelection:
+                        config[key]["processDummy"] = "false"
+                    else:
+                        config[key]["processDummy"] = "true"
+                                                
+                if key == "analysis-same-event-pairing":
+                    if value.endswith("Skimmed"):
+                        if config[key][value] == "true":
+                            skimmedListSEP.append("true")
+                        if config[key][value] == "false":
+                            skimmedListSEP.append("false")           
+                    if "true" in skimmedListSEP:
+                        config[key]["processDummy"] = "false"
+                    else:
+                        config[key]["processDummy"] = "true" 
+                        
+                if key == "analysis-dilepton-track":
+                    if value.endswith("Skimmed"):
+                        if config[key][value] == "true":
+                            skimmedListDileptonTrack.append("true")
+                        if config[key][value] == "false":
+                            skimmedListDileptonTrack.append("false")            
+                    if "true" in skimmedListDileptonTrack:
+                        config[key]["processDummy"] = "false"
+                    else:
+                        config[key]["processDummy"] = "true"
 
 # AOD File and Reader-Writer Checker                    
 if extrargs.aod != None:
